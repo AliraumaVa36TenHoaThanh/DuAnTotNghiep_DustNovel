@@ -1,0 +1,29 @@
+<div th:fragment="content">
+<div class="card">
+    <div class="card-header">
+        <h4>Thêm chương mới</h4>
+    </div>
+
+    <div class="card-body">
+       <form th:action="@{/DustNovel/chuong/them}" th:object="${chuong}" method="post">
+            <input type="hidden" th:field="*{truyen.id}"/>
+            <div class="mb-3">
+                <label>Tiêu đề chương</label>
+                <input type="text" th:field="*{tieuDe}" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Số chương</label>
+                <input type="number" th:field="*{soChuong}" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Nội dung</label>
+                <textarea th:field="*{noiDung}" rows="12"
+                          class="form-control" required></textarea>
+            </div>
+            <button class="btn btn-primary">Lưu chương</button>
+            <a th:href="@{/DustNovel/truyen/{id}(id=${chuong.truyen.id})}"
+               class="btn btn-secondary">Hủy</a>
+        </form>
+    </div>
+</div>
+</div>

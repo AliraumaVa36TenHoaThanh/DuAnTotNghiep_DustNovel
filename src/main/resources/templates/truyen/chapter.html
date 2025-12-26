@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout/main :: content">
+<div th:fragment="content">
+    <h4 class="text-center" th:text="${chuong.tieuDe}"></h4>
+    <p class="text-center text-muted">
+        Cập nhật:
+        <span th:text="${#temporals.format(chuong.ngayTao, 'dd/MM/yyyy HH:mm')}"></span>
+    </p>
+    <hr>
+    <div class="fs-5 lh-lg" th:utext="${chuong.noiDung}"></div>
+    <hr>
+    <div class="d-flex justify-content-between">
+    <a th:if="${chuongTruoc != null}" th:href="@{/DustNovel/chuong/{id}(id=${chuongTruoc.id})}" class="btn btn-outline-secondary">⬅ Chương trước</a>
+    
+    <a th:href="@{/DustNovel/truyen/{id}(id=${chuong.truyen.id})}" class="btn btn-outline-primary">🏠 Quay lại</a>
+
+    <a th:if="${chuongSau != null}" th:href="@{/DustNovel/chuong/{id}(id=${chuongSau.id})}" class="btn btn-outline-secondary">Chương sau ➡</a>
+</div>
+</div>
+</html>
