@@ -55,10 +55,10 @@ public class TruyenController {
 	        truyen.setNguoiDang(user);
 
 	        if (truyen.getAnhBia() == null || truyen.getAnhBia().isBlank()) {
-	            truyen.setAnhBia("/images/default.jpg");
+	            truyen.setAnhBia("/images/default.png");
 	        }
 
 	        truyenService.save(truyen, theLoaiIds);
-	        return "redirect:/DustNovel/home/";
+	        return "redirect:/DustNovel/home";
 	    }
 }

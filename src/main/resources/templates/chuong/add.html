@@ -3,7 +3,6 @@
     <div class="card-header">
         <h4>Thêm chương mới</h4>
     </div>
-
     <div class="card-body">
        <form th:action="@{/DustNovel/chuong/them}" th:object="${chuong}" method="post">
             <input type="hidden" th:field="*{truyen.id}"/>

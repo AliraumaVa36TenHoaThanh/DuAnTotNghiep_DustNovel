@@ -14,6 +14,11 @@
             <b>Người đăng:</b>
             <span th:text="${truyen.nguoiDang.tenDangNhap}"></span>
         </p>
+        <p>
+            <b>Nội dung:</b>
+           <span th:if="${truyen.tag18}" style="color: red; font-weight: bold;">Nội dung người lớn</span>
+           <span th:unless="${truyen.tag18}" style="color: green;">Nội dung an toàn</span>
+        </p>
         <div class="mb-2">
             <span class="badge bg-secondary me-1"
                   th:each="tl : ${truyen.theLoais}"
