@@ -7,6 +7,7 @@ import com.fpoly.service.ChuongService;
 import com.fpoly.repository.NguoiDungRepository;
 import com.fpoly.repository.TheLoaiRepository;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +49,11 @@ public class TruyenController {
 	    @PostMapping("/them")
 	    public String addTruyen(
 	            @ModelAttribute Truyen truyen,
-	            @RequestParam List<Long> theLoaiIds
+	            @RequestParam List<Long> theLoaiIds,
+	            Principal principal
 	    ) {
-
-	        NguoiDung user = nguoiDungRepo.findById(1L).orElseThrow();
+	    	
+	        NguoiDung user = nguoiDungRepo.findById(2L).orElseThrow();
 	        truyen.setNguoiDang(user);
 
 	        if (truyen.getAnhBia() == null || truyen.getAnhBia().isBlank()) {

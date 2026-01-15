@@ -33,4 +33,6 @@ public class Chuong {
 
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
+    
+   
 }

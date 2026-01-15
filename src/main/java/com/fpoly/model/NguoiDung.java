@@ -13,7 +13,10 @@ public class NguoiDung {
 
     @Column(name = "ten_dang_nhap", nullable = false, unique = true)
     private String tenDangNhap;
-
+    
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+    
     @Column(name = "mat_khau", nullable = false)
     private String matKhau;
     
