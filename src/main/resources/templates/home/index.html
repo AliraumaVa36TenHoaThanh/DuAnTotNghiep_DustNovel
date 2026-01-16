@@ -1,47 +1,50 @@
 <div th:fragment="content">
-    <h4 class="mb-3">🔥 Truyện sáng tác</h4>
-    <div class="row">
-        <div class="col-md-3 mb-3" th:each="truyen : ${truyenSangTac}">
-            <div class="card h-100">
-                <img th:src="${truyen.tag18} 
+	<h4 class="mb-3">🔥 Truyện sáng tác</h4>
+	<div class="row">
+		<div class="col-md-3 mb-3" th:each="truyen : ${truyenSangTac}">
+			<div class="card h-100">
+				<img
+					th:src="${truyen.tag18} 
                              ? 'https://i.pinimg.com/1200x/69/05/e3/6905e37f8ca8a420fd303393921ecec0.jpg' 
                              : (${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)} ? ${truyen.anhBia} : @{/images/default.jpg})"
-                     style="width:100%; aspect-ratio:3/4; object-fit:cover;"
-                     class="rounded shadow">
-                
-                <div class="card-body">
-                    <h6 class="card-title" th:text="${truyen.tenTruyen}"></h6>
-                    <p class="card-text" th:if="${truyen.tag18}">
-                        <small style="color: red; font-weight: bold;">🔞 Nội dung 18+</small>
-                    </p>
-                    <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}"
-                       class="btn btn-sm btn-outline-primary">
-                        Xem
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+					style="width: 100%; aspect-ratio: 2/1; object-fit: cover;"
+					class="rounded shadow">
 
-    <hr class="my-4">
-    <h4 class="mb-3">🌍 Truyện dịch</h4>
-    <div class="row">
-        <div class="col-md-3 mb-3" th:each="truyen : ${truyenDich}">
-            <div class="card h-100">
-                <img th:src="${truyen.tag18} 
+				<div class="card-body">
+					<h6 class="card-title" th:text="${truyen.tenTruyen}"></h6>
+					<p class="card-text" th:if="${truyen.tag18}">
+						<small style="color: red; font-weight: bold;">🔞 Nội dung
+							18+</small>
+					</p>
+					<a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}"
+						class="btn btn-sm btn-outline-primary"> Xem </a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<hr class="my-4">
+	<h4 class="mb-3">🌍 Truyện dịch</h4>
+	<div class="row">
+		<div class="col-md-3 mb-3" th:each="truyen : ${truyenDich}">
+			<div class="card h-100">
+				<img
+					th:src="${truyen.tag18} 
                              ? 'https://i.pinimg.com/1200x/69/05/e3/6905e37f8ca8a420fd303393921ecec0.jpg' 
                              : (${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)} ? ${truyen.anhBia} : @{/images/default.jpg})"
-                     style="width:100%; aspect-ratio:3/4; object-fit:cover;"
-                     class="rounded shadow">
+					style="width: 100%; aspect-ratio: 2/1; object-fit: cover;"
+					class="rounded shadow">
 
-                <div class="card-body">
-                    <h6 class="card-title" th:text="${truyen.tenTruyen}"></h6>
-                    <p class="card-text" th:if="${truyen.tag18}">
-                        <small style="color: red; font-weight: bold;">🔞 Nội dung 18+</small>
-                    </p>
-                    <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}" class="btn btn-sm btn-outline-primary">Xem</a>                  
-                </div>
-            </div>
-        </div>
-    </div>
+				<div class="card-body">
+					<h6 class="card-title" th:text="${truyen.tenTruyen}"></h6>
+					<p class="card-text" th:if="${truyen.tag18}">
+						<small style="color: red; font-weight: bold;">🔞 Nội dung
+							18+</small>
+					</p>
+					<a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}"
+						class="btn btn-sm btn-outline-primary">Xem</a>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

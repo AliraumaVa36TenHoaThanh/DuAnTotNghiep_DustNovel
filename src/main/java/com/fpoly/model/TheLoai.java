@@ -18,4 +18,6 @@ public class TheLoai {
     
     @ManyToMany(mappedBy = "theLoais")
     private List<Truyen> truyenList;
+    
+    
 }
