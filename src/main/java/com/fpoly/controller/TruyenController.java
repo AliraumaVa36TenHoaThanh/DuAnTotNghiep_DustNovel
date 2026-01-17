@@ -6,6 +6,7 @@ import com.fpoly.service.TruyenService;
 import com.fpoly.service.ChuongService;
 import com.fpoly.repository.NguoiDungRepository;
 import com.fpoly.repository.TheLoaiRepository;
+import com.fpoly.repository.TruyenRepository;
 
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class TruyenController {
 	     NguoiDungRepository nguoiDungRepo;
 	    @Autowired
 	    TheLoaiRepository theLoaiRepo;	
+	    @Autowired
+	    TruyenRepository truyenRepo;
 	    
 	    @GetMapping("/{id:\\d+}")
 	    public String detail(@PathVariable Long id, Model model) {
@@ -61,4 +64,21 @@ public class TruyenController {
 	        truyenService.save(truyen, theLoaiIds);
 	        return "redirect:/DustNovel/home";
 	    }
+	    @GetMapping("/tim-kiem")
+	    public String timKiemTruyen(
+	            @RequestParam("keyword") String keyword,
+	            Model model
+	    ) {
+
+	        List<Truyen> truyens = truyenRepo
+	                .findByTenTruyenContainingIgnoreCase(keyword);
+
+	        model.addAttribute("keyword", keyword);
+	        model.addAttribute("truyens", truyens);
+
+	        model.addAttribute("content", "truyen/tim-kiem");
+
+	        return "layout/main";
+	    }
+	    
 }

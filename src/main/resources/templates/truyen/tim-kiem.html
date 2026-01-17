@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+
+    <h4 class="mb-3">
+        🔍 Kết quả tìm kiếm cho:
+        <span th:text="${keyword}"></span>
+    </h4>
+
+    <div class="row">
+        <div class="col-md-3 mb-3" th:each="truyen : ${truyens}">
+            <div class="card h-100">
+
+                <img th:src="${truyen.tag18} 
+                             ? 'https://i.pinimg.com/1200x/69/05/e3/6905e37f8ca8a420fd303393921ecec0.jpg' 
+                             : (${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)} 
+                                ? ${truyen.anhBia} 
+                                : @{/images/default.png})"
+                     style="width:100%; aspect-ratio:2/1; object-fit:cover;"
+                     class="rounded shadow">
+
+                <div class="card-body">
+                    <h6 class="card-title" th:text="${truyen.tenTruyen}"></h6>
+
+                    <p th:if="${truyen.tag18}">
+                        <small style="color:red;font-weight:bold;">🔞 Nội dung 18+</small>
+                    </p>
+
+                    <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}"
+                       class="btn btn-sm btn-outline-primary">
+                        Xem
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+        <div th:if="${#lists.isEmpty(truyens)}"
+         class="alert alert-warning text-center">
+        📭 Hiện chưa có truyện có tên bao gồm
+        <strong th:text="${keyword}"></strong>
+    </div>
+
+</div>

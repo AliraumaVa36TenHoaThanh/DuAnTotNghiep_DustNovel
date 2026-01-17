@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
 
 <div th:fragment="content">
 
@@ -9,7 +12,15 @@
         <span th:text="${theLoai.tenTheLoai}"></span>
     </h4>
 
-    <div class="row">
+    <!-- ✅ THÔNG BÁO KHI KHÔNG CÓ TRUYỆN -->
+    <div th:if="${#lists.isEmpty(truyens)}"
+         class="alert alert-warning text-center">
+        📭 Hiện chưa có truyện nào thuộc thể loại
+        <strong th:text="${theLoai.tenTheLoai}"></strong>
+    </div>
+
+    <!-- ✅ DANH SÁCH TRUYỆN -->
+    <div class="row" th:if="${!#lists.isEmpty(truyens)}">
         <div class="col-md-3 mb-3" th:each="truyen : ${truyens}">
             <div class="card h-100">
 
@@ -42,7 +53,6 @@
     </div>
 
 </div>
-
 
 </body>
 </html>
