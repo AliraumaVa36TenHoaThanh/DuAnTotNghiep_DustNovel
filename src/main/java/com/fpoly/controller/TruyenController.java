@@ -58,7 +58,7 @@ public class TruyenController {
 	        truyen.setNguoiDang(user);
 
 	        if (truyen.getAnhBia() == null || truyen.getAnhBia().isBlank()) {
-	            truyen.setAnhBia("/images/default.png");
+	            truyen.setAnhBia("/images/aria.jpg");
 	        }
 
 	        truyenService.save(truyen, theLoaiIds);
@@ -75,7 +75,10 @@ public class TruyenController {
 
 	        model.addAttribute("keyword", keyword);
 	        model.addAttribute("truyens", truyens);
-
+	        model.addAttribute(
+	                "title",
+	                "DustNovel | Tìm kiếm truyện: " + keyword
+	            );
 	        model.addAttribute("content", "truyen/tim-kiem");
 
 	        return "layout/main";
