@@ -30,4 +30,6 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
 	List<Truyen> findByTheLoaiId(@Param("theLoaiId") Long theLoaiId);
 
 	List<Truyen> findByTheLoais_Id(Long theLoaiId);
+	
+    List<Truyen> findByTenTruyenContainingIgnoreCase(String keyword);
 }
