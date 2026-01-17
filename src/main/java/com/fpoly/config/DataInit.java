@@ -23,6 +23,7 @@ public class DataInit {
             if (repo.findByTenDangNhap("admin").isEmpty()) {
                 NguoiDung u = new NguoiDung();
                 u.setTenDangNhap("admin");
+                u.setEmail("admin@gmail.com");
                 u.setMatKhau(encoder.encode("123"));
                 u.setVaiTro(VaiTro.ADMIN);
                 u.setTrangThai("ACTIVE");
