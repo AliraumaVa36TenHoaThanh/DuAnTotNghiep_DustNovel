@@ -33,4 +33,9 @@ public class Chuong {
 
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
+    
+    private Boolean khoa = false;
+
+    @Column(name = "gia_token")
+    private Long giaToken = 0L;
 }
