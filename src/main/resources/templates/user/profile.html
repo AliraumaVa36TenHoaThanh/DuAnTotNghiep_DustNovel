@@ -208,8 +208,8 @@
         <h3 class="profile-title">Thông tin tài khoản</h3>
 
         <div class="role"
-             th:classappend="${user.vaiTro == 'ADMIN'} ? 'admin' : ''"
-             th:text="${user.vaiTro == 'ADMIN'} ? 'Quyền: Quản trị viên' : 'Quyền: Người dùng'">
+             th:classappend="${user.vaiTro == 'ADMIN'} ? 'ADMIN' : ''"
+             th:text="${user.vaiTro == 'ADMIN'} ? 'Quyền: Người Dùng' : 'Quyền: ADMIN'">
         </div>
 
         <div class="avatar"
