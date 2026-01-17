@@ -1,0 +1,79 @@
+/* ===== THEME VARIABLES ===== */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #212529;
+    --navbar-bg: #f8f9fa;
+    --footer-bg: #f8f9fa;
+    --link-color: #212529;
+}
+
+[data-theme="dark"] {
+    --bg-color: #141d2b;
+    --text-color: #f1f1f1;
+    --navbar-bg: #1e1e1e;
+    --footer-bg: #111111;
+    --link-color: #f1f1f1;
+}
+
+/* ===== APPLY THEME ===== */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color .3s, color .3s;
+}
+
+/* NAVBAR */
+.navbar {
+    background-color: var(--navbar-bg) !important;
+}
+
+.navbar,
+.navbar .nav-link,
+.navbar .navbar-brand,
+.navbar .hello-user {
+    color: var(--text-color) !important;
+}
+
+footer {
+    background-color: var(--footer-bg);
+    color: var(--text-color);
+    transition: background-color .3s, color .3s;
+}
+[data-theme="dark"] footer {
+    background-color: #ffffff;
+    color: #ffffff;
+    border-top: 1px solid #333;
+}
+/* DROPDOWN */
+.dropdown-menu {
+    background-color: var(--bg-color);
+}
+
+.dropdown-item {
+    color: var(--text-color);
+}
+
+.dropdown-item:hover {
+    background-color: rgba(255,255,255,0.08);
+}
+
+/* FOOTER */
+footer {
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+}
+
+footer small {
+    color: var(--text-color) !important;
+}
+
+/* LINKS */
+a {
+    color: var(--link-color);
+}
+
+/* TOGGLE */
+.theme-toggle {
+    cursor: pointer;
+    font-size: 14px;
+}
