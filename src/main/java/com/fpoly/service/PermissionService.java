@@ -36,13 +36,11 @@ public class PermissionService {
     }
 
     
-      // TRUYỆN
     
     public boolean canEditTruyen(Long truyenId) {
         NguoiDung user = getCurrentUser();
         if (user == null) return false;
 
-        // ADMIN luôn được
         if (user.getVaiTro().name().equals("ADMIN")) {
             return true;
         }
@@ -54,7 +52,6 @@ public class PermissionService {
     }
 
 
-       //CHƯƠNG
     public boolean canEditChuong(Long chuongId) {
         NguoiDung user = getCurrentUser();
         if (user == null) return false;
@@ -68,7 +65,7 @@ public class PermissionService {
 
         return chuong.getNguoiDang().getId().equals(user.getId());
     }
-      // THÊM CHƯƠNG
+
     public boolean canAddChuong(Long truyenId) {
         return canEditTruyen(truyenId);
     }

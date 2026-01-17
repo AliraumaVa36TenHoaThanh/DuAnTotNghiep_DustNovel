@@ -10,11 +10,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fpoly.model.NguoiDung;
 
 public class CustomUserDetails implements UserDetails {
-
     private final NguoiDung user;
-
+    
+    
+    
     public CustomUserDetails(NguoiDung user) {
         this.user = user;
+    }
+    
+    public Long getId() {
+        return user.getId();
+    }
+
+    public NguoiDung getUser() {
+        return user;
     }
 
     @Override
@@ -23,6 +32,9 @@ public class CustomUserDetails implements UserDetails {
             new SimpleGrantedAuthority("ROLE_" + user.getVaiTro().name())
         );
     }
+    
+
+   
 
     @Override
     public String getPassword() {
@@ -38,5 +50,6 @@ public class CustomUserDetails implements UserDetails {
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }
     @Override public boolean isEnabled() {return "HOAT_DONG".equalsIgnoreCase(user.getTrangThai());}
-
+    
+    
 }

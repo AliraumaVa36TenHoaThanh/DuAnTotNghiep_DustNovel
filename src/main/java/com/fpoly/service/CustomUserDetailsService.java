@@ -17,15 +17,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     private NguoiDungRepository repo;
 
     @Override
-    public UserDetails loadUserByUsername(String input)
-            throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
 
-        NguoiDung user = repo.findByTenDangNhap(input)
-                .or(() -> repo.findByEmail(input))
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("User không tồn tại"));
+        NguoiDung user = repo.findByTenDangNhap(username).orElseThrow(() ->
+                        new UsernameNotFoundException("Không tìm thấy user")
+                );
 
         return new CustomUserDetails(user);
     }
+
 }
 
