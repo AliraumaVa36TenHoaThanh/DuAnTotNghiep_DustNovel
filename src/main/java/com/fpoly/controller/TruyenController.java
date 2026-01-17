@@ -7,10 +7,13 @@ import com.fpoly.service.ChuongService;
 import com.fpoly.repository.NguoiDungRepository;
 import com.fpoly.repository.TheLoaiRepository;
 import com.fpoly.repository.TruyenRepository;
+import com.fpoly.security.CustomUserDetails;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -53,8 +56,13 @@ public class TruyenController {
 	            @ModelAttribute Truyen truyen,
 	            @RequestParam List<Long> theLoaiIds
 	    ) {
+	        CustomUserDetails cud =
+	        	    (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-	        NguoiDung user = nguoiDungRepo.findById(1L).orElseThrow();
+	        Long UserId = cud.getId();          
+	        NguoiDung user = cud.getUser();     
+
+
 	        truyen.setNguoiDang(user);
 
 	        if (truyen.getAnhBia() == null || truyen.getAnhBia().isBlank()) {
@@ -64,6 +72,7 @@ public class TruyenController {
 	        truyenService.save(truyen, theLoaiIds);
 	        return "redirect:/DustNovel/home";
 	    }
+
 	    @GetMapping("/tim-kiem")
 	    public String timKiemTruyen(
 	            @RequestParam("keyword") String keyword,

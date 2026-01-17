@@ -2,6 +2,7 @@ package com.fpoly.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -10,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import com.fpoly.service.CustomUserDetailsService;
 
+@EnableMethodSecurity(prePostEnabled = true)
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -36,11 +38,11 @@ public class SecurityConfig {
             .userDetailsService(userDetailsService)
 
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
+                .requestMatchers(	
+                	"/DustNovel/home",
                     "/DustNovel/css/**",
                     "/DustNovel/js/**",
                     "/DustNovel/images/**",
-                    "/DustNovel/",
                     "/DustNovel/login",
                     "/DustNovel/register",
                     "/DustNovel/truyen/**",
