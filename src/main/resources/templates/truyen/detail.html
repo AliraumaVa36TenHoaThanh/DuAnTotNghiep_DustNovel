@@ -37,4 +37,22 @@
 </div>
 	<a  class="btn btn-success mb-3" th:href="@{/DustNovel/chuong/them/{id}(id=${truyen.id})}"
 		th:if="${@permissionService.canAddChuong(truyen.id)}">➕ Thêm chương</a>
+		
+	<form
+    th:action="@{/DustNovel/truyen/{ten_truyen}/xoa/{id}(
+        ten_truyen=${truyen.tenTruyen},
+        id=${truyen.id}
+    )}"
+    method="post"
+    th:if="${@permissionService.canDeleteTruyen(truyen.id)}"
+    onsubmit="return confirm('Bạn có chắc muốn xoá truyện này không?')">
+
+    <button type="submit" class="btn btn-danger mb-3">
+        ❌ Xoá truyện
+    </button>
+
+</form>
+
+
+		
 </div>

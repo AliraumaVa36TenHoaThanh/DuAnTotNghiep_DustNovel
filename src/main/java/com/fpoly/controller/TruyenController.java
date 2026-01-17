@@ -12,7 +12,7 @@ import com.fpoly.security.CustomUserDetails;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -91,6 +91,39 @@ public class TruyenController {
 	        model.addAttribute("content", "truyen/tim-kiem");
 
 	        return "layout/main";
+	    }
+	    
+	    @PreAuthorize("@permissionService.canDeleteTruyen(#id)")
+	    @PostMapping("/{ten_truyen}/xoa/{id}")
+	    public String xoaTruyen(@PathVariable Long id) {
+	        truyenService.xoaTruyen(id);
+	        return "redirect:/DustNovel/home";
+	    }
+	    
+	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
+	    @GetMapping("/{tenTruyen}/sua/{id}")
+	    public String formSua(
+	            @PathVariable String tenTruyen,
+	            @PathVariable Long id,
+	            Model model) {
+
+	        model.addAttribute("truyen", truyenService.findById(id));
+	        model.addAttribute("content", "truyen/edit");
+	        model.addAttribute("title", "Sửa truyện");
+	        return "layout/main";
+	    }
+	    
+	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
+	    @PostMapping("/{tenTruyen}/sua/{id}")
+	    public String sua(
+	            @PathVariable String tenTruyen,
+	            @PathVariable Long id,
+	            @ModelAttribute Truyen truyen) {
+
+	        truyen.setId(id);
+	        truyenService.suaTruyen(id, truyen);
+
+	        return "redirect:/DustNovel/truyen/" + tenTruyen + "/" + id;
 	    }
 	    
 }

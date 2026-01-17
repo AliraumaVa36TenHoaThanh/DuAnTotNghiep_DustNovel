@@ -1,0 +1,95 @@
+<div th:fragment="content">
+<div class="card shadow-sm">
+    <div class="card-header bg-warning text-dark">
+        <h4 class="mb-0">Chỉnh sửa truyện: <span th:text="${truyen.tenTruyen}"></span></h4>
+    </div>
+
+    <div class="card-body">
+        <form th:action="@{/DustNovel/truyen/sua}" th:object="${truyen}" method="post">
+            
+            <input type="hidden" th:field="*{id}"/>
+            <input type="hidden" th:field="*{nguoiDang.id}"/>
+            <input type="hidden" th:field="*{ngayTao}"/>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Tên truyện</label>
+                <input type="text" th:field="*{tenTruyen}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Mô tả</label>
+                <textarea th:field="*{moTa}" class="form-control" rows="5"></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Tên tác giả</label>
+                    <input type="text" th:field="*{tenTacGia}" class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Loại truyện</label>
+                    <select th:field="*{loaiTruyen}" class="form-select">
+                        <option value="SÁNG_TÁC">Sáng tác</option>
+                        <option value="DỊCH">Dịch</option>
+                    </select>
+                </div>
+            </div>
+			
+            <div class="mb-3">
+                <label class="form-label fw-bold">Thể loại</label>
+                <div class="d-flex flex-wrap gap-2 p-3 border rounded bg-light">
+                    <label th:each="tl : ${dsTheLoai}" class="badge bg-white text-dark border p-2">
+                        <input type="checkbox"
+                               name="theLoaiIds"
+                               th:value="${tl.id}"
+                               th:checked="${#lists.contains(truyen.theLoais.![id], tl.id)}">
+                        <span class="ms-1" th:text="${tl.tenTheLoai}"></span>
+                    </label>
+                </div>
+            </div>
+			
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Trạng thái</label>
+                    <select th:field="*{trangThai}" class="form-select">
+                        <option value="ĐANG_RA">Đang ra</option>
+                        <option value="HOÀN_THÀNH">Hoàn thành</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3 d-flex align-items-end">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" th:field="*{tag18}" id="tag18">
+                        <label class="form-check-label fw-bold" for="tag18">Truyện 18+</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Ảnh bìa (URL)</label>
+                <input type="text"
+                       th:field="*{anhBia}"
+                       class="form-control"
+                       id="urlAnhBia"
+                       placeholder="Dán link ảnh bìa"
+                       oninput="previewAnhBia(this.value)">
+
+                <div class="mt-3">
+                    <div class="border rounded overflow-hidden shadow-sm bg-white"
+                         style="width:160px; aspect-ratio:3/4;">
+                        <img id="previewAnhBia"
+                             th:src="*{anhBia} != null and *{anhBia} != '' ? *{anhBia} : '/images/default.jpg'"
+                             style="width:100%; height:100%; object-fit:cover;"
+                             alt="Ảnh bìa">
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-warning px-4 fw-bold">Cập nhật truyện</button>
+                <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}" class="btn btn-secondary">Hủy bỏ</a>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
