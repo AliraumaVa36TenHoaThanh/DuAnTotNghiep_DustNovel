@@ -47,32 +47,7 @@ public class UserController {
 
         boolean hasError = false;
 
-        // VALIDATE TÊN ĐĂNG NHẬP
-        if (tenDangNhap == null || tenDangNhap.isBlank()) {
-            model.addAttribute("tenDangNhapError", "Tên đăng nhập không được để trống");
-            hasError = true;
-        } else if (tenDangNhap.contains(" ")) {
-            model.addAttribute("tenDangNhapError", "Tên đăng nhập không được chứa khoảng trắng");
-            hasError = true;
-        } else if (tenDangNhap.length() < 5) {
-            model.addAttribute("tenDangNhapError", "Tên đăng nhập phải từ 5 ký tự trở lên");
-            hasError = true;
-        } else if (!tenDangNhap.matches("^(?=.*[a-zA-Z])(?=.*\\d)[a-zA-Z0-9]+$")) {
-            model.addAttribute(
-                    "tenDangNhapError",
-                    "Tên đăng nhập phải chứa cả chữ và số, không chứa ký tự đặc biệt"
-            );
-            hasError = true;
-        }
 
-        // VALIDATE EMAIL
-        if (email == null || email.isBlank()) {
-            model.addAttribute("emailError", "Email không được để trống");
-            hasError = true;
-        } else if (!email.matches("^[A-Za-z0-9._%+-]+@gmail\\.com$")) {
-            model.addAttribute("emailError", "Email phải đúng định dạng @gmail.com");
-            hasError = true;
-        }
 
         // VALIDATE MẬT KHẨU
         if (matKhauMoi != null && !matKhauMoi.isBlank()) {
