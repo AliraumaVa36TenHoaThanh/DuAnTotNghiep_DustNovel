@@ -41,10 +41,6 @@ public class PermissionService {
         NguoiDung user = getCurrentUser();
         if (user == null) return false;
 
-        if (user.getVaiTro().name().equals("ADMIN")) {
-            return true;
-        }
-
         Truyen truyen = truyenRepo.findById(truyenId).orElse(null);
         if (truyen == null) return false;
 
@@ -56,9 +52,6 @@ public class PermissionService {
         NguoiDung user = getCurrentUser();
         if (user == null) return false;
 
-        if (user.getVaiTro().name().equals("ADMIN")) {
-            return true;
-        }
         
         Chuong chuong = chuongRepo.findById(chuongId).orElse(null);
         if (chuong == null) return false;
@@ -69,4 +62,19 @@ public class PermissionService {
     public boolean canAddChuong(Long truyenId) {
         return canEditTruyen(truyenId);
     }
+    
+    public boolean canDeleteTruyen(Long truyenId) {
+        NguoiDung user = getCurrentUser();
+        if (user == null) return false;
+
+        if (user.getVaiTro().name().equals("ADMIN")) {
+            return true;
+        }
+
+        Truyen truyen = truyenRepo.findById(truyenId).orElse(null);
+        if (truyen == null) return false;
+
+        return truyen.getNguoiDang().getId().equals(user.getId());
+    }
+    
 }

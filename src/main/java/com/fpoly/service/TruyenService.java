@@ -10,13 +10,14 @@ import com.fpoly.model.Truyen;
 import com.fpoly.model.enums.LoaiTruyen;
 import com.fpoly.model.TheLoai;
 import java.util.List;
-
 @Service
 public class TruyenService {
 	@Autowired
 	TheLoaiRepository theLoaiRepo;
 	@Autowired
 	TruyenRepository truyenRepo;
+	
+	
     public List<Truyen> findAll() {
         return truyenRepo.findAll();
     }
@@ -38,5 +39,10 @@ public class TruyenService {
     public List<Truyen> getTruyenDich() {
         return truyenRepo.findByLoaiTruyen(LoaiTruyen.DỊCH);
     }
-  
+    public void xoaTruyen(Long id) {
+    	truyenRepo.deleteById(id);
+    }
+    public Truyen suaTruyen(Long id, Truyen truyen){
+    	return truyenRepo.save(truyen);
+    }
 }
