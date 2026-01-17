@@ -51,10 +51,24 @@ public class UserController {
 
         // VALIDATE MẬT KHẨU
         if (matKhauMoi != null && !matKhauMoi.isBlank()) {
-            if (!matKhauMoi.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")) {
+//            if (!matKhauMoi.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$")) {
+//                model.addAttribute(
+//                        "matKhauMoiError",
+//                        "Mật khẩu phải ≥ 8 ký tự, gồm chữ hoa, chữ thường và số"
+//                );
+//                hasError = true;
+//            } full
+        	if (!matKhauMoi.matches("^[a-zA-Z0-9]{1,}$")) {
+        	    model.addAttribute(
+        	        "matKhauMoiError",
+        	        "Mật khẩu phải tồn tại."
+        	    );
+        	    hasError = true;
+        	}
+            if (passwordEncoder.matches(matKhauMoi, user.getMatKhau())) {
                 model.addAttribute(
                         "matKhauMoiError",
-                        "Mật khẩu phải ≥ 8 ký tự, gồm chữ hoa, chữ thường và số"
+                        "Nếu muốn để nguyên như cũ thì đổi làm gì..."
                 );
                 hasError = true;
             }
