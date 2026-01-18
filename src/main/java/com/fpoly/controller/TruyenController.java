@@ -19,7 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/DustNovel/truyen")
+@RequestMapping("/DustNovel")
 public class TruyenController {
 		@Autowired
 	     TruyenService truyenService;
@@ -32,7 +32,7 @@ public class TruyenController {
 	    @Autowired
 	    TruyenRepository truyenRepo;
 	    
-	    @GetMapping("/{id:\\d+}")
+	    @GetMapping("/truyen/{id:\\d+}")
 	    public String detail(@PathVariable Long id, Model model) {
 	        model.addAttribute("title", "Chi tiết truyện");
 	        model.addAttribute("content", "truyen/detail");
@@ -41,7 +41,7 @@ public class TruyenController {
 
 	        return "layout/main";
 	    }
-	    @GetMapping("/them")
+	    @GetMapping("/themtruyen")
 	    public String showAddForm(Model model) {
 
 	        model.addAttribute("truyen", new Truyen());
@@ -51,7 +51,7 @@ public class TruyenController {
 
 	        return "layout/main";
 	    }
-	    @PostMapping("/them")
+	    @PostMapping("/themtruyen")
 	    public String addTruyen(
 	            @ModelAttribute Truyen truyen,
 	            @RequestParam List<Long> theLoaiIds
@@ -73,7 +73,7 @@ public class TruyenController {
 	        return "redirect:/DustNovel/home";
 	    }
 
-	    @GetMapping("/tim-kiem")
+	    @GetMapping("/truyen/tim-kiem")
 	    public String timKiemTruyen(
 	            @RequestParam("keyword") String keyword,
 	            Model model
@@ -94,14 +94,14 @@ public class TruyenController {
 	    }
 	    
 	    @PreAuthorize("@permissionService.canDeleteTruyen(#id)")
-	    @PostMapping("/{ten_truyen}/xoa/{id}")
+	    @PostMapping("/truyen/{ten_truyen}/xoa/{id}")
 	    public String xoaTruyen(@PathVariable Long id) {
 	        truyenService.xoaTruyen(id);
 	        return "redirect:/DustNovel/home";
 	    }
 	    
 	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
-	    @GetMapping("/{tenTruyen}/sua/{id}")
+	    @GetMapping("/truyen/{tenTruyen}/sua/{id}")
 	    public String formSua(
 	            @PathVariable String tenTruyen,
 	            @PathVariable Long id,
@@ -114,7 +114,7 @@ public class TruyenController {
 	    }
 	    
 	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
-	    @PostMapping("/{tenTruyen}/sua/{id}")
+	    @PostMapping("/truyen/{tenTruyen}/sua/{id}")
 	    public String sua(
 	            @PathVariable String tenTruyen,
 	            @PathVariable Long id,
