@@ -44,6 +44,23 @@ footer {
     color: #ffffff;
     border-top: 1px solid #333;
 }
+
+/* ===== LIST CHƯƠNG - DARK THEME ===== */
+[data-theme="dark"] .list-group-item {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+    border-color: #2a2a2a;
+}
+
+[data-theme="dark"] .list-group-item a {
+    color: #f1f1f1;
+    text-decoration: none;
+}
+
+[data-theme="dark"] .list-group-item a:hover {
+    color: #9ecbff;
+}
+
 /* DROPDOWN */
 .dropdown-menu {
     background-color: var(--bg-color);

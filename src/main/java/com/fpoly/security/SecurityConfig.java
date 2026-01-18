@@ -38,27 +38,35 @@ public class SecurityConfig {
             .userDetailsService(userDetailsService)
 
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(	
-                	"/DustNovel/home",
-                    "/DustNovel/css/**",
-                    "/DustNovel/js/**",
-                    "/DustNovel/images/**",
-                    "/DustNovel/login",
-                    "/DustNovel/register",
-                    "/DustNovel/truyen/**",
-                    "/DustNovel/chuong/**"
-                ).permitAll()
+            	    // PUBLIC
+            		.requestMatchers(
+            			    "/images/**",
+            			    "/css/**",
+            			    "/js/**",
 
-                .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
+            			    "/DustNovel/home",
+            			    "/DustNovel/login",
+            			    "/DustNovel/register",
 
-                .requestMatchers(
-                    "/DustNovel/user/**",
-                    "/DustNovel/truyen/them",
-                    "/DustNovel/truyen/luu"
-                ).hasAnyRole("USER", "ADMIN")
+            			    "/DustNovel/truyen/**",     // xem, đọc, tìm truyện
+            			    "/DustNovel/chuong/**",     // đọc chương
+            			    "/DustNovel/the-loai/**"    // xem theo thể loại
+            			).permitAll()
 
-                .anyRequest().authenticated()
-            )
+            	    // CẦN ĐĂNG NHẬP
+            	    .requestMatchers(
+            	        "/DustNovel/themtruyen",
+            	        "/DustNovel/nap-tien",
+            	        "/DustNovel/guild",
+            	        "/DustNovel/user/**"
+            	    ).hasAnyRole("USER", "ADMIN")
+
+            	    // ADMIN
+            	    .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
+
+            	    .anyRequest().authenticated()
+            	)
+
 
             .formLogin(form -> form
                 .loginPage("/DustNovel/login")
