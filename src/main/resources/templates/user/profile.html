@@ -1,187 +1,358 @@
+
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Hồ sơ cá nhân</title>
+<meta charset="UTF-8">
+<title>Hồ sơ cá nhân</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: #f4f6f9;
-        }
+<style>
+body {
+	margin: 0;
+	font-family: "Segoe UI", Arial, sans-serif;
+	background: #f4f6f9;
+}
 
-        .profile-left h3.profile-title {
-            margin-top: -20px;
-            margin-bottom: 8px;
-            font-size: 27px;
-        }
+.profile-left h3.profile-title {
+	margin-top: -20px;
+	margin-bottom: 8px;
+	font-size: 27px;
+}
 
-        .role {
-            font-size: 19px;
-            font-weight: 600;
-            margin-bottom: 25px;
-            color: #ffd43b;
-        }
+.role {
+	font-size: 19px;
+	font-weight: 600;
+	margin-bottom: 25px;
+	color: #ffd43b;
+}
 
-        .role.admin {
-            color: #ff6b6b;
-        }
+.role.admin {
+	color: #ff6b6b;
+}
 
-        .container {
-            display: flex;
-            max-width: 1100px;
-            margin: 40px auto;
-            gap: 30px;
-        }
+.container {
+	display: flex;
+	max-width: 1100px;
+	margin: 40px auto;
+	gap: 30px;
+}
 
-        .profile-left {
-            width: 30%;
-            background: black;
-            color: white;
-            border-radius: 14px;
-            padding: 50px;
-            text-align: center;
-            font-size: 20px;
-        }
+.profile-left {
+	width: 30%;
+	background: black;
+	color: white;
+	border-radius: 14px;
+	padding: 50px;
+	text-align: center;
+	font-size: 20px;
+}
 
-        .avatar {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            background: grey;
-            font-size: 42px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-        }
+.avatar {
+	width: 110px;
+	height: 110px;
+	border-radius: 50%;
+	background: grey;
+	font-size: 42px;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 15px;
+}
 
-        .status {
-            color: #00ff99;
-            font-weight: bold;
-            margin: 32px 0 25px;
-        }
+.status {
+	color: #00ff99;
+	font-weight: bold;
+	margin: 32px 0 25px;
+}
 
-        .profile-left button {
-            width: 100%;
-            margin-top: 28px;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
+.profile-left button {
+	width: 100%;
+	margin-top: 28px;
+	padding: 12px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: 600;
+}
 
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
+.btn-danger {
+	background: #dc3545;
+	color: white;
+}
 
-        .btn-danger:hover {
-            background: #bb2d3b;
-        }
+.btn-danger:hover {
+	background: #bb2d3b;
+}
 
-        .btn-logout {
-            background: #333;
-            color: white;
-        }
+.btn-logout {
+	background: #333;
+	color: white;
+}
 
-        .btn-logout:hover {
-            background: #222;
-        }
+.btn-logout:hover {
+	background: #222;
+}
 
-        .profile-right {
-            width: 70%;
-            background: white;
-            border-radius: 14px;
-            padding: 60px;
-        }
+.profile-right {
+	width: 70%;
+	background: white;
+	border-radius: 14px;
+	padding: 60px;
+}
 
-        h2 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
+h2 {
+	margin-top: 0;
+	margin-bottom: 10px;
+}
 
-        label {
-            font-weight: 600;
-            display: block;
-            margin-bottom: 6px;
-        }
+label {
+	font-weight: 600;
+	display: block;
+	margin-bottom: 6px;
+}
 
-        input {
-            width: 100%;
-            padding: 11px;
-            margin-bottom: 6px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 15px;
-        }
+input {
+	width: 100%;
+	padding: 11px;
+	margin-bottom: 6px;
+	border-radius: 8px;
+	border: 1px solid #ccc;
+	font-size: 15px;
+}
 
-        input:disabled {
-            background: #eee;
-            cursor: not-allowed;
-        }
+input:disabled {
+	background: #eee;
+	cursor: not-allowed;
+}
 
-        .error {
-            color: #dc3545;
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
+.error {
+	color: #dc3545;
+	font-size: 14px;
+	margin-bottom: 12px;
+}
 
-        .success {
-            background: #e6fffa;
-            color: #0f5132;
-            padding: 14px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
+<
+style>*, *::before, *::after {
+	box-sizing: border-box;
+}
 
-        .btn-edit {
-            background: #6f42c1;
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            margin-bottom: 25px;
-        }
+body {
+	min-height: 100vh;
+	background: url("/images/bglogin.jpg");
+	background-size: cover;
+	margin: 0;
+	font-family: "Segoe UI", Arial, sans-serif;
+}
 
-        .btn-edit:hover {
-            background: #5a32a3;
-        }
+.profile-bg {
+	min-height: 100vh;
+	padding-top: 40px;
+}
 
-        #btnUpdate {
-            background: #198754;
-            color: white;
-            padding: 11px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-        }
+.header {
+	height: 315px;
+	background: #cfcfcf;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 40px;
+	letter-spacing: 6px;
+	color: rgba(0, 0, 0, 0.15);
+	font-weight: 700;
+	cursor: pointer;
+	background-size: cover;
+	background-position: top;
+	background-repeat: no-repeat;
+}
 
-        #btnUpdate:hover {
-            background: #157347;
-        }
+.container {
+	max-width: 1150px;
+	margin: -60px auto 50px;
+	display: flex;
+	gap: 30px;
+}
 
-        .form-actions {
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
+.profile-left {
+	width: 320px;
+	background: white;
+	border-radius: 16px;
+	padding: 25px;
+	text-align: center;
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
 
-        a {
-            text-decoration: none;
-            font-weight: 600;
-            color: #6f42c1;
-        }
-    </style>
+.avatar {
+	width: 120px;
+	height: 120px;
+	border-radius: 50%;
+	background: #d9d9d9;
+	font-size: 48px;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: -80px auto 10px;
+}
 
-    <script>
+.profile-left h3 {
+	margin: 8px 0 2px;
+}
+
+.profile-left p {
+	margin: 0;
+	color: #555;
+	font-size: 14px;
+}
+
+.status {
+	color: #28a745;
+	font-weight: bold;
+	margin: 10px 0 20px;
+}
+
+.stats {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
+	margin-bottom: 20px;
+}
+
+.stats div {
+	background: #f1f3f5;
+	border-radius: 10px;
+	padding: 10px 0;
+	font-size: 14px;
+}
+
+.stats strong {
+	display: block;
+	font-size: 18px;
+}
+
+.profile-left button {
+	width: 100%;
+	padding: 11px;
+	border-radius: 10px;
+	border: none;
+	font-weight: 600;
+	cursor: pointer;
+	margin-top: 10px;
+}
+
+.btn-danger {
+	background: #e9ecef;
+	color: black;
+}
+
+.btn-danger:hover {
+	background: black;
+	color: white;
+}
+
+.btn-logout {
+	background: #e9ecef;;
+	color: black border: 1px solid white;
+}
+
+.btn-logout:hover {
+	background: black;
+	color: white;
+}
+
+.profile-right {
+	flex: 1;
+	background: white;
+	border-radius: 16px;
+	padding: 40px;
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.profile-right h2 {
+	margin-top: 0;
+}
+
+label {
+	display: block;
+	font-weight: 600;
+	margin-top: 18px;
+}
+
+input {
+	width: 100%;
+	padding: 13px;
+	margin-top: 6px;
+	border-radius: 10px;
+	border: 1px solid #ccc;
+	font-size: 15px;
+	background: #f2f2f2;
+}
+
+input:disabled {
+	cursor: not-allowed;
+}
+
+input.editable {
+	background: white;
+}
+
+.error {
+	color: #dc3545;
+	font-size: 14px;
+	margin-top: 4px;
+}
+
+.success {
+	background: #e6fffa;
+	color: #0f5132;
+	padding: 14px;
+	border-radius: 10px;
+	margin-bottom: 20px;
+}
+
+.btn-edit {
+	background: #6f42c1;
+	color: white;
+	padding: 10px 18px;
+	border-radius: 8px;
+	border: none;
+	cursor: pointer;
+	font-weight: 600;
+	margin-bottom: 25px;
+}
+
+.btn-edit:hover {
+	background: #5a32a3;
+}
+
+#btnUpdate {
+	background: #198754;
+	color: white;
+	padding: 11px 20px;
+	border-radius: 8px;
+	border: none;
+	cursor: pointer;
+	font-weight: 600;
+}
+
+#btnUpdate:hover {
+	background: #157347;
+}
+
+.form-actions {
+	margin-top: 20px;
+	display: flex;
+	align-items: center;
+	gap: 18px;
+}
+
+a {
+	text-decoration: none;
+	font-weight: 600;
+	color: #6f42c1;
+}
+</style>
+
+<script>
         function enableEdit() {
             document.querySelectorAll(".editable").forEach(i => i.disabled = false);
             document.getElementById("btnUpdate").style.display = "inline-block";
@@ -201,84 +372,305 @@
 </head>
 
 <body>
-<div class="container">
+	<div class="container">
 
-    <!-- BEN TRAI -->
-    <div class="profile-left">
-        <h3 class="profile-title">Thông tin tài khoản</h3>
+		<!-- BEN TRAI -->
+		<div class="profile-left">
+			<h3 class="profile-title">Thông tin tài khoản</h3>
 
-        <div class="role"
-             th:classappend="${user.vaiTro == 'ADMIN'} ? 'admin' : ''"
-             th:text="${user.vaiTro == 'ADMIN'} ? 'Quyền: Quản trị viên' : 'Quyền: Người dùng'">
-        </div>
+			<div class="role"
+				th:classappend="${user.vaiTro == 'ADMIN'} ? 'admin' : ''"
+				th:text="${user.vaiTro == 'ADMIN'} ? 'Quyền: Quản trị viên' : 'Quyền: Người dùng'">
+			</div>
 
-        <div class="avatar"
-             th:text="${#strings.toUpperCase(#strings.substring(user.tenDangNhap,0,1))}">
-        </div>
+			<div class="avatar"
+				th:text="${#strings.toUpperCase(#strings.substring(user.tenDangNhap,0,1))}">
+			</div>
 
-        <h3 th:text="${user.tenDangNhap}"></h3>
-        <strong th:text="${user.email}"></strong>
+			<h3 th:text="${user.tenDangNhap}"></h3>
+			<strong th:text="${user.email}"></strong>
 
-        <div class="status">Đang hoạt động</div>
+			<div class="status">Đang hoạt động</div>
 
-        <form th:action="@{/DustNovel/user/delete}" method="post"
-              onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể khôi phục!')">
-            <button class="btn-danger">Xóa tài khoản</button>
-        </form>
+			<form th:action="@{/DustNovel/user/delete}" method="post"
+				onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản? Hành động này không thể khôi phục!')">
+				<button class="btn-danger">Xóa tài khoản</button>
+			</form>
 
-        <form th:action="@{/DustNovel/logout}" method="post" onsubmit="return confirmLogout()">
-            <button class="btn-logout">Đăng xuất</button>
-        </form>
-    </div>
+			<form th:action="@{/DustNovel/logout}" method="post"
+				onsubmit="return confirmLogout()">
+				<button class="btn-logout">Đăng xuất</button>
+			</form>
+		</div>
 
-    <!-- BEN PHAI -->
-    <div class="profile-right">
-        <h2>CẬP NHẬT THÔNG TIN TÀI KHOẢN</h2>
+		<!-- BEN PHAI -->
+		<div class="profile-right">
+			<h2>CẬP NHẬT THÔNG TIN TÀI KHOẢN</h2>
 
-        <div th:if="${success != null and success == true}" class="success">
-            Cập nhật thông tin tài khoản thành công
-        </div>
+			<div th:if="${success != null and success == true}" class="success">
+				Cập nhật thông tin tài khoản thành công</div>
 
-        <button type="button" class="btn-edit" onclick="enableEdit()">
-            Chỉnh sửa hồ sơ
-        </button>
+			<button type="button" class="btn-edit" onclick="enableEdit()">
+				Chỉnh sửa hồ sơ</button>
 
-        <form th:action="@{/DustNovel/user/profile/update}" method="post">
+			<form th:action="@{/DustNovel/user/profile/update}" method="post">
 
-            <!-- TEN DANG NHAP: KHOA + GUI NGAM -->
-            <label>Tên đăng nhập</label>
-            <input disabled
-                   th:value="${tenDangNhapValue != null ? tenDangNhapValue : user.tenDangNhap}">
-            <input type="hidden" name="tenDangNhap"
-                   th:value="${tenDangNhapValue != null ? tenDangNhapValue : user.tenDangNhap}">
-            <div class="error" th:if="${tenDangNhapError}" th:text="${tenDangNhapError}"></div>
+				<!-- TEN DANG NHAP: KHOA + GUI NGAM -->
+				<label>Tên đăng nhập</label> <input disabled
+					th:value="${tenDangNhapValue != null ? tenDangNhapValue : user.tenDangNhap}">
+				<input type="hidden" name="tenDangNhap"
+					th:value="${tenDangNhapValue != null ? tenDangNhapValue : user.tenDangNhap}">
+				<div class="error" th:if="${tenDangNhapError}"
+					th:text="${tenDangNhapError}"></div>
 
-            <!-- EMAIL: KHOA + GUI NGAM -->
-            <label>Email</label>
-            <input disabled
-                   th:value="${emailValue != null ? emailValue : user.email}">
-            <input type="hidden" name="email"
-                   th:value="${emailValue != null ? emailValue : user.email}">
-            <div class="error" th:if="${emailError}" th:text="${emailError}"></div>
+				<!-- EMAIL: KHOA + GUI NGAM -->
+				<label>Email</label> <input disabled
+					th:value="${emailValue != null ? emailValue : user.email}">
+				<input type="hidden" name="email"
+					th:value="${emailValue != null ? emailValue : user.email}">
+				<div class="error" th:if="${emailError}" th:text="${emailError}"></div>
 
-            <h4>Đổi mật khẩu (không bắt buộc)</h4>
-            <input class="editable" disabled type="password" name="matKhauMoi"
-                   th:value="${matKhauMoi}" placeholder="Mật khẩu mới">
-            <div class="error" th:if="${matKhauMoiError}" th:text="${matKhauMoiError}"></div>
+				<h4>Đổi mật khẩu (không bắt buộc)</h4>
+				<input class="editable" disabled type="password" name="matKhauMoi"
+					th:value="${matKhauMoi}" placeholder="Mật khẩu mới">
+				<div class="error" th:if="${matKhauMoiError}"
+					th:text="${matKhauMoiError}"></div>
 
-            <input class="editable" disabled type="password" name="xacNhanMatKhau"
-                   th:value="${xacNhanMatKhau}" placeholder="Xác nhận mật khẩu mới">
-            <div class="error" th:if="${xacNhanMatKhauError}" th:text="${xacNhanMatKhauError}"></div>
+				<input class="editable" disabled type="password"
+					name="xacNhanMatKhau" th:value="${xacNhanMatKhau}"
+					placeholder="Xác nhận mật khẩu mới">
+				<div class="error" th:if="${xacNhanMatKhauError}"
+					th:text="${xacNhanMatKhauError}"></div>
 
-            <div class="form-actions">
-                <button id="btnUpdate" type="submit" style="display:none">
-                    Cập nhật thông tin
-                </button>
-                <a href="/DustNovel/home">← Quay về trang chủ</a>
-            </div>
-        </form>
-    </div>
+				<div class="form-actions">
+					<button id="btnUpdate" type="submit" style="display: none">
+						Cập nhật thông tin</button>
+					<a href="/DustNovel/home">← Quay về trang chủ</a>
+				</div>
+			</form>
+		</div>
 
-</div>
+	</div>
+	.btn-edit { background: #198754; color: white; padding: 12px 26px;
+	border-radius: 10px; border: none; cursor: pointer; font-weight: 600;
+	margin: 15px 0 25px; } .btn-edit:hover { background: black; color:
+	white; } .form-actions { margin-top: 30px; display: flex; align-items:
+	center; gap: 25px; } #btnUpdate { display: none; background: #198754;
+	color: white; padding: 12px 26px; border-radius: 10px; border: none;
+	font-weight: 600; cursor: pointer; } #btnUpdate:hover { background:
+	black; color: white; } a { text-decoration: none; font-weight: 600;
+	color: #198754; } a:hover { color: red; } .password-wrapper { position:
+	relative; width: 100%; } .password-wrapper input { width: 100%;
+	padding: 13px 44px 13px 13px; box-sizing: border-box; }
+
+	.toggle-password { position: absolute; right: 14px; top: 50%;
+	transform: translateY(-50%); cursor: pointer; font-size: 18px; color:
+	#666; user-select: none; } .toggle-password:hover { color: #000; }
+
+	.avatar { position: relative; width: 120px; height: 120px;
+	border-radius: 50%; background: #d9d9d9; font-size: 48px; font-weight:
+	bold; display: flex; align-items: center; justify-content: center;
+	cursor: pointer; } .avatar-box { position: relative; width: 120px;
+	height: 120px; margin: -80px auto 10px; border-radius: 50%; overflow:
+	hidden; } .avatar-fallback { position: absolute; inset: 0; background:
+	#d9d9d9; display: flex; align-items: center; justify-content: center;
+	font-size: 48px; font-weight: bold; color: #555; z-index: 1; }
+
+	.avatar-img { position: absolute; inset: 0; width: 100%; height: 100%;
+	object-fit: cover; z-index: 2; } .avatar-action { position: absolute;
+	top: 50%; right: 8px; transform: translateY(-50%); opacity: 0; z-index:
+	3; transition: 0.25s ease; display: flex; gap: 6px; }
+
+	.avatar-action.left { right: 87px; top: 50px; } .avatar-action.right {
+	right: 1px; top: 54px; } .avatar-action button { font-size: 22px; }
+
+	.avatar-action label, .avatar-action button { width: 32px; height:
+	32px; border-radius: 50%; background: #d3ffff; border: none; display:
+	flex; align-items: center; justify-content: center; cursor: pointer;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25); } .avatar-box:hover
+	.avatar-action { opacity: 1; } .banner-action { position: absolute;
+	top: 20px; right: 20px; display: flex; gap: 8px; opacity: 0; z-index:
+	3; transition: 0.25s ease; } .header:hover .banner-action { opacity: 1;
+	} .banner-action button { width: 32px; height: 32px; border-radius:
+	50%; background: #d3ffff; border: none; display: flex; align-items:
+	center; justify-content: center; cursor: pointer; font-size: 22px;
+	font-weight: 900; line-height: 1; box-shadow: 0 3px 8px rgba(0, 0, 0,
+	0.25); } }
+	</style>
+
+	<script>
+	function enableEdit() {
+	    document.querySelectorAll(".editable").forEach(i => i.disabled = false);
+	    document.getElementById("btnUpdate").style.display = "inline-block";
+	}
+	
+	window.onload = function () {
+	    if (document.querySelector(".error")) {
+	        enableEdit();
+	    }
+	}
+	
+	function confirmLogout() {
+	    return confirm("Bạn có chắc chắn muốn đăng xuất không?");
+	}
+	
+	function togglePassword(id, icon) {
+	    const input = document.getElementById(id);
+	    if (input.type === "password") {
+	        input.type = "text";
+	        icon.textContent = "👁‍";
+	    } else {
+	        input.type = "password";
+	        icon.textContent = "👁";
+	    }
+	}
+		
+	function confirmDeleteAvatar() {
+	    return confirm("Bạn có chắc chắn muốn xóa ảnh đại diện không?");
+	}
+	
+	
+</script>
+</head>
+
+<body>
+	<!-- ================= HEADER (BANNER) ================= -->
+	<div class="header"
+		onclick="document.getElementById('bannerInput').click()"
+		th:style="${user.banner != null} ? 'background-image:url(' + @{${user.banner}} + ')' : ''">
+		➕ DustNovel
+		<!-- INPUT FILE ẨN -->
+		<form th:action="@{/DustNovel/user/banner}" method="post"
+			enctype="multipart/form-data">
+			<input id="bannerInput" type="file" name="file" accept="image/*"
+				hidden onchange="this.form.submit()">
+		</form>
+		<!-- NÚT XÓA (GIỮ LẠI) -->
+		<div class="banner-action" onclick="event.stopPropagation()">
+			<form th:if="${user.banner != null}"
+				th:action="@{/DustNovel/user/banner/delete}" method="post"
+				onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner không?')">
+				<button type="submit">🗑</button>
+			</form>
+		</div>
+	</div>
+	<!-- =================================================== -->
+
+
+
+	<div class="container">
+		<!-- ===== LEFT ===== -->
+		<div class="profile-left">
+			<div class="avatar-box">
+
+				<!-- LỚP NỀN + CHỮ (LUÔN TỒN TẠI) -->
+				<div class="avatar-fallback"
+					th:text="${#strings.toUpperCase(#strings.substring(user.tenDangNhap,0,1))}">
+				</div>
+
+				<!-- LỚP ẢNH (CHỈ HIỆN KHI CÓ AVATAR) -->
+				<img th:if="${user.avatar != null}" th:src="@{${user.avatar}}"
+					class="avatar-img" />
+
+				<!-- ICON UPLOAD -->
+				<form th:action="@{/DustNovel/user/avatar}" method="post"
+					enctype="multipart/form-data" class="avatar-action left">
+					<label> ➕ <input type="file" name="file" accept="image/*"
+						hidden onchange="this.form.submit()">
+					</label>
+				</form>
+
+				<!-- ICON DELETE -->
+				<form th:if="${user.avatar != null}"
+					th:action="@{/DustNovel/user/avatar/delete}" method="post"
+					class="avatar-action right" onsubmit="return confirmDeleteAvatar()">
+					<button type="submit">🗑</button>
+				</form>
+
+			</div>
+
+
+			<h3 th:text="${user.tenDangNhap}"></h3>
+			<p th:text="${user.email}"></p>
+
+			<div class="status">Đang hoạt động</div>
+
+			<div class="stats">
+				<div>
+					<strong>0</strong>Truyện
+				</div>
+				<div>
+					<strong>0</strong>Theo dõi
+				</div>
+				<div>
+					<strong>0</strong>Bình luận
+				</div>
+			</div>
+
+			<form th:action="@{/DustNovel/user/delete}" method="post"
+				onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản?')">
+				<button class="btn-danger">Xóa tài khoản</button>
+			</form>
+
+			<form th:action="@{/DustNovel/logout}" method="post"
+				onsubmit="return confirmLogout()">
+				<button class="btn-logout">Đăng xuất</button>
+			</form>
+		</div>
+
+		<!-- ===== RIGHT ===== -->
+		<div class="profile-right">
+
+			<h2>THÔNG TIN TÀI KHOẢN</h2>
+
+			<button type="button" class="btn-edit" onclick="enableEdit()">
+				Thay đổi mật khẩu</button>
+
+			<div th:if="${success != null and success == true}" class="success">
+				Cập nhật mật khẩu thành công</div>
+
+			<form th:action="@{/DustNovel/user/profile/update}" method="post">
+
+				<label>Tên đăng nhập</label> <input disabled
+					th:value="${tenDangNhapValue != null ? tenDangNhapValue : user.tenDangNhap}">
+				<input type="hidden" name="tenDangNhap"
+					th:value="${tenDangNhapValue != null ? tenDangNhapValue : user.tenDangNhap}">
+				<div class="error" th:if="${tenDangNhapError}"
+					th:text="${tenDangNhapError}"></div>
+
+				<label>Email</label> <input disabled
+					th:value="${emailValue != null ? emailValue : user.email}">
+				<input type="hidden" name="email"
+					th:value="${emailValue != null ? emailValue : user.email}">
+				<div class="error" th:if="${emailError}" th:text="${emailError}"></div>
+
+				<label>Đổi mật khẩu (không bắt buộc)</label>
+				<div class="password-wrapper">
+					<input id="matKhauMoi" class="editable" disabled type="password"
+						name="matKhauMoi" placeholder="Mật khẩu mới"
+						th:value="${matKhauMoi}"> <span class="toggle-password"
+						onclick="togglePassword('matKhauMoi', this)">👁</span>
+				</div>
+				<div class="error" th:if="${matKhauMoiError}"
+					th:text="${matKhauMoiError}"></div>
+
+				<div class="password-wrapper">
+					<input id="xacNhanMatKhau" class="editable" disabled
+						type="password" name="xacNhanMatKhau"
+						placeholder="Xác nhận mật khẩu mới" th:value="${xacNhanMatKhau}">
+					<span class="toggle-password"
+						onclick="togglePassword('xacNhanMatKhau', this)">👁</span>
+				</div>
+				<div class="error" th:if="${xacNhanMatKhauError}"
+					th:text="${xacNhanMatKhauError}"></div>
+
+
+				<div class="form-actions">
+					<button id="btnUpdate" type="submit">Cập nhật mật khẩu</button>
+					<a href="/DustNovel/home">← Quay về trang chủ</a>
+				</div>
+			</form>
+		</div>
+	</div>
 </body>
 </html>

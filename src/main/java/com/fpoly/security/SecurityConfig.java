@@ -9,6 +9,10 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+
+import com.fpoly.service.CustomUserDetailsService;
+
+@EnableMethodSecurity(prePostEnabled = true)
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -42,6 +46,11 @@ public class SecurityConfig {
                     "/DustNovel/truyen/**",
                     "/DustNovel/chuong/**"
                 ).permitAll()
+            			    "/DustNovel/truyen/**",     // xem, đọc, tìm truyện
+            			    "/DustNovel/chuong/**",     // đọc chương
+            			    "/DustNovel/the-loai/**",    // xem theo thể loại
+            			    "/DustNovel/user/avatar/**"
+            			).permitAll()
 
                 // ADMIN
                 .requestMatchers("/DustNovel/admin/**")

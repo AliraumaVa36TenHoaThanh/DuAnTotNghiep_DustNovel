@@ -23,4 +23,13 @@ public class NguoiDung {
     
     @Column(name = "trang_thai")
     private String trangThai; 
+    
+    private Long token = 0L;
+      
+    @Column(name = "avatar")
+    private String avatar;
+    
+    @Column(name = "banner")
+    private String banner;
+
 }
