@@ -1,20 +1,113 @@
+
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title th:text="${title}">DustNovel</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- THEME CSS -->
 <link rel="stylesheet" th:href="@{/css/theme.css}">
 
 <style>
+
+/* ===== THEME TOGGLE SWITCH ===== */
+.theme-switch {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 14px;
+}
+
+.theme-switch span {
+	font-size: 13px;
+}
+
+.switch {
+	position: relative;
+	width: 44px;
+	height: 24px;
+}
+
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.slider {
+	position: absolute;
+	inset: 0;
+	background: #ddd;
+	border-radius: 999px;
+	transition: .3s;
+}
+
+.slider:before {
+	content: "☀️";
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	left: 2px;
+	top: 2px;
+	background: white;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 12px;
+	transition: .3s;
+}
+
+input:checked+.slider {
+	background: #2b2b2b;
+}
+
+input:checked+.slider:before {
+	transform: translateX(20px);
+	content: "🌙";
+}
+
+/* Mặc định (light) */
+.theme-label {
+	color: #212529;
+}
+
+/* Dark mode */
+[data-theme="dark"] .theme-label {
+	color: #f1f1f1;
+}
+
+/* ===== SWITCH CHUNG ===== */
+.theme-switch {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.theme-switch span {
+	font-size: 14px;
+}
+
 /* ===== FONT & SIZE ===== */
-body { font-size: 14px; }
-.navbar { font-size: 14px; }
-.navbar-brand span { font-size: 16px; }
+body {
+	font-size: 14px;
+}
+
+.navbar {
+	font-size: 14px;
+}
+
+.navbar-brand span {
+	font-size: 16px;
+}
 
 /* ===== THỂ LOẠI DROPDOWN ===== */
 .theloai-dropdown {
@@ -44,119 +137,121 @@ body { font-size: 14px; }
 
 <body data-theme="light">
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-	<div class="container">
+	<nav
+		class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+		<div class="container">
 
-		<a class="navbar-brand fw-bold d-flex align-items-center"
-		   th:href="@{/DustNovel/home}">
-			<img th:src="@{/images/logo.png}" height="36" class="me-2">
-			<span>DustNovel</span>
-		</a>
+			<a class="navbar-brand fw-bold d-flex align-items-center"
+				th:href="@{/DustNovel/home}"> <img th:src="@{/images/logo.png}"
+				height="36" class="me-2"> <span>DustNovel</span>
+			</a>
 
-		<button class="navbar-toggler" type="button"
-		        data-bs-toggle="collapse" data-bs-target="#navbarNav">
-			<span class="navbar-toggler-icon"></span>
-		</button>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarNav">
+				<span class="navbar-toggler-icon"></span>
+			</button>
 
-		<div class="collapse navbar-collapse" id="navbarNav">
+			<div class="collapse navbar-collapse" id="navbarNav">
 
-			<ul class="navbar-nav me-3">
-				<li class="nav-item">
-					<a class="nav-link" th:href="@{/DustNovel/truyen/them}">➕ Thêm truyện</a>
-				</li>
+				<ul class="navbar-nav me-3">
+					<li class="nav-item"><a class="nav-link"
+						th:href="@{/DustNovel/themtruyen}">➕ Thêm truyện</a></li>
 
-				<li class="nav-item dropdown position-static">
-					<a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">📚 Thể loại</a>
-					<ul class="dropdown-menu theloai-dropdown">
-						<li th:each="tl : ${theLoais}">
-							<a class="dropdown-item"
-							   th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
-							   th:text="${tl.tenTheLoai}"></a>
-						</li>
-					</ul>
-				</li>
+					<li class="nav-item dropdown position-static"><a
+						class="nav-link dropdown-toggle" href="#"
+						data-bs-toggle="dropdown">📚 Thể loại</a>
+						<ul class="dropdown-menu theloai-dropdown">
+							<li th:each="tl : ${theLoais}"><a class="dropdown-item"
+								th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
+								th:text="${tl.tenTheLoai}"></a></li>
+						</ul></li>
 
-				<li class="nav-item"><a class="nav-link" th:href="@{/DustNovel/nap-tien}">💰 Nạp tiền</a></li>
-				<li class="nav-item"><a class="nav-link" th:href="@{/DustNovel/guild}">🛡️ Guild</a></li>
-			</ul>
+					<li class="nav-item"><a class="nav-link"
+						th:href="@{/DustNovel/nap-tien}">💰 Nạp tiền</a></li>
+					<li class="nav-item"><a class="nav-link"
+						th:href="@{/DustNovel/guild}">🛡️ Guild</a></li>
+				</ul>
 
-			<form class="d-flex ms-auto me-3"
-			      th:action="@{/DustNovel/truyen/tim-kiem}" method="get">
-				<input class="form-control search-input me-2"
-				       type="search" name="keyword" placeholder="Tìm truyện...">
-				<button class="btn btn-outline-primary btn-sm">🔍</button>
-			</form>
+				<form class="d-flex ms-auto me-3"
+					th:action="@{/DustNovel/truyen/tim-kiem}" method="get">
+					<input class="form-control search-input me-2" type="search"
+						name="keyword" placeholder="Tìm truyện...">
+					<button class="btn btn-outline-primary btn-sm">🔍</button>
+				</form>
 
-			<ul class="navbar-nav">
+				<ul class="navbar-nav">
 
-				<div sec:authorize="isAnonymous()">
-					<a th:href="@{/DustNovel/login}" class="ms-1 text-decoration-none">Đăng nhập</a>
-				</div>
+					<div sec:authorize="isAnonymous()">
+						<a th:href="@{/DustNovel/login}" class="ms-1 text-decoration-none">Đăng
+							nhập</a>
+					</div>
 
-				<div class="dropdown d-flex align-items-center gap-2"
-				     sec:authorize="isAuthenticated()">
+					<div class="dropdown d-flex align-items-center gap-2"
+						sec:authorize="isAuthenticated()">
 
-					<span class="hello-user">
-						Xin chào, <span sec:authentication="name"></span>
-					</span>
+						<span class="hello-user"> Xin chào, <span
+							sec:authentication="name"></span>
+						</span>
 
-					<button class="btn btn-secondary rounded-circle fw-bold text-white"
-					        type="button" data-bs-toggle="dropdown"
-					        style="width:42px;height:42px">
-						<span th:text="${#strings.toUpperCase(#strings.substring(#authentication.name,0,1))}"></span>
-					</button>
+						<button
+							class="btn btn-secondary rounded-circle fw-bold text-white"
+							type="button" data-bs-toggle="dropdown"
+							style="width: 42px; height: 42px">
+							<span
+								th:text="${#strings.toUpperCase(#strings.substring(#authentication.name,0,1))}"></span>
+						</button>
 
-					<ul class="dropdown-menu dropdown-menu-end shadow-sm">
-						<li>
-							<a class="dropdown-item" th:href="@{/DustNovel/user/profile}">
-								Thông tin tài khoản
-							</a>
-						</li>
+						<ul class="dropdown-menu dropdown-menu-end shadow-sm">
+							<li><a class="dropdown-item"
+								th:href="@{/DustNovel/user/profile}"> Thông tin tài khoản </a></li>
 
-						<li>
-							<span class="dropdown-item theme-toggle" onclick="toggleTheme()">
-								🌗 Giao diện Sáng / Tối
-							</span>
-						</li>
+							<li>
+								<div class="theme-switch">
+									<span class="theme-label">Giao diện</span> <label
+										class="switch"> <input type="checkbox"
+										id="themeToggle"> <span class="slider"></span>
+									</label>
+								</div>
+							</li>
+							<li><hr class="dropdown-divider"></li>
 
-						<li><hr class="dropdown-divider"></li>
+							<li><a class="dropdown-item text-danger"
+								th:href="@{/DustNovel/logout}"> Đăng xuất </a></li>
+						</ul>
+					</div>
 
-						<li>
-							<a class="dropdown-item text-danger"
-							   th:href="@{/DustNovel/logout}">
-								Đăng xuất
-							</a>
-						</li>
-					</ul>
-				</div>
-
-			</ul>
+				</ul>
+			</div>
 		</div>
+	</nav>
+
+	<div class="container my-4">
+		<div th:replace="${content} :: content"></div>
 	</div>
-</nav>
 
-<div class="container my-4">
-	<div th:replace="${content} :: content"></div>
-</div>
+	<footer class="text-center py-2 border-top">
+		<small>© 2025 - DustNovel</small>
+	</footer>
 
-<footer class="text-center py-2 border-top">
-    <small>© 2025 - DustNovel</small>
-</footer>
+	<script>
+const toggle = document.getElementById("themeToggle");
 
-<script>
-function toggleTheme() {
-	const body = document.body;
-	const current = body.getAttribute("data-theme");
-	const next = current === "dark" ? "light" : "dark";
-	body.setAttribute("data-theme", next);
-	localStorage.setItem("theme", next);
+function applyTheme(theme) {
+    document.body.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    toggle.checked = theme === "dark";
 }
 
+toggle.addEventListener("change", () => {
+    applyTheme(toggle.checked ? "dark" : "light");
+});
+
 (function () {
-	const saved = localStorage.getItem("theme") || "light";
-	document.body.setAttribute("data-theme", saved);
+    const saved = localStorage.getItem("theme") || "light";
+    applyTheme(saved);
 })();
 </script>
+
 
 </body>
 </html>
