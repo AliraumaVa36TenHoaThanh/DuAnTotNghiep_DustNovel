@@ -45,12 +45,12 @@
                         <h4 class="text-danger fw-bold"><span th:text="${T(com.fpoly.config.GiaChuongKhoa).gia_chuong}"></span> Token</h4>
                         <hr>
                         <div th:if="${currentUser != null}" class="bg-light p-2 rounded">
-                            <span>Số dư của ông: </span>	
+                            <span>Số dư của bạn: </span>	
                             <b class="text-primary"><span th:text="${currentUser.token}"></span> Token</b>
                         </div>
                         <div th:unless="${currentUser != null}">
                             <div class="alert alert-warning py-2 mb-0">
-                                ⚠️ Phải <a th:href="@{/DustNovel/login}" class="fw-bold">đăng nhập</a> mới mua được ông giáo ạ!
+                                ⚠️ Phải <a th:href="@{/DustNovel/login}" class="fw-bold">đăng nhập</a> mới mua được !
                             </div>
                         </div>
                     </div>
