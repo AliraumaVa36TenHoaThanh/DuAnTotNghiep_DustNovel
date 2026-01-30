@@ -31,13 +31,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
+    	http.csrf(csrf -> {})
 
             // ✅ GẮN USERDETAILSSERVICE Ở ĐÂY
             .userDetailsService(userDetailsService)
 
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(	
+                	"/DustNovel/home",
+                    "/DustNovel/css/**",
+                    "/DustNovel/js/**",
+                    "/DustNovel/images/**",
+                    "/DustNovel/login",
+                    "/DustNovel/register",
+                    "/DustNovel/truyen/**",
+                    "/DustNovel/chuong/{id:\\d+}**"
+                ).permitAll()
+                .requestMatchers("/DustNovel/chuong/*/mua").authenticated()
+                .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
+
+                .requestMatchers(
+                    "/DustNovel/user/**",
+                    "/DustNovel/truyen/them",
+                    "/DustNovel/truyen/luu"
+                ).hasAnyRole("USER", "ADMIN")
+
+                .anyRequest().authenticated()
+            )
             	    // PUBLIC
             		.requestMatchers(
             			    "/images/**",
