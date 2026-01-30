@@ -25,6 +25,12 @@ public class CustomUserDetails implements UserDetails {
     public NguoiDung getUser() {
         return user;
     }
+    
+    private NguoiDung nguoiDung;
+
+    public NguoiDung getNguoiDung() {
+        return nguoiDung;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

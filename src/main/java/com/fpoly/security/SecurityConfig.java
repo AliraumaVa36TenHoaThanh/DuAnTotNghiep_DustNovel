@@ -31,8 +31,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
+    	http.csrf(csrf -> {})
 
             // ✅ GẮN USERDETAILSSERVICE Ở ĐÂY
             .userDetailsService(userDetailsService)
@@ -46,9 +45,9 @@ public class SecurityConfig {
                     "/DustNovel/login",
                     "/DustNovel/register",
                     "/DustNovel/truyen/**",
-                    "/DustNovel/chuong/**"
+                    "/DustNovel/chuong/{id:\\d+}**"
                 ).permitAll()
-
+                .requestMatchers("/DustNovel/chuong/*/mua").authenticated()
                 .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
 
                 .requestMatchers(

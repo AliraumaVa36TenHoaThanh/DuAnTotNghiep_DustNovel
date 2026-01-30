@@ -43,7 +43,10 @@ public class Truyen {
 
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
-    
+    @PrePersist
+    protected void onCreate() {
+        this.ngayTao = LocalDateTime.now();
+    }
     @ManyToMany
     @JoinTable(
         name = "truyen_the_loai",

@@ -33,9 +33,18 @@ public class Chuong {
 
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
+    @PrePersist
+    protected void onCreate() {
+        this.ngayTao = LocalDateTime.now();
+    }
     
-    private Boolean khoa = false;
+    @Column(name = "khoa", columnDefinition = "BIT")
+    private boolean khoa;
 
     @Column(name = "gia_token")
     private Long giaToken = 0L;
+    
+   
+
+    
 }
