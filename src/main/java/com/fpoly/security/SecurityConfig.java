@@ -58,35 +58,6 @@ public class SecurityConfig {
 
                 .anyRequest().authenticated()
             )
-            	    // PUBLIC
-            		.requestMatchers(
-            			    "/images/**",
-            			    "/css/**",
-            			    "/js/**",
-
-            			    "/DustNovel/home",
-            			    "/DustNovel/login",
-            			    "/DustNovel/register",
-
-            			    "/DustNovel/truyen/**",     // xem, đọc, tìm truyện
-            			    "/DustNovel/chuong/**",     // đọc chương
-            			    "/DustNovel/the-loai/**"    // xem theo thể loại
-            			).permitAll()
-
-            	    // CẦN ĐĂNG NHẬP
-            	    .requestMatchers(
-            	        "/DustNovel/themtruyen",
-            	        "/DustNovel/nap-tien",
-            	        "/DustNovel/guild",
-            	        "/DustNovel/user/**"
-            	    ).hasAnyRole("USER", "ADMIN")
-
-            	    // ADMIN
-            	    .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
-
-            	    .anyRequest().authenticated()
-            	)
-
 
             .formLogin(form -> form
                 .loginPage("/DustNovel/login")
