@@ -204,7 +204,6 @@ body {
 						<ul class="dropdown-menu dropdown-menu-end shadow-sm">
 							<li><a class="dropdown-item"
 								th:href="@{/DustNovel/user/profile}"> Thông tin tài khoản </a></li>
-
 							<li>
 								<div class="theme-switch">
 									<span class="theme-label">Giao diện</span> <label
@@ -215,8 +214,12 @@ body {
 							</li>
 							<li><hr class="dropdown-divider"></li>
 
-							<li><a class="dropdown-item text-danger"
-								th:href="@{/DustNovel/logout}"> Đăng xuất </a></li>
+							<li>							<form th:action="@{/DustNovel/logout}" method="post">
+							    <button type="submit"
+							            class="dropdown-item text-danger">
+							        Đăng xuất
+							    </button>
+							</form></li>
 						</ul>
 					</div>
 
