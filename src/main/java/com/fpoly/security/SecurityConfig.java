@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/DustNovel/user/**",
                     "/DustNovel/themtruyen",
+                    "/DustNovel/nap-tien",
                     "/DustNovel/truyen/luu"
                 ).hasAnyRole("USER", "ADMIN")
 
