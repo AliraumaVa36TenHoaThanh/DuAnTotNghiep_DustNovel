@@ -3,6 +3,7 @@ package com.fpoly.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fpoly.model.NguoiDung;
 import com.fpoly.repository.NguoiDungRepository;
 
 @Service
@@ -16,6 +17,10 @@ public class NguoiDungService {
             throw new RuntimeException("Không tìm thấy tài khoản");
         }
         repo.deleteById(id);
+    }
+    
+    public NguoiDung findByTenDangNhap(String tenDangNhap) {
+        return repo.findByTenDangNhap(tenDangNhap).orElse(null);
     }
 }
 
