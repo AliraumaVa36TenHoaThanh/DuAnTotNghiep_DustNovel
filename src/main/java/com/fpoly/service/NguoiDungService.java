@@ -61,6 +61,8 @@ public class NguoiDungService {
             u.setBanner(null);
             repo.save(u);
         });
+        
+    }
     public NguoiDung findByTenDangNhap(String tenDangNhap) {
         return repo.findByTenDangNhap(tenDangNhap).orElse(null);
     }
