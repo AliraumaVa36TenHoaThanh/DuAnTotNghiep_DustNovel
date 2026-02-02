@@ -93,8 +93,6 @@ public class SecurityConfig {
             	    // ADMIN
             	    .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
 
-            	    .anyRequest().authenticated()
-            	)
 
                 .anyRequest().authenticated()
             )
