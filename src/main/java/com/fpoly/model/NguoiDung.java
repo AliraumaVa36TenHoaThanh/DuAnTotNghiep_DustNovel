@@ -34,4 +34,7 @@ public class NguoiDung {
     
     @Column(name = "banner")
     private String banner;
+    
+    @OneToOne(mappedBy = "nguoiDung", cascade = CascadeType.ALL)
+    private PhieuThuong phieuThuong;
 }
