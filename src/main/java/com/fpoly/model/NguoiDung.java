@@ -29,6 +29,7 @@ public class NguoiDung {
     
     private Long token = 0L;
     
+    @Column(name = "avatar")
     private String avatar;
     
     @Column(name = "banner")
