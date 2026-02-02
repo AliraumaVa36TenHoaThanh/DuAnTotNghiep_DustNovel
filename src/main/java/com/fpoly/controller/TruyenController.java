@@ -167,6 +167,7 @@ public class TruyenController {
 
 	        model.addAttribute("searched", isSearch);
 	        model.addAttribute("theLoais", tlSer.getAllTheLoai());
+	        model.addAttribute("title", "DustNovel | Tìm kiếm nâng cao");
 	        model.addAttribute("content", "truyen/tim-kiem-nang-cao");
 
 	        return "layout/main";
