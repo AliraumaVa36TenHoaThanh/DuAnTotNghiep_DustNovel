@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
 import com.fpoly.service.CustomUserDetailsService;
 
 @EnableMethodSecurity(prePostEnabled = true)
@@ -65,6 +64,37 @@ public class SecurityConfig {
                     "/DustNovel/nap-tien",
                     "/DustNovel/truyen/luu"
                 ).hasAnyRole("USER", "ADMIN")
+
+
+            	    // PUBLIC
+            		.requestMatchers(
+            			    "/images/**",
+            			    "/css/**",
+            			    "/js/**",
+
+            			    "/DustNovel/home",
+            			    "/DustNovel/login",
+            			    "/DustNovel/register",
+
+            			    "/DustNovel/truyen/**",     // xem, đọc, tìm truyện
+            			    "/DustNovel/chuong/**",     // đọc chương
+            			    "/DustNovel/the-loai/**",    // xem theo thể loại
+            			    "/DustNovel/user/avatar/**"
+            			).permitAll()
+
+            	    // CẦN ĐĂNG NHẬP
+            	    .requestMatchers(
+            	        "/DustNovel/themtruyen",
+            	        "/DustNovel/nap-tien",
+            	        "/DustNovel/guild",
+            	        "/DustNovel/user/**"
+            	    ).hasAnyRole("USER", "ADMIN")
+
+            	    // ADMIN
+            	    .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
+
+            	    .anyRequest().authenticated()
+            	)
 
                 .anyRequest().authenticated()
             )

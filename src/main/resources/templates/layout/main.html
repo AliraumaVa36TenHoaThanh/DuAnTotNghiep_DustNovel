@@ -1,7 +1,106 @@
-
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">DustNovel</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Theme -->
+    <link rel="stylesheet" th:href="@{/css/theme.css}">
+
+    <style>
+        /* ===== THEME TOGGLE ===== */
+        .theme-switch {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 14px;
+        }
+
+        .theme-switch span {
+            font-size: 13px;
+        }
+
+        .switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            inset: 0;
+            background: #ddd;
+            border-radius: 999px;
+            transition: .3s;
+        }
+
+        .slider:before {
+            content: "☀️";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 2px;
+            top: 2px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: .3s;
+        }
+
+        input:checked + .slider {
+            background: #2b2b2b;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+            content: "🌙";
+        }
+
+        body {
+            font-size: 14px;
+        }
+
+        .theloai-dropdown {
+            left: 50% !important;
+            transform: translateX(-50%);
+            width: 1100px;
+            max-width: 90vw;
+            max-height: 300px;
+            overflow-y: auto;
+            column-count: 7;
+            padding: 20px;
+        }
+
+        .theloai-dropdown .dropdown-item {
+            white-space: normal;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .search-input {
+            width: 220px;
+            font-size: 13px;
+        }
+    </style>
+=======
 <meta charset="UTF-8">
 <title th:text="${title}">DustNovel</title>
 
@@ -193,6 +292,152 @@ body {
 
 <body data-theme="light">
 
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <div class="container">
+
+        <a class="navbar-brand fw-bold d-flex align-items-center"
+           th:href="@{/DustNovel/home}">
+            <img th:src="@{/images/logo.png}" height="36" class="me-2">
+            <span>DustNovel</span>
+        </a>
+
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <ul class="navbar-nav me-3">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/DustNovel/themtruyen}">
+                        ➕ Thêm truyện
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown position-static">
+                    <a class="nav-link dropdown-toggle" href="#"
+                       data-bs-toggle="dropdown">
+                        📚 Thể loại
+                    </a>
+                    <ul class="dropdown-menu theloai-dropdown">
+                        <li th:each="tl : ${theLoais}">
+                            <a class="dropdown-item"
+                               th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
+                               th:text="${tl.tenTheLoai}">
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/DustNovel/nap-tien}">💰 Nạp tiền</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/DustNovel/guild}">🛡️ Guild</a>
+                </li>
+            </ul>
+
+            <form class="d-flex ms-auto me-3"
+                  th:action="@{/DustNovel/truyen/tim-kiem}" method="get">
+                <input class="form-control search-input me-2"
+                       type="search" name="keyword" placeholder="Tìm truyện...">
+                <button class="btn btn-outline-primary btn-sm">🔍</button>
+            </form>
+
+            <ul class="navbar-nav">
+
+                <div sec:authorize="isAnonymous()">
+                    <a th:href="@{/DustNovel/login}" class="ms-1 text-decoration-none">
+                        Đăng nhập
+                    </a>
+                </div>
+
+                <div class="dropdown d-flex align-items-center gap-2"
+                     sec:authorize="isAuthenticated()">
+
+                    <span>Xin chào, <span sec:authentication="name"></span></span>
+
+                    <button class="btn p-0 border-0 rounded-circle overflow-hidden"
+                            type="button" data-bs-toggle="dropdown"
+                            style="width:42px;height:42px">
+
+                        <img th:if="${user != null and user.avatar != null}"
+                             th:src="@{${user.avatar}}"
+                             style="width:100%;height:100%;object-fit:cover">
+
+                        <span th:if="${user == null or user.avatar == null}"
+                              class="d-flex align-items-center justify-content-center
+                                     bg-secondary text-white fw-bold"
+                              style="width:100%;height:100%;">
+                            <span th:text="${#strings.toUpperCase(
+                                    #strings.substring(#authentication.name,0,1))}">
+                            </span>
+                        </span>
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li><a class="dropdown-item"
+                               th:href="@{/DustNovel/user/profile}">👤 Tài khoản</a></li>
+                        <li><a class="dropdown-item"
+                               th:href="@{/DustNovel/user/history}">🕘 Lịch sử</a></li>
+                        <li><a class="dropdown-item"
+                               th:href="@{/DustNovel/user/bookmark}">🔖 Đánh dấu</a></li>
+                        <li>
+                            <div class="theme-switch">
+                                <span>Giao diện</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="themeToggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </li>
+
+                        <li><a class="dropdown-item"
+                               th:href="@{/DustNovel/system}">⚙️ Hệ thống</a></li>
+
+                        <li><hr class="dropdown-divider"></li>
+
+                        <li><a class="dropdown-item text-danger"
+                               th:href="@{/DustNovel/logout}">🚪 Thoát</a></li>
+                    </ul>
+                </div>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-4">
+    <div th:replace="${content} :: content"></div>
+</div>
+
+<footer class="text-center py-2 border-top">
+    <small>© 2025 - DustNovel</small>
+</footer>
+
+<script>
+    const toggle = document.getElementById("themeToggle");
+
+    function applyTheme(theme) {
+        document.body.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+        toggle.checked = theme === "dark";
+    }
+
+    toggle.addEventListener("change", () => {
+        applyTheme(toggle.checked ? "dark" : "light");
+    });
+
+    (function () {
+        const saved = localStorage.getItem("theme") || "light";
+        applyTheme(saved);
+    })();
+
+    document.querySelectorAll('.theme-switch').forEach(el => {
+        el.addEventListener('click', e => e.stopPropagation());
+    });
+=======
 	<nav
 		class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
 		<div class="container">
@@ -320,7 +565,6 @@ toggle.addEventListener("change", () => {
     applyTheme(saved);
 })();
 </script>
-
 
 </body>
 </html>
