@@ -37,6 +37,8 @@ public class TruyenController {
 	    TruyenRepository truyenRepo;
 	    @Autowired
 	    SecurityUtil securityUtil;
+	    @Autowired
+	    TheLoaiService tlSer;
 	    
 	    
 	    @GetMapping("/truyen/{id:\\d+}")
