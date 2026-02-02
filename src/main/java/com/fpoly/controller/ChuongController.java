@@ -79,7 +79,7 @@ public class ChuongController {
 //	        return "redirect:/DustNovel/truyen/" + chuong.getTruyen().getId() + "?error=not_purchased&chapId=" + id;
 //	    }
 //
-//	    // Nếu canRead = true thì mới chạy tiếp xuống đây
+//
 //	    model.addAttribute("chuong", chuong);
 //	    model.addAttribute("chuongTruoc", chuongService.chuongTruoc(chuong));
 //	    model.addAttribute("chuongSau", chuongService.chuongSau(chuong));
@@ -105,7 +105,6 @@ public class ChuongController {
 
 	    Chuong chuongSau = chuongService.chuongSau(chuong);
 	    if (chuongSau != null) {
-	        // Kiểm tra xem chương sau người dùng đã mua chưa hoặc có free không
 	        boolean canReadNext = permissionService.canReadChuong(chuongSau, currentUser);
 	        model.addAttribute("chuongSau", chuongSau);
 	        model.addAttribute("canReadNext", canReadNext);
@@ -113,6 +112,7 @@ public class ChuongController {
 
 	    model.addAttribute("chuong", chuong);
 	    model.addAttribute("chuongTruoc", chuongService.chuongTruoc(chuong));
+	    model.addAttribute("canRead", canRead);
 	    model.addAttribute("currentUser", currentUser);
 	    model.addAttribute("content", "truyen/chapter");
 	    return "layout/main";

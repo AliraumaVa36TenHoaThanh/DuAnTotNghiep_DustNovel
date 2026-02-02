@@ -1,0 +1,244 @@
+<div th:fragment="content">
+
+<!-- ================= STYLE ================= -->
+<style>
+/* ===== TIÊU ĐỀ CHÍNH ===== */
+.search-title-main {
+	text-align: center;
+	font-size: 1.9rem;          /* to vừa */
+	font-weight: 700;
+	margin-bottom: 24px;
+	color: #111827;
+}
+
+/* ===== KHUNG THỂ LOẠI ===== */
+.genre-wrapper {
+	padding: 16px;
+	margin-top: 8px;
+	border-radius: 10px;
+	background: #fff;
+	border: 1px solid #00000030; /* viền đen nhẹ */
+}
+
+/* ===== ITEM THỂ LOẠI ===== */
+.genre-item {
+	cursor: pointer;
+	user-select: none;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+	font-size: 14px;
+	padding: 6px 8px;
+	border-radius: 6px;
+}
+
+.genre-item:hover {
+	background: #f9fafb;
+}
+
+/* ===== CHECKBOX GIẢ ===== */
+.fake-checkbox {
+	width: 16px;
+	height: 16px;
+	border: 1.5px solid #555;
+	border-radius: 3px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: white;
+}
+
+/* ===== INCLUDE ===== */
+.genre-include .fake-checkbox {
+	background: #22c55e;
+	border-color: #22c55e;
+}
+.genre-include .fake-checkbox::after { content: "✔"; }
+.genre-include .genre-name {
+	color: #16a34a;
+	font-weight: 600;
+}
+
+/* ===== EXCLUDE ===== */
+.genre-exclude .fake-checkbox {
+	background: #ef4444;
+	border-color: #ef4444;
+}
+.genre-exclude .fake-checkbox::after {
+	content: "⛔";
+	font-size: 10px;
+}
+.genre-exclude .genre-name {
+	color: #dc2626;
+	text-decoration: line-through;
+}
+
+/* ===== KẾT QUẢ ===== */
+.result-title {
+	text-align: center;
+	font-size: 1.8rem;
+	font-weight: 700;
+	margin: 30px 0 14px;
+	color: #111827;
+}
+
+.result-empty {
+	text-align: center;
+	font-size: 1.2rem;
+	font-weight: 500;
+	color: #6b7280;
+	margin-top: 12px;
+}
+</style>
+
+<!-- ================= FORM TÌM KIẾM ================= -->
+<div class="card shadow-sm mb-4">
+	<div class="card-body">
+
+		<h5 class="search-title-main">🔍 Tìm kiếm nâng cao</h5>
+
+		<form th:action="@{/DustNovel/truyen/tim-kiem-nang-cao}" method="get">
+
+			<div class="mb-3">
+				<label class="form-label">Tên truyện</label>
+				<input type="text" name="tenTruyen" class="form-control">
+			</div>
+
+			<div class="mb-3">
+				<label class="form-label">Tên tác giả</label>
+				<input type="text" name="tenTacGia" class="form-control">
+			</div>
+
+			<div class="mb-3">
+				<label class="form-label">Thể loại</label>
+
+				<div class="genre-wrapper">
+					<div class="row">
+						<div class="col-md-3" th:each="tl : ${theLoais}">
+							<div class="genre-item" onclick="toggleGenre(this)">
+								<span class="fake-checkbox"></span>
+								<span class="genre-name" th:text="${tl.tenTheLoai}"></span>
+								<input type="hidden"
+								       th:attr="data-name='theLoai[' + ${tl.id} + ']'"
+								       value="0">
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="mb-3">
+				<label class="form-label">Loại truyện</label>
+				<select name="loaiTruyen" class="form-select">
+					<option value="">Tất cả</option>
+					<option th:value="${T(com.fpoly.model.enums.LoaiTruyen).SÁNG_TÁC}">
+						Sáng tác
+					</option>
+					<option th:value="${T(com.fpoly.model.enums.LoaiTruyen).DỊCH}">
+						Truyện dịch
+					</option>
+				</select>
+			</div>
+
+			<div class="mb-3">
+				<label class="form-label">Nội dung 18+</label>
+				<select name="showTag18" class="form-select">
+					<option value="">Tất cả</option>
+					<option value="true">Chỉ truyện 18+</option>
+					<option value="false">Không truyện 18+</option>
+				</select>
+			</div>
+
+			<button class="btn btn-primary w-100">🔎 Tìm kiếm</button>
+		</form>
+	</div>
+</div>
+
+<!-- ================= CHƯA TÌM KIẾM ================= -->
+<div class="text-center mt-4" th:if="${!searched}">
+	🔍 Vui lòng nhập điều kiện và bấm <b>Tìm kiếm</b> để xem kết quả
+</div>
+
+<!-- ================= KẾT QUẢ ================= -->
+<div class="mt-4" th:if="${searched}">
+
+	<h5 class="result-title">Kết quả tìm kiếm</h5>
+
+	<div th:if="${#lists.isEmpty(dsTruyen)}">
+		<div class="result-empty">💭 Không tìm thấy truyện nào</div>
+	</div>
+
+	<div class="row" th:if="${!#lists.isEmpty(dsTruyen)}">
+		<div class="col-md-3 mb-4" th:each="truyen : ${dsTruyen}">
+			<div class="card h-100 shadow-sm">
+
+				<img th:src="${truyen.anhBia}" class="card-img-top"
+				     style="height:220px;object-fit:cover">
+
+				<div class="card-body d-flex flex-column">
+
+					<h6 class="fw-bold" th:text="${truyen.tenTruyen}"></h6>
+
+					<p class="mb-1">
+						Tác giả: <span th:text="${truyen.tenTacGia}"></span>
+					</p>
+
+					<p class="mb-1">
+						<span th:if="${truyen.loaiTruyen.name() == 'SANG_TAC'}"
+						      class="badge bg-success">Sáng tác</span>
+						<span th:if="${truyen.loaiTruyen.name() == 'DICH'}"
+						      class="badge bg-info">Truyện dịch</span>
+					</p>
+
+					<p class="mb-1">
+						<span th:each="tl : ${truyen.theLoais}"
+						      class="badge bg-secondary me-1"
+						      th:text="${tl.tenTheLoai}"></span>
+					</p>
+
+					<p class="text-danger small" th:if="${truyen.tag18}">
+						🔞 Nội dung 18+
+					</p>
+
+					<a class="btn btn-outline-primary btn-sm mt-auto"
+					   th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}">
+						Xem
+					</a>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- ================= JS ================= -->
+<script>
+function toggleGenre(el) {
+	const hidden = el.querySelector("input[type='hidden']");
+	let state = Number(hidden.value);
+
+	el.classList.remove("genre-include", "genre-exclude");
+
+	if (state === 0) {
+		state = 1;
+		el.classList.add("genre-include");
+		hidden.name = hidden.dataset.name;
+	} else if (state === 1) {
+		state = -1;
+		el.classList.add("genre-exclude");
+		hidden.name = hidden.dataset.name;
+	} else {
+		state = 0;
+		hidden.value = "0";
+		hidden.removeAttribute("name");
+		return;
+	}
+	hidden.value = state;
+}
+</script>
+
+</div>

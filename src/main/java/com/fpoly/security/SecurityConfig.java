@@ -37,21 +37,31 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(	
-                	"/DustNovel/home",
-                    "/DustNovel/css/**",
-                    "/DustNovel/js/**",
-                    "/DustNovel/images/**",
-                    "/DustNovel/login",
-                    "/DustNovel/register",
-                    "/DustNovel/truyen/**",
-                    "/DustNovel/chuong/{id:\\d+}**"
+                        "/DustNovel/home",
+                        "/css/**",
+                        "/js/**",
+                        "/images/**",
+
+                        // auth
+                        "/DustNovel/login",
+                        "/DustNovel/register",
+
+                        // truyện public
+                        "/DustNovel/truyen/**",
+                        "/DustNovel/truyen/tim-kiem",
+                        "/DustNovel/truyen/tim-kiem-nang-cao",
+                        "/DustNovel/the-loai/**",
+
+                        // xem chương
+                        "/DustNovel/chuong/{id:\\d+}**"
                 ).permitAll()
                 .requestMatchers("/DustNovel/chuong/*/mua").authenticated()
                 .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
 
                 .requestMatchers(
                     "/DustNovel/user/**",
-                    "/DustNovel/truyen/them",
+                    "/DustNovel/themtruyen",
+                    "/DustNovel/nap-tien",
                     "/DustNovel/truyen/luu"
                 ).hasAnyRole("USER", "ADMIN")
 
@@ -86,6 +96,8 @@ public class SecurityConfig {
             	    .anyRequest().authenticated()
             	)
 
+                .anyRequest().authenticated()
+            )
 
             .formLogin(form -> form
                 .loginPage("/DustNovel/login")
