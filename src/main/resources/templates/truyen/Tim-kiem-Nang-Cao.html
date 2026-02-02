@@ -194,11 +194,13 @@
 						      class="badge bg-info">Truyện dịch</span>
 					</p>
 
-					<p class="mb-1">
-						<span th:each="tl : ${truyen.theLoais}"
-						      class="badge bg-secondary me-1"
-						      th:text="${tl.tenTheLoai}"></span>
-					</p>
+					<div class="mb-2 d-flex flex-wrap gap-1">
+					    <a th:each="tl : ${truyen.theLoais}"
+					       th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
+					       th:text="${tl.tenTheLoai}"
+					       class="badge bg-secondary text-decoration-none">
+					    </a>
+					</div>
 
 					<p class="text-danger small" th:if="${truyen.tag18}">
 						🔞 Nội dung 18+
