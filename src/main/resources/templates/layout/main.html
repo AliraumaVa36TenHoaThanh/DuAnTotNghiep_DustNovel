@@ -132,6 +132,62 @@ body {
 	width: 220px;
 	font-size: 13px;
 }
+/* ===== USER DROPDOWN ===== */
+.user-dropdown {
+	min-width: 260px;
+}
+
+/* ===== TOKEN BOX (GIỐNG STYLE GIAO DIỆN) ===== */
+.token-box {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 14px;
+	margin-bottom: 6px;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.04);
+	font-size: 13px;
+}
+
+.token-label {
+	color: #495057;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.token-value {
+	font-weight: 600;
+	color: #f4b400; /* vàng coin */
+	letter-spacing: 0.4px;
+}
+
+/* Dark mode */
+[data-theme="dark"] .token-box {
+	background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .token-label {
+	color: #e5e5e5;
+}
+
+/* ===== THEME SWITCH (GIỮ NGUYÊN STYLE CŨ) ===== */
+.theme-switch {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 14px;
+}
+
+.theme-label {
+	font-size: 13px;
+	color: #212529;
+}
+
+[data-theme="dark"] .theme-label {
+	color: #f1f1f1;
+}
 </style>
 </head>
 
@@ -204,19 +260,32 @@ body {
 						<ul class="dropdown-menu dropdown-menu-end shadow-sm">
 							<li><a class="dropdown-item"
 								th:href="@{/DustNovel/user/profile}"> Thông tin tài khoản </a></li>
+								<li class="px-3 py-2">
 
-							<li>
-								<div class="theme-switch">
-									<span class="theme-label">Giao diện</span> <label
-										class="switch"> <input type="checkbox"
-										id="themeToggle"> <span class="slider"></span>
-									</label>
-								</div>
-							</li>
-							<li><hr class="dropdown-divider"></li>
+								      <div class="token-box">
+								          <span class="token-label">🪙 Token</span>
+								          <span class="token-value" th:text="${userToken}">0</span>
+								      </div>
 
-							<li><a class="dropdown-item text-danger"
-								th:href="@{/DustNovel/logout}"> Đăng xuất </a></li>
+								      <div class="theme-switch">
+								          <span class="theme-label">Giao diện</span>
+								          <label class="switch">
+								              <input type="checkbox" id="themeToggle">
+								              <span class="slider"></span>
+								          </label>
+								      </div>
+
+								  </li>
+
+								  <li><hr class="dropdown-divider"></li>
+
+							<li>							
+								<form th:action="@{/DustNovel/logout}" method="post">
+							    <button type="submit"
+							            class="dropdown-item text-danger">
+							        Đăng xuất
+							    </button>
+							</form></li>
 						</ul>
 					</div>
 

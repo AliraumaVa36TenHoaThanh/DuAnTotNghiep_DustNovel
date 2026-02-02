@@ -10,6 +10,7 @@ import com.fpoly.repository.NguoiDungRepository;
 import com.fpoly.repository.TheLoaiRepository;
 import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.CustomUserDetails;
+import com.fpoly.security.SecurityUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -35,15 +36,19 @@ public class TruyenController {
 	    @Autowired
 	    TruyenRepository truyenRepo;
 	    @Autowired
-	    TheLoaiService tlSer;
+	    SecurityUtil securityUtil;
+	    
 	    
 	    @GetMapping("/truyen/{id:\\d+}")
 	    public String detail(@PathVariable Long id, Model model) {
-	        model.addAttribute("title", "Chi tiết truyện");
-	        model.addAttribute("content", "truyen/detail");
-	        model.addAttribute("truyen", truyenService.findById(id));
-	        model.addAttribute("dsChuong", chuongService.findByTruyen(id));
+	    	
+	    	Truyen truyen = truyenService.findById(id);
+	        NguoiDung user = securityUtil.getCurrentUserFromDB(); 
+	        model.addAttribute("currentUser", user); 
 
+	        model.addAttribute("truyen", truyen);
+	        model.addAttribute("dsChuong", chuongService.findByTruyen(id));
+	        model.addAttribute("content", "truyen/detail");
 	        return "layout/main";
 	    }
 	    @GetMapping("/themtruyen")

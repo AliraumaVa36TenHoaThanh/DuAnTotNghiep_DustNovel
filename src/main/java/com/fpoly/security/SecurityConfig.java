@@ -31,42 +31,43 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
+    	http.csrf(csrf -> {})
 
             // ✅ GẮN USERDETAILSSERVICE Ở ĐÂY
             .userDetailsService(userDetailsService)
 
             .authorizeHttpRequests(auth -> auth
-            	    // PUBLIC
-            		.requestMatchers(
-            			    "/images/**",
-            			    "/css/**",
-            			    "/js/**",
+                .requestMatchers(	
+                        "/DustNovel/home",
+                        "/css/**",
+                        "/js/**",
+                        "/images/**",
 
-            			    "/DustNovel/home",
-            			    "/DustNovel/login",
-            			    "/DustNovel/register",
+                        // auth
+                        "/DustNovel/login",
+                        "/DustNovel/register",
 
-            			    "/DustNovel/truyen/**",     // xem, đọc, tìm truyện
-            			    "/DustNovel/chuong/**",     // đọc chương
-            			    "/DustNovel/the-loai/**"    // xem theo thể loại
-            			).permitAll()
+                        // truyện public
+                        "/DustNovel/truyen/**",
+                        "/DustNovel/truyen/tim-kiem",
+                        "/DustNovel/truyen/tim-kiem-nang-cao",
+                        "/DustNovel/the-loai/**",
 
-            	    // CẦN ĐĂNG NHẬP
-            	    .requestMatchers(
-            	        "/DustNovel/themtruyen",
-            	        "/DustNovel/nap-tien",
-            	        "/DustNovel/guild",
-            	        "/DustNovel/user/**"
-            	    ).hasAnyRole("USER", "ADMIN")
+                        // xem chương
+                        "/DustNovel/chuong/{id:\\d+}**"
+                ).permitAll()
+                .requestMatchers("/DustNovel/chuong/*/mua").authenticated()
+                .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
 
-            	    // ADMIN
-            	    .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
+                .requestMatchers(
+                    "/DustNovel/user/**",
+                    "/DustNovel/themtruyen",
+                    "/DustNovel/nap-tien",
+                    "/DustNovel/truyen/luu"
+                ).hasAnyRole("USER", "ADMIN")
 
-            	    .anyRequest().authenticated()
-            	)
-
+                .anyRequest().authenticated()
+            )
 
             .formLogin(form -> form
                 .loginPage("/DustNovel/login")

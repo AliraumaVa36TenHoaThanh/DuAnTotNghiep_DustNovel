@@ -1,8 +1,67 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<div th:fragment="content">
 
-    <a>Chúng tôi đang test</a>
+<div th:fragment="content" class="container mt-4">
+
+    <h3>Nạp / Tặng Token</h3>
+
+    <p><b>Tên người dùng:</b> <span th:text="${user.tenDangNhap}"></span></p>
+    <p><b>Số token hiện có:</b> <span th:text="${user.token}"></span></p>
+
+    <hr>
+
+    <!-- ===== THÔNG BÁO ===== -->
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <!-- ===== NẠP TOKEN ===== -->
+    <h5>Nạp token</h5>
+    <form th:action="@{/DustNovel/nap-tien/nap}" method="post">
+        <input type="number" name="soToken" class="form-control mb-2" placeholder="Số token" required>
+        <input type="password" name="matKhau" class="form-control mb-2" placeholder="Mật khẩu xác nhận" required>
+        <button class="btn btn-success">Nạp</button>
+    </form>
+
+    <hr>
+
+    <!-- ===== TẶNG TOKEN ===== -->
+    <h5>Tặng token</h5>
+
+    <div class="mb-2">
+        <b>Gợi ý:</b>
+        <span th:each="u : ${randomUsers}"
+              th:text="${u.tenDangNhap}"
+              onclick="chonNguoiNhan(this)"
+              style="cursor:pointer"
+              class="badge bg-secondary me-1">
+        </span>
+    </div>
+
+    <form th:action="@{/DustNovel/nap-tien/tang}" method="post">
+        <input type="text" id="nguoiNhan" name="nguoiNhan"
+               class="form-control mb-2" placeholder="Tên người nhận" required>
+
+        <input type="number" name="soToken"
+               class="form-control mb-2" placeholder="Số token" required>
+
+        <input type="password" name="matKhau"
+               class="form-control mb-2" placeholder="Mật khẩu xác nhận" required>
+
+        <button class="btn btn-warning">Tặng</button>
+    </form>
 
 </div>
+
+<script>
+    function chonNguoiNhan(el) {
+        document.getElementById("nguoiNhan").value = el.innerText;
+
+        document.querySelectorAll(".badge").forEach(b => b.classList.remove("bg-primary"));
+        el.classList.remove("bg-secondary");
+        el.classList.add("bg-primary");
+    }
+</script>
+
+</body>
+</html>
