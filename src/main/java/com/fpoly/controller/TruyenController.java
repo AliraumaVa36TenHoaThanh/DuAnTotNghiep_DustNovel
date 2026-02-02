@@ -1,9 +1,11 @@
 package com.fpoly.controller;
 
 import com.fpoly.model.Truyen;
+import com.fpoly.model.enums.LoaiTruyen;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.service.TruyenService;
 import com.fpoly.service.ChuongService;
+import com.fpoly.service.TheLoaiService;
 import com.fpoly.repository.NguoiDungRepository;
 import com.fpoly.repository.TheLoaiRepository;
 import com.fpoly.repository.TruyenRepository;
@@ -11,6 +13,7 @@ import com.fpoly.security.CustomUserDetails;
 import com.fpoly.security.SecurityUtil;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -132,5 +135,39 @@ public class TruyenController {
 
 	        return "redirect:/DustNovel/truyen/" + tenTruyen + "/" + id;
 	    }
-	    
+	    @GetMapping("/truyen/tim-kiem-nang-cao")
+	    public String timKiemNangCao(
+	            @RequestParam(required = false) String tenTruyen,
+	            @RequestParam(required = false) String tenTacGia,
+	            @RequestParam(required = false) Boolean showTag18,
+	            @RequestParam(required = false) LoaiTruyen loaiTruyen,
+	            @RequestParam Map<String, String> params,
+	            Model model
+	    ) {
+
+	        boolean isSearch =
+	                tenTruyen != null ||
+	                tenTacGia != null ||
+	                loaiTruyen != null ||
+	                showTag18 != null ||
+	                params.keySet().stream().anyMatch(k -> k.startsWith("theLoai["));
+
+	        if (isSearch) {
+	            List<Truyen> ketQua = truyenService.timKiemNangCao(
+	                    tenTruyen,
+	                    tenTacGia,
+	                    loaiTruyen,
+	                    params,
+	                    showTag18
+	            );
+	            model.addAttribute("dsTruyen", ketQua);
+	        }
+
+	        model.addAttribute("searched", isSearch);
+	        model.addAttribute("theLoais", tlSer.getAllTheLoai());
+	        model.addAttribute("content", "truyen/tim-kiem-nang-cao");
+
+	        return "layout/main";
+	    }
+
 }
