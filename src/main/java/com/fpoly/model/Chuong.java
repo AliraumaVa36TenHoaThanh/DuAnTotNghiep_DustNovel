@@ -24,9 +24,14 @@ public class Chuong {
     private Integer soChuong;
 
     @ManyToOne
+    @JoinColumn(name = "tap_id", nullable = false)
+    private Tap tap;
+    
+    @ManyToOne
     @JoinColumn(name = "truyen_id", nullable = false)
     private Truyen truyen;
 
+    
     @ManyToOne
     @JoinColumn(name = "nguoi_dang_id", nullable = false)
     private NguoiDung nguoiDang;

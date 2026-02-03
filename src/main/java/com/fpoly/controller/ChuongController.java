@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import com.fpoly.model.Chuong;
 import com.fpoly.model.MoKhoaChuong;
 import com.fpoly.model.NguoiDung;
+import com.fpoly.model.Tap;
 import com.fpoly.repository.ChuongRepository;
 import com.fpoly.repository.MoKhoaChuongRepository;
 import com.fpoly.repository.NguoiDungRepository;
@@ -20,6 +21,7 @@ import com.fpoly.security.CustomUserDetails;
 import com.fpoly.security.SecurityUtil;
 import com.fpoly.service.ChuongService;
 import com.fpoly.service.PermissionService;
+import com.fpoly.service.TapService;
 import com.fpoly.service.TruyenService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,7 +44,8 @@ public class ChuongController {
 	SecurityUtil securityUtil;
 	@Autowired
 	PermissionService permissionService;
-	
+	@Autowired
+	TapService tapService;
 	
 //	@GetMapping("/{id}")
 //	public String read(@PathVariable Long id, Model model) {
@@ -91,34 +94,72 @@ public class ChuongController {
 //	    return "layout/main";
 //	}
 	
+//	@GetMapping("/{id}")
+//	public String read(@PathVariable Long id, Model model) {
+//	    Chuong chuong = chuongService.findById(id);
+//	    if (chuong == null) return "redirect:/DustNovel/home";
+//
+//	    NguoiDung currentUser = securityUtil.getCurrentUserFromDB();
+//	    boolean canRead = permissionService.canReadChuong(chuong, currentUser);
+//
+//	    if (!canRead) {
+//            return "redirect:/DustNovel/truyen/"
+//                    + chuong.getTap().getTruyen().getId()
+//                    + "?error=not_purchased&chapId=" + id;
+//        }
+//
+//	    Chuong chuongSau = chuongService.chuongSau(chuong);
+//	    if (chuongSau != null) {
+//	        boolean canReadNext = permissionService.canReadChuong(chuongSau, currentUser);
+//	        model.addAttribute("chuongSau", chuongSau);
+//	        model.addAttribute("canReadNext", canReadNext);
+//	    }
+//
+//	    model.addAttribute("chuong", chuong);
+//	    model.addAttribute("chuongTruoc", chuongService.chuongTruoc(chuong));
+//	    model.addAttribute("canRead", canRead);
+//	    model.addAttribute("currentUser", currentUser);
+//	    model.addAttribute("content", "truyen/chapter");
+//	    return "layout/main";
+//	}
+	
 	@GetMapping("/{id}")
 	public String read(@PathVariable Long id, Model model) {
+
 	    Chuong chuong = chuongService.findById(id);
-	    if (chuong == null) return "redirect:/DustNovel/home";
+	    if (chuong == null) {
+	        return "redirect:/DustNovel/home";
+	    }
 
 	    NguoiDung currentUser = securityUtil.getCurrentUserFromDB();
 	    boolean canRead = permissionService.canReadChuong(chuong, currentUser);
 
 	    if (!canRead) {
-	        return "redirect:/DustNovel/truyen/" + chuong.getTruyen().getId() + "?error=not_purchased&chapId=" + id;
+	        return "redirect:/DustNovel/truyen/"
+	                + chuong.getTap().getTruyen().getId()
+	                + "/tap/" + chuong.getTap().getId()
+	                + "?error=not_purchased&chapId=" + id;
 	    }
 
+	    Chuong chuongTruoc = chuongService.chuongTruoc(chuong);
 	    Chuong chuongSau = chuongService.chuongSau(chuong);
+
 	    if (chuongSau != null) {
 	        boolean canReadNext = permissionService.canReadChuong(chuongSau, currentUser);
-	        model.addAttribute("chuongSau", chuongSau);
 	        model.addAttribute("canReadNext", canReadNext);
 	    }
 
 	    model.addAttribute("chuong", chuong);
-	    model.addAttribute("chuongTruoc", chuongService.chuongTruoc(chuong));
+	    model.addAttribute("chuongTruoc", chuongTruoc);
+	    model.addAttribute("chuongSau", chuongSau);
 	    model.addAttribute("canRead", canRead);
 	    model.addAttribute("currentUser", currentUser);
 	    model.addAttribute("content", "truyen/chapter");
+
 	    return "layout/main";
 	}
-	
-	
+
+
 
 //	    if (!permissionService.canReadChuong(chuong, currentUser)) {
 //        model.addAttribute("chuong", chuong);
@@ -141,36 +182,102 @@ public class ChuongController {
 	
 
 	
-    @PreAuthorize("@permissionService.canAddChuong(#truyenId)")
-    @GetMapping("/them/{truyenId}")
-    public String showAddForm(@PathVariable Long truyenId, Model model) {
-        Chuong chuong = new Chuong();
-        chuong.setTruyen(truyenService.findById(truyenId));
-        model.addAttribute("chuong", chuong);
-        model.addAttribute("content", "chuong/add");
-        model.addAttribute("title", "Thêm chương");
-        return "layout/main";
-    }
-    
-    @PreAuthorize("@permissionService.canAddChuong(#chuong.truyen.id)")
-    @PostMapping("/them")
-    public String add(@ModelAttribute Chuong chuong) {
+//	@PreAuthorize("@permissionService.canAddChuongByTap(#tapId)")
+//	@GetMapping("/them/{truyenId}/{tapId}")
+//	public String showAddForm(
+//	        @PathVariable Long truyenId,
+//	        @PathVariable Long tapId,
+//	        Model model
+//	) {
+//	    Tap tap = tapService.findById(tapId);
+//	    if (tap == null) return "redirect:/DustNovel/home";
+//	    if (!tap.getTruyen().getId().equals(truyenId)) {
+//            return "redirect:/DustNovel/home";
+//        }
+//
+//	    Chuong chuong = new Chuong();
+//	    chuong.setTap(tap);
+//
+//	    model.addAttribute("chuong", chuong);
+//	    model.addAttribute("tap", tap);
+//	    model.addAttribute("truyen", tap.getTruyen());
+//
+//	    model.addAttribute("content", "chuong/add");
+//	    model.addAttribute("title", "Thêm chương");
+//
+//	    return "layout/main";
+//	}
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails cud = (CustomUserDetails) auth.getPrincipal();
-        NguoiDung user = cud.getUser();
+	@PreAuthorize("@permissionService.canAddChuongByTap(#tapId)")
+	@GetMapping("/them/{truyenId}/{tapId}")
+	public String showAddForm(
+	        @PathVariable Long truyenId,
+	        @PathVariable Long tapId,
+	        Model model
+	) {
+	    Tap tap = tapService.findById(tapId);
+	    if (tap == null) return "redirect:/DustNovel/home";
+	    
+	    Chuong chuong = new Chuong();
+	    chuong.setTap(tap);
 
-        chuong.setNguoiDang(user);
+	    // Tự động tính số chương tiếp theo dựa trên tập ID
+	    int nextSo = chuongService.getNextSoChuongByTap(tapId); //
+	    chuong.setSoChuong(nextSo); // Gán vào model để Thymeleaf tự điền vào input
 
-        int nextSo = chuongService.getNextSoChuong(
-                chuong.getTruyen().getId()
-        );
-        chuong.setSoChuong(nextSo);
+	    model.addAttribute("chuong", chuong);
+	    model.addAttribute("tap", tap);
+	    model.addAttribute("truyen", tap.getTruyen());
+	    model.addAttribute("content", "chuong/add");
+	    
+	    return "layout/main";
+	}
+	
+	
+//	@PreAuthorize("@permissionService.canAddChuongByTap(#chuong.tap.id)")
+//    @PostMapping("/them")
+//    public String add(@ModelAttribute Chuong chuong) {
+//
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        CustomUserDetails cud = (CustomUserDetails) auth.getPrincipal();
+//        NguoiDung user = cud.getUser();
+//
+//        chuong.setNguoiDang(user);
+//
+//        int nextSo = chuongService.getNextSoChuongByTap(
+//                chuong.getTap().getId()
+//        );
+//        chuong.setSoChuong(nextSo);
+//        chuongService.save(chuong);
+//
+//        return "redirect:/DustNovel/truyen/"
+//                + chuong.getTap().getTruyen().getId();
+//    }
+	@PostMapping("/them")
+	@PreAuthorize("@permissionService.canAddChuongByTap(#chuong.tap.id)")
+	public String add(@ModelAttribute Chuong chuong) {
 
-        chuongService.save(chuong);
-        return "redirect:/DustNovel/truyen/" + chuong.getTruyen().getId();
-    }
-    
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    CustomUserDetails cud = (CustomUserDetails) auth.getPrincipal();
+	    NguoiDung user = cud.getUser();
+
+	    chuong.setNguoiDang(user);
+
+	    // ✅ SET TAP (đã có từ form)
+	    Tap tap = tapService.findById(chuong.getTap().getId());
+	    chuong.setTap(tap);
+
+	    // ✅ BẮT BUỘC: SET TRUYỆN
+	    chuong.setTruyen(tap.getTruyen());
+
+	    int nextSo = chuongService.getNextSoChuongByTap(tap.getId());
+	    chuong.setSoChuong(nextSo);
+
+	    chuongService.save(chuong);
+
+	    return "redirect:/DustNovel/truyen/" + tap.getTruyen().getId();
+	}
+
 
     @PostMapping("/{id}/toggle-khoa")
     public String toggleKhoa(@PathVariable Long id,

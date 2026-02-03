@@ -37,35 +37,42 @@ public class ChuongService {
     public Chuong findById(Long id) {
         return chuongRepo.findById(id).orElse(null);
     }
-
-   public List<Chuong> findByTruyen(Long truyenId) {
-        return chuongRepo.findByTruyenIdOrderBySoChuongAsc(truyenId);
-   }
     
+//   public List<Chuong> findByTruyen(Long truyenId) {
+//        return chuongRepo.findByTapIdOrderBySoChuongAsc(truyenId);
+//   }
+   public List<Chuong> findByTap(Long tapId) {
+	    return chuongRepo.findByTapIdOrderBySoChuongAsc(tapId);
+	}
+
 
 
     public Chuong chuongTruoc(Chuong c) {
-        return chuongRepo
-                .findByTruyenIdAndSoChuong(
-                        c.getTruyen().getId(),
+        return chuongRepo.findByTapIdAndSoChuong(
+                        c.getTap().getId(),
                         c.getSoChuong() - 1
                 )
                 .orElse(null);
     }
 
     public Chuong chuongSau(Chuong c) {
-        return chuongRepo
-                .findByTruyenIdAndSoChuong(
-                        c.getTruyen().getId(),
+        return chuongRepo.findByTapIdAndSoChuong(
+                        c.getTap().getId(),
                         c.getSoChuong() + 1
                 )
                 .orElse(null);
     }
 
     public int getNextSoChuong(Long truyenId) {
-        Integer max = chuongRepo.findMaxSoChuongByTruyenId(truyenId);
+        Integer max = chuongRepo.findMaxSoChuongByTapId(truyenId);
         return (max == null) ? 1 : max + 1;
     }
+    
+    public int getNextSoChuongByTap(Long tapId) {
+        Integer max = chuongRepo.findMaxSoChuongByTapId(tapId); //
+        return (max == null) ? 1 : max + 1;
+    }
+    
 
     public Chuong save(Chuong chuong) {
         return chuongRepo.save(chuong);
@@ -117,10 +124,10 @@ public class ChuongService {
     }
 
     public List<ChuongView> getDanhSachChuongView(
-            Long truyenId, NguoiDung user) {
+            Long tapId, NguoiDung user) {
 
-        List<Chuong> ds = chuongRepo
-                .findByTruyenIdOrderBySoChuongAsc(truyenId);
+        List<Chuong> ds = chuongRepo.findByTapIdOrderBySoChuongAsc(tapId);
+
 
         return ds.stream().map(chap -> {
 
@@ -143,4 +150,6 @@ public class ChuongService {
             return v;
         }).toList();
     }
+    
+    
 }
