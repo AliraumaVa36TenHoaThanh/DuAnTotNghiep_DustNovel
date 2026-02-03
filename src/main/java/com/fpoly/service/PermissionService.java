@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 
 import com.fpoly.model.Chuong;
 import com.fpoly.model.NguoiDung;
+import com.fpoly.model.Tap;
 import com.fpoly.model.Truyen;
 import com.fpoly.model.enums.VaiTro;
 import com.fpoly.repository.ChuongRepository;
 import com.fpoly.repository.MoKhoaChuongRepository;
+import com.fpoly.repository.TapRepository;
 import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.SecurityUtil;
 
@@ -26,6 +28,9 @@ public class PermissionService {
 
     @Autowired
     private MoKhoaChuongRepository moKhoaChuongRepo;
+    
+    @Autowired
+    private TapRepository tapRepo;
 
   
     private NguoiDung currentUser() {
@@ -110,4 +115,39 @@ public class PermissionService {
                 .existsByNguoiDung_IdAndChuong_Id(
                         user.getId(), chuong.getId());
     }
+    
+    public boolean canManageTapByTruyen(Long truyenId) {
+        NguoiDung user = currentUser();
+        if (user == null) return false;
+        if (isAdmin(user)) return true;
+
+        Truyen truyen = truyenRepo.findById(truyenId).orElse(null);
+        return truyen != null
+            && truyen.getNguoiDang() != null
+            && truyen.getNguoiDang().getId().equals(user.getId());
+    }
+
+    public boolean canManageTap(Long tapId) {
+        NguoiDung user = currentUser();
+        if (user == null) return false;
+        if (isAdmin(user)) return true;
+
+        Tap tap = tapRepo.findById(tapId).orElse(null);
+        return tap != null
+            && tap.getTruyen() != null
+            && tap.getTruyen().getNguoiDang() != null
+            && tap.getTruyen().getNguoiDang().getId().equals(user.getId());
+    }
+    public boolean canAddChuongByTap(Long tapId) {
+        NguoiDung user = currentUser();
+        if (user == null) return false;
+        if (isAdmin(user)) return true;
+
+        Tap tap = tapRepo.findById(tapId).orElse(null);
+        if (tap == null) return false;
+
+        return tap.getTruyen().getNguoiDang().getId()
+                .equals(user.getId());
+    }
+
 }

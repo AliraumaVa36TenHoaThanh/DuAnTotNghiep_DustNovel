@@ -5,6 +5,7 @@ import com.fpoly.model.enums.LoaiTruyen;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.service.TruyenService;
 import com.fpoly.service.ChuongService;
+import com.fpoly.service.TapService;
 import com.fpoly.service.TheLoaiService;
 import com.fpoly.repository.NguoiDungRepository;
 import com.fpoly.repository.TheLoaiRepository;
@@ -39,20 +40,38 @@ public class TruyenController {
 	    SecurityUtil securityUtil;
 	    @Autowired
 	    TheLoaiService tlSer;
+	    @Autowired
+	    TapService tapService;
 	    
-	    
+//	    @GetMapping("/truyen/{id:\\d+}")
+//	    public String detail(@PathVariable Long id, Model model) {
+//	    	
+//	    	Truyen truyen = truyenService.findById(id);
+//	        NguoiDung user = securityUtil.getCurrentUserFromDB(); 
+//	        model.addAttribute("currentUser", user); 
+//
+//	        model.addAttribute("truyen", truyen);
+//	        model.addAttribute("dsTap", tapService.findByTruyen(id));
+//	        model.addAttribute("content", "truyen/detail");
+//	        return "layout/main";
+//	    }
 	    @GetMapping("/truyen/{id:\\d+}")
 	    public String detail(@PathVariable Long id, Model model) {
-	    	
-	    	Truyen truyen = truyenService.findById(id);
-	        NguoiDung user = securityUtil.getCurrentUserFromDB(); 
-	        model.addAttribute("currentUser", user); 
 
+	        Truyen truyen = truyenService.findById(id);
+	        if (truyen == null) return "redirect:/DustNovel/home";
+
+	        NguoiDung user = securityUtil.getCurrentUserFromDB();
+
+	        model.addAttribute("currentUser", user);
 	        model.addAttribute("truyen", truyen);
-	        model.addAttribute("dsChuong", chuongService.findByTruyen(id));
+
+	        model.addAttribute("dsTap", tapService.findByTruyen(id));
+
 	        model.addAttribute("content", "truyen/detail");
 	        return "layout/main";
 	    }
+
 	    @GetMapping("/themtruyen")
 	    public String showAddForm(Model model) {
 
