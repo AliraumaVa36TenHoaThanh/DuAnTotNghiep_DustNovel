@@ -206,10 +206,21 @@
 					<li class="nav-item"><a class="nav-link" th:href="@{/DustNovel/nap-tien}">💰 Nạp tiền</a></li>
 					<li class="nav-item"><a class="nav-link" th:href="@{/DustNovel/truyen/tim-kiem-nang-cao}">🔎 Tìm
 							kiếm nâng cao</a></li>
+					<li class="nav-item" sec:authorize="hasRole('ADMIN')">
+						<a class="nav-link" th:href="@{/dba/}">
+							📊 Dashboard
+						</a>
+					</li>
+					<li class="nav-item" sec:authorize="hasRole('USER')">
+						<a class="nav-link" th:href="@{/dbu/}">
+							📊 Dashboard
+						</a>
+					</li>
 				</ul>
 				<form class="d-flex ms-auto me-3" th:action="@{/DustNovel/truyen/tim-kiem}" method="get"> <input
 						class="form-control search-input me-2" type="search" name="keyword" placeholder="Tìm truyện...">
-					<button class="btn btn-outline-primary btn-sm">🔍</button> </form>
+					<button class="btn btn-outline-primary btn-sm">🔍</button>
+				</form>
 				<ul class="navbar-nav">
 					<div sec:authorize="isAnonymous()"> <a th:href="@{/DustNovel/login}"
 							class="ms-1 text-decoration-none">Đăng nhập</a> </div>
