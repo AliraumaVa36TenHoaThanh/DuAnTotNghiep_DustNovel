@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/dba")
 public class QuanLyNguoiDungController {
-	@GetMapping("/")
+	@GetMapping("/user")
 	public String list(Model model) {
 		model.addAttribute("content", "/view/admin/user/index.html");
 		return "/layout/admin_base";
