@@ -1,80 +1,153 @@
 package com.fpoly.service;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.fpoly.model.Chuong;
 import com.fpoly.model.NguoiDung;
+import com.fpoly.model.Tap;
 import com.fpoly.model.Truyen;
+import com.fpoly.model.enums.VaiTro;
 import com.fpoly.repository.ChuongRepository;
-import com.fpoly.repository.NguoiDungRepository;
+import com.fpoly.repository.MoKhoaChuongRepository;
+import com.fpoly.repository.TapRepository;
 import com.fpoly.repository.TruyenRepository;
+import com.fpoly.security.SecurityUtil;
+
 @Service("permissionService")
 public class PermissionService {
 
-	 @Autowired
-	    private TruyenRepository truyenRepo;
+    @Autowired
+    private SecurityUtil securityUtil;
 
-	    @Autowired
-	    private ChuongRepository chuongRepo;
+    @Autowired
+    private TruyenRepository truyenRepo;
 
-	    @Autowired
-	    private NguoiDungRepository nguoiDungRepo; 
-	    
-	    
-    private NguoiDung getCurrentUser() {
-        Authentication auth =
-            SecurityContextHolder.getContext().getAuthentication();
+    @Autowired
+    private ChuongRepository chuongRepo;
 
-        if (auth == null || !auth.isAuthenticated()) {
-            return null;
-        }
+    @Autowired
+    private MoKhoaChuongRepository moKhoaChuongRepo;
+    
+    @Autowired
+    private TapRepository tapRepo;
 
-        String username = auth.getName();
-        return nguoiDungRepo.findByTenDangNhap(username).orElse(null);
+  
+    private NguoiDung currentUser() {
+        return securityUtil.getCurrentUserFromDB();
     }
 
-    
-    
+    private boolean isAdmin(NguoiDung user) {
+        return user != null && user.getVaiTro() == VaiTro.ADMIN;
+    }
+
+   
     public boolean canEditTruyen(Long truyenId) {
-        NguoiDung user = getCurrentUser();
+        NguoiDung user = currentUser();
         if (user == null) return false;
+        if (isAdmin(user)) return true;
 
         Truyen truyen = truyenRepo.findById(truyenId).orElse(null);
-        if (truyen == null) return false;
-
-        return truyen.getNguoiDang().getId().equals(user.getId());
+        return truyen != null &&
+               truyen.getNguoiDang() != null &&
+               truyen.getNguoiDang().getId().equals(user.getId());
     }
 
-
-    public boolean canEditChuong(Long chuongId) {
-        NguoiDung user = getCurrentUser();
-        if (user == null) return false;
-
-        
-        Chuong chuong = chuongRepo.findById(chuongId).orElse(null);
-        if (chuong == null) return false;
-
-        return chuong.getNguoiDang().getId().equals(user.getId());
+    public boolean canDeleteTruyen(Long truyenId) {
+        return canEditTruyen(truyenId);
     }
 
     public boolean canAddChuong(Long truyenId) {
         return canEditTruyen(truyenId);
     }
-    
-    public boolean canDeleteTruyen(Long truyenId) {
-        NguoiDung user = getCurrentUser();
-        if (user == null) return false;
 
-        if (user.getVaiTro().name().equals("ADMIN")) {
+  
+    public boolean canEditChuong(Long chuongId) {
+        NguoiDung user = currentUser();
+        if (user == null) return false;
+        if (isAdmin(user)) return true;
+
+        Chuong chuong = chuongRepo.findById(chuongId).orElse(null);
+        return chuong != null &&
+               chuong.getNguoiDang() != null &&
+               chuong.getNguoiDang().getId().equals(user.getId());
+    }
+
+    public boolean canToggleChuong(Long chuongId) {
+        return canEditChuong(chuongId);
+    }
+
+ 
+//    public boolean canReadChuong(Chuong chuong, NguoiDung user) {
+//        if (chuong == null) return false;
+//        if (!chuong.isKhoa()) return true;
+//        if (user == null) return false;
+//        if (isAdmin(user)) return true;
+//        if (chuong.getNguoiDang() != null && chuong.getNguoiDang().getId().equals(user.getId())) {
+//            return true;
+//        }
+//  
+//        if (chuong.getTruyen() != null &&
+//            chuong.getTruyen().getNguoiDang() != null &&
+//            chuong.getTruyen().getNguoiDang().getId().equals(user.getId())) {
+//            return true;
+//        }
+//
+//        return moKhoaChuongRepo.existsByNguoiDung_IdAndChuong_Id( user.getId(), chuong.getId());
+//    }
+    
+    public boolean canReadChuong(Chuong chuong, NguoiDung user) {
+
+        if (!chuong.isKhoa()) {
             return true;
         }
 
-        Truyen truyen = truyenRepo.findById(truyenId).orElse(null);
-        if (truyen == null) return false;
+        if (user == null) {
+            return false;
+        }
 
-        return truyen.getNguoiDang().getId().equals(user.getId());
+        if (chuong.getNguoiDang() != null
+            && chuong.getNguoiDang().getId().equals(user.getId())) {
+            return true;
+        }
+        
+        return moKhoaChuongRepo
+                .existsByNguoiDung_IdAndChuong_Id(
+                        user.getId(), chuong.getId());
     }
     
+    public boolean canManageTapByTruyen(Long truyenId) {
+        NguoiDung user = currentUser();
+        if (user == null) return false;
+        if (isAdmin(user)) return true;
+
+        Truyen truyen = truyenRepo.findById(truyenId).orElse(null);
+        return truyen != null
+            && truyen.getNguoiDang() != null
+            && truyen.getNguoiDang().getId().equals(user.getId());
+    }
+
+    public boolean canManageTap(Long tapId) {
+        NguoiDung user = currentUser();
+        if (user == null) return false;
+        if (isAdmin(user)) return true;
+
+        Tap tap = tapRepo.findById(tapId).orElse(null);
+        return tap != null
+            && tap.getTruyen() != null
+            && tap.getTruyen().getNguoiDang() != null
+            && tap.getTruyen().getNguoiDang().getId().equals(user.getId());
+    }
+    public boolean canAddChuongByTap(Long tapId) {
+        NguoiDung user = currentUser();
+        if (user == null) return false;
+        if (isAdmin(user)) return true;
+
+        Tap tap = tapRepo.findById(tapId).orElse(null);
+        if (tap == null) return false;
+
+        return tap.getTruyen().getNguoiDang().getId()
+                .equals(user.getId());
+    }
+
 }

@@ -24,18 +24,32 @@ public class Chuong {
     private Integer soChuong;
 
     @ManyToOne
+    @JoinColumn(name = "tap_id", nullable = false)
+    private Tap tap;
+    
+    @ManyToOne
     @JoinColumn(name = "truyen_id", nullable = false)
     private Truyen truyen;
 
+    
     @ManyToOne
     @JoinColumn(name = "nguoi_dang_id", nullable = false)
     private NguoiDung nguoiDang;
 
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
+    @PrePersist
+    protected void onCreate() {
+        this.ngayTao = LocalDateTime.now();
+    }
     
-    private Boolean khoa = false;
+    @Column(name = "khoa", columnDefinition = "BIT")
+    private boolean khoa;
 
     @Column(name = "gia_token")
     private Long giaToken = 0L;
+    
+   
+
+    
 }

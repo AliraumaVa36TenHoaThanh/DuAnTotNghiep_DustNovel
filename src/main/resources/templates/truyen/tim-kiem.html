@@ -17,21 +17,36 @@
                              : (${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)} 
                                 ? ${truyen.anhBia} 
                                 : @{/images/default.png})"
-                     style="width:100%; aspect-ratio:2/1; object-fit:cover;"
+                     style="width:100%; aspect-ratio:9/11; object-fit:cover;"
                      class="rounded shadow">
 
-                <div class="card-body">
-                    <h6 class="card-title" th:text="${truyen.tenTruyen}"></h6>
+					 <div class="card-body d-flex flex-column">
 
-                    <p th:if="${truyen.tag18}">
-                        <small style="color:red;font-weight:bold;">🔞 Nội dung 18+</small>
-                    </p>
+					     <h6 class="card-title"
+					         th:text="${truyen.tenTruyen}">
+					     </h6>
 
-                    <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}"
-                       class="btn btn-sm btn-outline-primary">
-                        Xem
-                    </a>
-                </div>
+					     <small class="text-muted mb-1"
+					            th:text="'Tác giả: ' + ${truyen.tenTacGia}">
+					     </small>
+					 	<div class="mb-2 d-flex flex-wrap gap-1">
+					 	    <a th:each="tl : ${truyen.theLoais}"
+					 	       th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
+					 	       th:text="${tl.tenTheLoai}"
+					 	       class="badge bg-secondary text-decoration-none">
+					 	    </a>
+					 	</div>
+					     <small class="text-danger mb-2"
+					            th:if="${truyen.tag18}">
+					         🔞 Nội dung 18+
+					     </small>
+
+					     <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}"
+					        class="btn btn-sm btn-outline-primary mt-auto">
+					         Xem truyện
+					     </a>
+
+					 </div>
             </div>
         </div>
     </div>

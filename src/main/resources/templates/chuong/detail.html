@@ -1,0 +1,33 @@
+<div th:fragment="chuongDetail(chap, currentUser)">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+
+        <!-- ĐƯỢC ĐỌC -->
+        <div th:if="${@permissionService.canReadChuong(chap, currentUser)}">
+            <a th:href="@{/DustNovel/chuong/{id}(id=${chap.id})}"
+               th:text="${chap.tieuDe}"
+               class="fw-bold text-dark text-decoration-none"></a>
+        </div>
+
+        <!-- BỊ KHOÁ -->
+        <div th:unless="${@permissionService.canReadChuong(chap, currentUser)}">
+            <span class="text-muted" th:text="${chap.tieuDe}"></span>
+
+            <a th:if="${currentUser != null}"
+               class="badge bg-danger ms-2"
+               data-bs-toggle="modal"
+               th:data-bs-target="'#muaChuongModal__' + ${chap.id}">
+                🔒 Mua (<span th:text="${chap.giaToken}"></span>)
+            </a>
+
+            <a th:if="${currentUser == null}"
+               th:href="@{/DustNovel/login}"
+               class="badge bg-dark ms-2">
+                🔒 Đăng nhập để mua
+            </a>
+        </div>
+
+        <!-- MODAL -->
+        <div th:replace="chuong/mua-modal :: muaModal(${chap}, ${currentUser})"></div>
+
+    </li>
+</div>

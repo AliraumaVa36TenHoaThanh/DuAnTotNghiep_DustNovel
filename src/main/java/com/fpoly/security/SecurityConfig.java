@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
 import com.fpoly.service.CustomUserDetailsService;
 
 @EnableMethodSecurity(prePostEnabled = true)
@@ -31,13 +30,42 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
+    	http.csrf(csrf -> {})
 
             // ✅ GẮN USERDETAILSSERVICE Ở ĐÂY
             .userDetailsService(userDetailsService)
 
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(	
+                        "/DustNovel/home",
+                        "/css/**",
+                        "/js/**",
+                        "/images/**",
+
+                        // auth
+                        "/DustNovel/login",
+                        "/DustNovel/register",
+
+                        // truyện public
+                        "/DustNovel/truyen/**",
+                        "/DustNovel/truyen/tim-kiem",
+                        "/DustNovel/truyen/tim-kiem-nang-cao",
+                        "/DustNovel/the-loai/**",
+
+                        // xem chương
+                        "/DustNovel/chuong/{id:\\d+}**"
+                ).permitAll()
+                .requestMatchers("/DustNovel/chuong/*/mua").authenticated()
+                .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
+
+                .requestMatchers(
+                    "/DustNovel/user/**",
+                    "/DustNovel/themtruyen",
+                    "/DustNovel/nap-tien",
+                    "/DustNovel/truyen/luu"
+                ).hasAnyRole("USER", "ADMIN")
+
+
             	    // PUBLIC
             		.requestMatchers(
             			    "/images/**",
@@ -50,7 +78,8 @@ public class SecurityConfig {
 
             			    "/DustNovel/truyen/**",     // xem, đọc, tìm truyện
             			    "/DustNovel/chuong/**",     // đọc chương
-            			    "/DustNovel/the-loai/**"    // xem theo thể loại
+            			    "/DustNovel/the-loai/**",    // xem theo thể loại
+            			    "/DustNovel/user/avatar/**"
             			).permitAll()
 
             	    // CẦN ĐĂNG NHẬP
@@ -64,9 +93,9 @@ public class SecurityConfig {
             	    // ADMIN
             	    .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
 
-            	    .anyRequest().authenticated()
-            	)
 
+                .anyRequest().authenticated()
+            )
 
             .formLogin(form -> form
                 .loginPage("/DustNovel/login")
@@ -79,6 +108,8 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutUrl("/DustNovel/logout")
                 .logoutSuccessUrl("/DustNovel/login?logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
                 .permitAll()
             );
 

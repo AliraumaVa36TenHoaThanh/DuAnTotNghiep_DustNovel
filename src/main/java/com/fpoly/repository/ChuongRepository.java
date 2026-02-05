@@ -11,10 +11,10 @@ import com.fpoly.model.Chuong;
 
 public interface ChuongRepository extends JpaRepository<Chuong, Long> {
 
-    List<Chuong> findByTruyenIdOrderBySoChuongAsc(Long truyenId);
+	List<Chuong> findByTapIdOrderBySoChuongAsc(Long tapId);
 
-    Optional<Chuong> findByTruyenIdAndSoChuong(Long truyenId, Integer soChuong);
+    Optional<Chuong> findByTapIdAndSoChuong(Long tapId, Integer soChuong);
 
-    @Query("SELECT MAX(c.soChuong) FROM Chuong c WHERE c.truyen.id = :truyenId")
-    Integer findMaxSoChuongByTruyenId(@Param("truyenId") Long truyenId);
+    @Query("SELECT MAX(c.soChuong) FROM Chuong c WHERE c.tap.id = :tapId")
+    Integer findMaxSoChuongByTapId(@Param("tapId") Long tapId);
 }
