@@ -108,6 +108,8 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutUrl("/DustNovel/logout")
                 .logoutSuccessUrl("/DustNovel/login?logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
                 .permitAll()
             );
 
