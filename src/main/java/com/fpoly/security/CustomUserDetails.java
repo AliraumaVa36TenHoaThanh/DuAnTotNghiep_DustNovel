@@ -1,4 +1,4 @@
-package com.fpoly.security;
+	package com.fpoly.security;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,8 +29,9 @@ public class CustomUserDetails implements UserDetails {
     private NguoiDung nguoiDung;
 
     public NguoiDung getNguoiDung() {
-        return nguoiDung;
+        return user;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
