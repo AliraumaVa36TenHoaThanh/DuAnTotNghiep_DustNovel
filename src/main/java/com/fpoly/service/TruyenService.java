@@ -2,9 +2,10 @@ package com.fpoly.service;
 
 import com.fpoly.repository.TheLoaiRepository;
 import com.fpoly.repository.TruyenRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import com.fpoly.model.Truyen;
 import com.fpoly.model.enums.LoaiTruyen;
 import com.fpoly.model.TheLoai;
@@ -12,6 +13,8 @@ import com.fpoly.model.NguoiDung;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.springframework.ui.Model;
+
 
 @Service
 public class TruyenService {
@@ -106,7 +109,7 @@ public class TruyenService {
 
         truyen.setLoaiTruyen(LoaiTruyen.SÁNG_TÁC);
         truyen.setNguoiDang(user);
-        truyen.setTrangThai("ĐANG_RA");
+        truyen.setTrangThai("ĐANG_RA"); 
         truyen.setTag18(false);
 
         truyenRepo.save(truyen);
@@ -127,6 +130,5 @@ public class TruyenService {
 	            LoaiTruyen.DỊCH
 	    );
 	}
-
 	
 }
