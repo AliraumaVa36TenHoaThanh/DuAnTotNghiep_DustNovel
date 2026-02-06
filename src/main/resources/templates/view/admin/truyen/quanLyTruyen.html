@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Quản lý truyện</title>
+
+<style>
+* {
+	box-sizing: border-box;
+	font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+	margin: 0;
+	background: #f4f6f9;
+	color: #111;
+}
+
+.sidebar {
+	width: 260px;
+	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: #ffffff;
+	border-right: 1px solid #e0e0e0;
+	padding: 20px;
+}
+
+.main-content {
+	margin-left: 260px;
+	padding: 30px;
+}
+
+.card {
+	background: #ffffff;
+	border-radius: 12px;
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+	padding: 20px;
+	margin-left: 40px;
+}
+
+.page-title {
+	font-size: 22px;
+	font-weight: 600;
+	margin-bottom: 15px;
+}
+
+.toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.search-box {
+	display: flex;
+	gap: 10px;
+}
+
+.search-box input {
+	padding: 8px 12px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+	width: 320px;
+}
+
+.btn-add {
+	padding: 8px 14px;
+	border-radius: 6px;
+	background: #dc3545;
+	color: #fff;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	background: #ffffff;
+}
+
+thead {
+	background: #f1f3f5;
+}
+
+th, td {
+	padding: 14px;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+	text-align: left;
+}
+
+.badge {
+	padding: 6px 14px;
+	border-radius: 20px;
+	font-size: 13px;
+	font-weight: 600;
+	display: inline-block;
+}
+
+.badge-dangra {
+	background: #ffe08a;
+	color: #856404;
+}
+
+.badge-hoanthanh {
+	background: #2ecc71;
+	color: #fff;
+}
+
+.action-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border-radius: 8px;
+	color: #fff;
+	text-decoration: none;
+	margin: 0 4px;
+	font-size: 16px;
+}
+
+.btn-view {
+	background: #0d6efd;
+}
+
+.btn-edit {
+	background: #28a745;
+}
+
+.btn-delete {
+	background: #dc3545;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.empty {
+	text-align: center;
+	color: #777;
+	font-style: italic;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+	<h3>ADMIN</h3>
+</div>
+
+<div class="main-content">
+	<div class="card">
+
+		<div class="page-title">Quản lý toàn bộ truyện</div>
+
+		<div class="toolbar">
+			<span>Danh sách truyện của tất cả người dùng</span>
+			<div class="search-box">
+				<input type="text" id="searchInput"
+					placeholder="Tìm tên truyện hoặc người đăng...">
+				<a href="/DustNovel/themtruyen" class="btn-add">+ Thêm truyện</a>
+			</div>
+		</div>
+
+		<table>
+			<thead>
+				<tr>
+					<th>Tên truyện</th>
+					<th>Người đăng</th>
+					<th>Trạng thái</th>
+					<th>Ngày tạo</th>
+					<th class="text-center">Quản lý</th>
+				</tr>
+			</thead>
+
+			<tbody id="storyTable">
+				<tr th:each="truyen : ${listTruyenUser}">
+					<td th:text="${truyen.tenTruyen}">Tên truyện</td>
+
+					<td th:text="${truyen.nguoiDang.tenDangNhap}">
+						Người đăng
+					</td>
+
+					<td>
+						<span th:if="${truyen.trangThai == 'ĐANG_RA'}"
+							class="badge badge-dangra">Đang ra</span>
+						<span th:if="${truyen.trangThai == 'HOÀN_THÀNH'}"
+							class="badge badge-hoanthanh">Hoàn thành</span>
+					</td>
+
+					<td
+						th:text="${#temporals.format(truyen.ngayTao,'dd/MM/yyyy')}">
+						01/02/2026
+					</td>
+
+					<td class="text-center">
+						<a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}"
+							class="action-btn btn-view">👁</a>
+						<a th:href="@{/DustNovel/sua/{id}(id=${truyen.id})}"
+							class="action-btn btn-edit">✏</a>
+						<a href="#"
+							class="action-btn btn-delete"
+							th:data-url="@{/DustNovel/chuong/xoa/{id}(id=${truyen.id})}"
+							onclick="return xoaTruyen(this)">🗑</a>
+					</td>
+				</tr>
+
+				<tr th:if="${#lists.isEmpty(listTruyenUser)}">
+					<td colspan="5" class="empty">
+						Chưa có truyện nào
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+</div>
+
+<script>
+const searchInput = document.getElementById("searchInput");
+const rows = document.querySelectorAll("#storyTable tr");
+
+searchInput.addEventListener("keyup", function () {
+	const keyword = this.value.toLowerCase();
+
+	rows.forEach(row => {
+		const tenTruyen = row.cells[0]?.textContent.toLowerCase() || "";
+		const nguoiDang = row.cells[1]?.textContent.toLowerCase() || "";
+
+		row.style.display =
+			tenTruyen.includes(keyword) || nguoiDang.includes(keyword)
+				? ""
+				: "none";
+	});
+});
+
+function xoaTruyen(el) {
+	if (confirm("Bạn chắc chắn muốn xóa truyện này chứ ?")) {
+		alert("Xóa truyện thành công!");
+		window.location.href = el.dataset.url;
+	}
+	return false;
+}
+</script>
+
+</body>
+</html>

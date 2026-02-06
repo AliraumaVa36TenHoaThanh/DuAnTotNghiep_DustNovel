@@ -71,5 +71,12 @@ public class DatatableTestController {
 
 	    return "layout/cilent_base";
 	}
+	
+	@GetMapping("/truyen")
+	public String truyenAdmin(Model model) {
+	    List<Truyen> listTruyen = truyenRepository.findAll(); 
+	    model.addAttribute("listTruyenUser", listTruyen);
+	    return "layout/admin_base"; 
+	}
 
 }

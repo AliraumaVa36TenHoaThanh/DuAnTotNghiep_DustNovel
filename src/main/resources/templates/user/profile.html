@@ -423,6 +423,41 @@ a:hover {
 	background: #198754;
 	color: white;
 }
+
+.account-actions {
+    display: flex;
+    gap: 16px;              /* tách ra */
+    align-items: center;
+    margin: 20px 0 25px;
+}
+
+/* đồng bộ chiều cao */
+.btn-edit,
+.btn-reward {
+    height: 44px;
+    padding: 0 26px;
+    border-radius: 10px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+
+.btn-reward {
+    background: Pink;
+    color: black;
+    text-decoration: none;
+}
+
+.btn-edit:hover,
+.btn-reward:hover {
+    background: black;
+    color: white;
+}
+
+
 </style>
 
 
@@ -696,7 +731,9 @@ function submitBanner() {
 			<h2>THÔNG TIN TÀI KHOẢN</h2>
 			<button type="button" class="btn-edit" onclick="enableEdit()">Thay
 				đổi mật khẩu</button>
-				
+			<a href="/DustNovel/ma-thuong" class="btn-reward">
+                Nhập mã thưởng
+            </a>	
 			<div th:if="${success != null and success == true}" class="success">Cập
 				nhật mật khẩu thành công</div>
 				

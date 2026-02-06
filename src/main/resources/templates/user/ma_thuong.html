@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nhập mã thưởng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background:#f4f6f9;
+            padding:40px;
+        }
+        .box {
+            max-width:400px;
+            margin:auto;
+            background:white;
+            padding:30px;
+            border-radius:12px;
+            box-shadow:0 8px 25px rgba(0,0,0,.12);
+        }
+        input, button {
+            width:100%;
+            padding:12px;
+            margin-top:12px;
+            border-radius:8px;
+            border:1px solid #ccc;
+        }
+        button {
+            background:#198754;
+            color:white;
+            border:none;
+            font-weight:600;
+            cursor:pointer;
+        }
+        button:hover {
+            background:black;
+        }
+        a {
+            display:block;
+            margin-top:16px;
+            text-align:center;
+            color:#198754;
+            text-decoration:none;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Nhập mã thưởng</h2>
+
+        <form method="post" th:action="@{/DustNovel/ma-thuong}">
+            <input type="text" name="maThuong" placeholder="Nhập mã thưởng">
+            <button type="submit">Xác nhận</button>
+        </form>
+
+        <a href="/DustNovel/user/profile">← Quay lại hồ sơ</a>
+    </div>
+</body>
+</html>

@@ -17,6 +17,7 @@ import com.fpoly.model.Tap;
 import com.fpoly.repository.ChuongRepository;
 import com.fpoly.repository.MoKhoaChuongRepository;
 import com.fpoly.repository.NguoiDungRepository;
+import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.CustomUserDetails;
 import com.fpoly.security.SecurityUtil;
 import com.fpoly.service.ChuongService;
@@ -38,6 +39,8 @@ public class ChuongController {
 	 NguoiDungRepository nguoiDungRepo;
 	@Autowired
 	ChuongRepository chuongRepo;
+	@Autowired
+	TruyenRepository truyenRepo;
 	@Autowired
 	MoKhoaChuongRepository moKhoaChuongRepo;
 	@Autowired
@@ -410,6 +413,12 @@ public class ChuongController {
         moKhoaChuongRepo.save(mk);
 
         return "redirect:/DustNovel/chuong/" + id;
+    }
+    
+    @GetMapping("/xoa/{id}")
+    public String xoaChuong(@PathVariable Long id) {
+        truyenRepo.deleteById(id);
+        return "redirect:/dbu/truyen-sang-tac";
     }
     
 
