@@ -22,12 +22,6 @@ public class DatatableTestController {
 		model.addAttribute("content", "/view/client/truyen/index.html");
 		return "/layout/cilent_base";
 	}
-	
-	@GetMapping("/component-alert")
-    public String componentAlert(Model model) {
-        model.addAttribute("content", "view/client/truyen/component-alert");
-        return "layout/cilent_base";
-    }
 
 	@GetMapping("/truyen-sang-tac")
 	public String truyenSangTac(Model model, Authentication authentication) {
