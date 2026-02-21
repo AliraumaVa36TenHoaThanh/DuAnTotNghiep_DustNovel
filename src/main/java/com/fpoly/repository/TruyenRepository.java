@@ -105,5 +105,14 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     	    @Param("includeSize") long includeSize,
     	    @Param("excludeSize") long excludeSize
     	);
-
+    
+    @Query("""
+    	    SELECT t FROM Truyen t
+    	    WHERE t.nguoiDang.id = :userId
+    	    AND t.loaiTruyen = :loai
+    	""")
+    	List<Truyen> findByUserAndLoai(
+    	    @Param("userId") Long userId,
+    	    @Param("loai") LoaiTruyen loai
+    	);
 }
