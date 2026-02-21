@@ -16,6 +16,8 @@ public interface NguoiDungRepository extends JpaRepository<NguoiDung, Long> {
     boolean existsByTenDangNhap(String tenDangNhap);
 
     boolean existsByEmail(String email);
+    boolean existsByEmailAndIdNot(String email, Long id);
+
     
     NguoiDung findByTenDangNhapOrEmail(String tenDangNhap, String email);
     
