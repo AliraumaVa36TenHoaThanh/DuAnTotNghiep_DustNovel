@@ -1,12 +1,23 @@
 package com.fpoly.controller;
 
+import com.fpoly.repository.NapTienRepository;
+import com.fpoly.security.CustomUserDetails;
 import com.fpoly.service.NapTienService;
+import com.fpoly.model.NapTien;
+import com.fpoly.model.NguoiDung;
 import lombok.RequiredArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+
 
 @Controller
 @RequestMapping("/DustNovel/nap-tien")
@@ -14,6 +25,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class NapTienController {
 
     private final NapTienService napTienService;
+    
+    @Autowired
+    NapTienRepository napTienRepository;
 
     /* ========= TRANG NẠP / TẶNG ========= */
     @GetMapping
@@ -32,21 +46,63 @@ public class NapTienController {
 
     /* ========= NẠP TOKEN ========= */
     @PostMapping("/nap")
-    public String napToken(
+    public String hienQR(
             @RequestParam("soToken") Long soToken,
-            @RequestParam("matKhau") String matKhau,
             Authentication auth,
-            RedirectAttributes ra
+            Model model
     ) {
-        try {
-            napTienService.napToken(auth.getName(), soToken, matKhau);
-            ra.addFlashAttribute("success", "Nạp token thành công");
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", e.getMessage());
+
+        var user = napTienService.getByTenDangNhap(auth.getName());
+
+        if (soToken == null || soToken <= 0) {
+            model.addAttribute("error", "Số tiền không hợp lệ");
+        } else {
+
+            String noiDung = user.getTenDangNhap() + System.currentTimeMillis();
+
+            model.addAttribute("soTien", soToken);
+            model.addAttribute("noiDung", noiDung);
         }
-        return "redirect:/DustNovel/nap-tien";
+
+        model.addAttribute("title", "DustNovel | Nạp token");
+        model.addAttribute("content", "truyen/nap-tien");
+        model.addAttribute("user", user);
+        model.addAttribute("randomUsers", napTienService.getRandomUsers());
+
+        return "layout/main";
     }
 
+    @PostMapping("/xac-nhan")
+    public String xacNhanNapTien(
+            @RequestParam Long soTien,
+            @RequestParam String noiDung,
+            Authentication authentication
+    ) {
+
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
+
+        NguoiDung nguoiDung = userDetails.getUser(); // dùng NguoiDung
+
+        NapTien nap = new NapTien();
+
+        nap.setNguoiDung(nguoiDung);
+
+        // set số tiền thực
+        nap.setSoTienThuc(BigDecimal.valueOf(soTien));
+
+        // ví dụ 1000đ = 1 token
+        nap.setSoTokenNhan(soTien / 20);
+
+        nap.setPhuongThuc("CHUYEN_KHOAN");
+
+        nap.setTrangThai("PENDING");
+
+        napTienRepository.save(nap);
+
+        return "redirect:/DustNovel/nap-tien?success=Da gui yeu cau cho admin duyet";
+    }
+    
     /* ========= TẶNG TOKEN ========= */
     @PostMapping("/tang")
     public String tangToken(
