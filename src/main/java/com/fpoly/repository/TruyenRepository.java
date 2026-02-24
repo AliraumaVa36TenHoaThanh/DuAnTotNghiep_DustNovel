@@ -115,4 +115,11 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     	    @Param("userId") Long userId,
     	    @Param("loai") LoaiTruyen loai
     	);
+    
+    @Query("""
+            SELECT t FROM Truyen t
+            JOIN t.theLoais tl
+            WHERE tl.id = :theLoaiId
+        """)
+        List<Truyen> findTruyenByTheLoaiId(Long theLoaiId);
 }

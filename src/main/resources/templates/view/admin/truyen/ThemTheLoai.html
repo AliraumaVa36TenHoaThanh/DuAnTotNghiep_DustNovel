@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Thêm thể loại truyện</title>
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+<style>
+* {
+	box-sizing: border-box;
+	font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+	margin: 0;
+	background: #f4f6f9;
+	color: #111;
+}
+
+.sidebar {
+	width: 260px;
+	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: #ffffff;
+	border-right: 1px solid #e0e0e0;
+	padding: 20px;
+}
+
+.sidebar h3 {
+	margin-top: 0;
+}
+
+.main-content {
+	margin-left: 260px;
+	padding: 30px;
+}
+
+.card {
+	background: #ffffff;
+	border-radius: 16px;
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+	padding: 32px;
+	width: 100%;
+	max-width: 1190px;
+	margin-left: 30px;
+	margin-right: 60px;
+}
+
+.page-title {
+	font-size: 22px;
+	font-weight: 600;
+	margin-bottom: 25px;
+}
+
+.form-group {
+	position: relative;
+	margin-bottom: 24px;
+}
+
+label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
+.form-control {
+	width: 100%;
+	padding: 14px 16px;
+	border-radius: 8px;
+	border: 1px solid #ccc;
+	font-size: 15px;
+	transition: border-color 0.2s ease;
+}
+
+.form-control:focus {
+	outline: none;
+	border-color: #0d6efd;
+}
+
+.form-control.error {
+	border-color: #e74c3c;
+}
+
+
+.form-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 20px;
+	margin-top: 30px;
+}
+
+.btn {
+	height: 46px;
+	padding: 12px 22px;
+	border-radius: 10px;
+	border: none;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+	color: #fff;
+	text-decoration: none;
+	transition: all 0.2s ease;
+	gap: 8px;
+}
+
+.btn-back {
+	background: #6c757d;
+}
+
+.btn-back:hover {
+	background: #5a6268;
+}
+
+.btn-save {
+	background: #0d6efd;
+}
+
+.btn-save:hover {
+	background: #0b5ed7;
+}
+
+.btn i {
+	font-size: 16px;
+}
+
+.error-message {
+    color: #e74c3c;  
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+</style>
+</head>
+
+<body>
+
+	<div class="sidebar">
+		<h3>Menu</h3>
+	</div>
+
+	<div class="main-content">
+		<div class="card">
+
+			<div class="page-title">Thêm thể loại truyện</div>
+
+			<form
+				th:action="@{/dba/truyen-the-loai/them}"
+				method="post"
+				onsubmit="return validateForm()"
+				novalidate>
+
+				<div class="form-group">
+					<label for="tenTheLoai">Tên thể loại</label>
+
+					<input
+						type="text"
+						id="tenTheLoai"
+						name="tenTheLoai"
+						placeholder="Nhập tên thể loại"
+						class="form-control">
+
+					<small class="error-message"
+                       th:if="${errorTenTheLoai}"
+                       th:text="${errorTenTheLoai}"
+                       style="display:block">
+                    </small>
+					<small class="error-message"
+                           th:if="${errorTrungTen}"
+                           th:text="${errorTrungTen}"
+                           style="display:block">
+                    </small>
+				</div>
+
+				<div class="form-actions">
+					<a th:href="@{/dba/truyen-the-loai}" class="btn btn-back" >
+						<i class="fa-solid fa-arrow-left"></i>
+						<span>Quay lại</span>
+					</a>
+
+					<button type="submit" class="btn btn-success">
+						<i class="fa-solid fa-floppy-disk"></i>
+						<span>Lưu thể loại</span>
+					</button>
+				</div>
+
+			</form>
+
+		</div>
+	</div>
+<script>
+document.querySelector("form").addEventListener("submit", function (e) {
+
+    let ten = document.getElementById("tenTheLoai").value.trim();
+
+    if (ten === "") {
+        sessionStorage.removeItem("daThem");
+        return;
+    }
+
+    e.preventDefault(); // chặn submit trước
+
+    fetch("/dba/truyen-the-loai/check-ten?ten=" + encodeURIComponent(ten))
+        .then(response => response.json())
+        .then(exists => {
+
+            if (exists) {
+                alert("Tên thể loại đã tồn tại");
+                sessionStorage.removeItem("daThem");
+            } else {
+                sessionStorage.setItem("daThem", "true");
+                e.target.submit(); // submit thật
+            }
+
+        });
+
+});
+
+</script>
+	
+</body>
+</html>
