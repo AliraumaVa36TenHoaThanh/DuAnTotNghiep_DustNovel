@@ -6,8 +6,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import java.util.List;
+
+import com.fpoly.model.TheLoai;
 import com.fpoly.model.Truyen;
 import com.fpoly.model.enums.*;
+import com.fpoly.repository.TheLoaiRepository;
 import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.CustomUserDetails;
 
@@ -16,6 +19,9 @@ import com.fpoly.security.CustomUserDetails;
 public class DatatableTestController {
 	@Autowired
 	private TruyenRepository truyenRepository;
+	
+	@Autowired
+	private TheLoaiRepository theLoaiRepository;
 
 	@GetMapping("/")
 	public String list(Model model) {
@@ -61,16 +67,30 @@ public class DatatableTestController {
 
 	    model.addAttribute("listTruyenDich", listTruyen);
 	    model.addAttribute("content", "view/client/truyen/dich");
-	    model.addAttribute("title", "Truyện dịch");
+	    model.addAttribute("title", "Truyện dịch");    
+	    return "layout/cilent_base";
+	}
+	
+	@GetMapping("/truyen-the-loai")
+	public String danhSachTheLoai(Model model) {
+
+	    List<TheLoai> listTheLoai = theLoaiRepository.findByStatusTheLoai(StatusTheLoai.ON);
+
+	    model.addAttribute("listTheLoai", listTheLoai);
+	    model.addAttribute("content", "view/client/truyen/ListTheLoaiUser");
 
 	    return "layout/cilent_base";
 	}
 	
-	@GetMapping("/truyen")
-	public String truyenAdmin(Model model) {
-	    List<Truyen> listTruyen = truyenRepository.findAll(); 
-	    model.addAttribute("listTruyenUser", listTruyen);
-	    return "layout/admin_base"; 
+	@GetMapping("/truyen-the-loai/chi-tiet-user/{id}")
+	public String xemTruyenTheoTheLoai(
+	        @PathVariable("id") Long idTheLoai,Model model) {
+	    List<Truyen> listTruyen = truyenRepository.findTruyenByTheLoaiId(idTheLoai);
+	    TheLoai theLoai =  theLoaiRepository.findById(idTheLoai).orElse(null);
+	    model.addAttribute("listTruyenXemUser", listTruyen);
+	    model.addAttribute("theLoai", theLoai);
+	    model.addAttribute("content", "view/client/truyen/ListXemTheLoaiUser");
+	    return "layout/cilent_base";
 	}
 
 }
