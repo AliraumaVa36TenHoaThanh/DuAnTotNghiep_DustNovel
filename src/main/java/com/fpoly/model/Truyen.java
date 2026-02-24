@@ -50,6 +50,9 @@ public class Truyen {
     protected void onCreate() {
         this.ngayTao = LocalDateTime.now();
     }
+    @Column(name = "luot_xem", insertable = false)
+    private Long luotXem;
+    
     @ManyToMany
     @JoinTable(
         name = "truyen_the_loai",
