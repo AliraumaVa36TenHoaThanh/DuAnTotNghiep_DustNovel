@@ -237,7 +237,7 @@ public class TruyenController {
 
 	        truyenService.save2(truyen);
 	        return "redirect:/DustNovel/truyen/" + id;
-	    
+	    }  
 	    @GetMapping("/the-loai/{id}")
 	    public String xemTheoTheLoai(@PathVariable Long id, Model model) {
 
