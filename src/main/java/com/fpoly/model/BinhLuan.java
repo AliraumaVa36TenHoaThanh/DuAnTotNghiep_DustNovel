@@ -3,6 +3,7 @@ package com.fpoly.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "binh_luan")
@@ -26,9 +27,16 @@ public class BinhLuan {
 
     @Column(name = "ngay_binh_luan")
     private LocalDateTime ngayBinhLuan;
+    
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private BinhLuan parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    private List<BinhLuan> replies;
 
     @PrePersist
     protected void onCreate() {
         this.ngayBinhLuan = LocalDateTime.now();
     }
-}
+} 
