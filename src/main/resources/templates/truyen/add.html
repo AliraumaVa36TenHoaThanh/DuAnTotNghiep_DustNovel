@@ -35,7 +35,7 @@
     <label class="form-label">Thể loại</label>
 
     <div class="d-flex flex-wrap gap-2">
-        <label th:each="tl : ${dsTheLoai}" class="badge bg-light text-dark border">
+        <label th:each="tl : ${dsTheLoai}"  class="badge bg-light text-dark border">
             <input type="checkbox"
                    name="theLoaiIds"
                    th:value="${tl.id}">
