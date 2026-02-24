@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Quản lý nạp tiền</title>
+
+<style>
+* {
+	box-sizing: border-box;
+	font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+	margin: 0;
+	background: #f4f6f9;
+	color: #111;
+}
+
+.sidebar {
+	width: 260px;
+	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: #ffffff;
+	border-right: 1px solid #e0e0e0;
+	padding: 20px;
+}
+
+.main-content {
+	margin-left: 260px;
+	padding: 30px;
+}
+
+.card {
+	background: #ffffff;
+	border-radius: 12px;
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+	padding: 20px;
+	margin-left: 40px;
+}
+
+.page-title {
+	font-size: 22px;
+	font-weight: 600;
+	margin-bottom: 15px;
+}
+
+.toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.search-box input {
+	padding: 8px 12px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+	width: 320px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	background: #ffffff;
+}
+
+thead {
+	background: #f1f3f5;
+}
+
+th, td {
+	padding: 14px;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+	text-align: left;
+}
+
+.badge {
+	padding: 6px 14px;
+	border-radius: 20px;
+	font-size: 13px;
+	font-weight: 600;
+	display: inline-block;
+}
+
+.badge-pending {
+	background: #ffe08a;
+	color: #856404;
+}
+
+.badge-approved {
+	background: #2ecc71;
+	color: #fff;
+}
+
+.badge-reject {
+	background: #dc3545;
+	color: #fff;
+}
+
+.action-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border-radius: 8px;
+	color: #fff;
+	text-decoration: none;
+	margin: 0 4px;
+	font-size: 16px;
+}
+
+.btn-approve {
+	background: #28a745;
+}
+
+.btn-reject {
+	background: #dc3545;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.empty {
+	text-align: center;
+	color: #777;
+	font-style: italic;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+	<h3>ADMIN</h3>
+</div>
+
+<div class="main-content">
+	<div class="card">
+
+		<div class="page-title">Quản lý yêu cầu nạp tiền</div>
+
+		<div class="toolbar">
+			<span>Danh sách yêu cầu từ người dùng</span>
+			<div class="search-box">
+				<input type="text" id="searchInput"
+					placeholder="Tìm tên người nạp...">
+			</div>
+		</div>
+
+		<table>
+			<thead>
+				<tr>
+					<th>Người nạp</th>
+					<th>Số tiền</th>
+					<th>Token nhận</th>
+					<th>Phương thức</th>
+					<th>Trạng thái</th>
+					<th>Ngày tạo</th>
+					<th class="text-center">Duyệt</th>
+				</tr>
+			</thead>
+
+			<tbody id="napTable">
+
+				<tr th:each="nap : ${listNapTien}">
+
+					<td th:text="${nap.nguoiDung.tenDangNhap}">
+						username
+					</td>
+
+					<td th:text="${#numbers.formatDecimal(nap.soTienThuc,0,'COMMA',0,'POINT')} + ' VNĐ'">
+						100.000 VNĐ
+					</td>
+
+					<td th:text="${nap.soTokenNhan}">
+						100
+					</td>
+
+					<td th:text="${nap.phuongThuc}">
+						Banking
+					</td>
+
+					<td>
+						<span th:if="${nap.trangThai == 'PENDING'}"
+							class="badge badge-pending">Chờ duyệt</span>
+
+						<span th:if="${nap.trangThai == 'DA_DUYET'}"
+							class="badge badge-approved">Đã duyệt</span>
+
+						<span th:if="${nap.trangThai == 'TU_CHOI'}"
+							class="badge badge-reject">Từ chối</span>
+					</td>
+
+					<td th:text="${#temporals.format(nap.ngayTao,'dd/MM/yyyy HH:mm')}">
+						01/02/2026
+					</td>
+
+					<td class="text-center">
+						<a href="#"
+						   class="action-btn btn-approve"
+						   th:data-url="@{/dba/nap-tien/duyet/{id}(id=${nap.id})}"
+						   onclick="return duyetNap(this)">✔</a>
+
+						<a href="#"
+						   class="action-btn btn-reject"
+						   th:data-url="@{/dba/nap-tien/tu-choi/{id}(id=${nap.id})}"
+						   onclick="return tuChoiNap(this)">✖</a>
+					</td>
+
+				</tr>
+
+				<tr th:if="${#lists.isEmpty(listNapTien)}">
+					<td colspan="7" class="empty">
+						Chưa có yêu cầu nạp tiền nào
+					</td>
+				</tr>
+
+			</tbody>
+		</table>
+
+	</div>
+</div>
+
+<script>
+const searchInput = document.getElementById("searchInput");
+const rows = document.querySelectorAll("#napTable tr");
+
+searchInput.addEventListener("keyup", function () {
+	const keyword = this.value.toLowerCase();
+
+	rows.forEach(row => {
+		const user = row.cells[0]?.textContent.toLowerCase() || "";
+
+		row.style.display =
+			user.includes(keyword)
+				? ""
+				: "none";
+	});
+});
+function duyetNap(el) {
+    if (confirm("Xác nhận duyệt yêu cầu nạp tiền này?")) {
+        window.location.href = el.dataset.url;
+    }
+    return false;
+}
+
+function tuChoiNap(el) {
+    if (confirm("Xác nhận từ chối yêu cầu này?")) {
+        window.location.href = el.dataset.url;
+    }
+    return false;
+}
+</script>
+
+</body>
+</html>

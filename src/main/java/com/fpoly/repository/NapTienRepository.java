@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface NapTienRepository extends JpaRepository<NapTien, Long> {
     List<NapTien> findByNguoiDungIdOrderByNgayTaoDesc(Long nguoiDungId);
+    
+    List<NapTien> findByTrangThai(String trangThai);
 }
