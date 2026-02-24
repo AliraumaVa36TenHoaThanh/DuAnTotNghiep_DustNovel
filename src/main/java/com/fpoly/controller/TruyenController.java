@@ -6,6 +6,7 @@ import com.fpoly.model.enums.StatusTheLoai;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.model.TheLoai;
 import com.fpoly.service.TruyenService;
+import com.fpoly.service.BinhLuanService;
 import com.fpoly.service.ChuongService;
 import com.fpoly.service.TapService;
 import com.fpoly.service.TheLoaiService;
@@ -44,6 +45,8 @@ public class TruyenController {
 	    TheLoaiService tlSer;
 	    @Autowired
 	    TapService tapService;
+	    @Autowired
+	    BinhLuanService binhLuanService;
 	    
 //	    @GetMapping("/truyen/{id:\\d+}")
 //	    public String detail(@PathVariable Long id, Model model) {
@@ -63,17 +66,15 @@ public class TruyenController {
 	        Truyen truyen = truyenService.findById(id);
 	        if (truyen == null) return "redirect:/DustNovel/home";
 
-	        NguoiDung user = securityUtil.getCurrentUserFromDB();
-
-	        model.addAttribute("currentUser", user);
 	        model.addAttribute("truyen", truyen);
-
 	        model.addAttribute("dsTap", tapService.findByTruyen(id));
+
+	        // THÊM DÒNG NÀY
+	        model.addAttribute("comments", binhLuanService.getByTruyen(id));
 
 	        model.addAttribute("content", "truyen/detail");
 	        return "layout/main";
 	    }
-
 	    @GetMapping("/themtruyen")
 	    public String showAddForm(Model model) {
 
