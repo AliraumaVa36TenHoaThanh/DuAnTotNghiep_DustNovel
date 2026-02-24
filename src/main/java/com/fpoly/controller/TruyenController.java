@@ -3,8 +3,11 @@ package com.fpoly.controller;
 import com.fpoly.model.Truyen;
 import com.fpoly.model.enums.LoaiTruyen;
 import com.fpoly.model.enums.TrangThaiTruyen;
+import com.fpoly.model.enums.StatusTheLoai;
 import com.fpoly.model.NguoiDung;
+import com.fpoly.model.TheLoai;
 import com.fpoly.service.TruyenService;
+import com.fpoly.service.BinhLuanService;
 import com.fpoly.service.ChuongService;
 import com.fpoly.service.TapService;
 import com.fpoly.service.TheLoaiService;
@@ -43,6 +46,8 @@ public class TruyenController {
 	    TheLoaiService tlSer;
 	    @Autowired
 	    TapService tapService;
+	    @Autowired
+	    BinhLuanService binhLuanService;
 	    
 //	    @GetMapping("/truyen/{id:\\d+}")
 //	    public String detail(@PathVariable Long id, Model model) {
@@ -62,22 +67,21 @@ public class TruyenController {
 	        Truyen truyen = truyenService.findById(id);
 	        if (truyen == null) return "redirect:/DustNovel/home";
 
-	        NguoiDung user = securityUtil.getCurrentUserFromDB();
-
-	        model.addAttribute("currentUser", user);
 	        model.addAttribute("truyen", truyen);
-
 	        model.addAttribute("dsTap", tapService.findByTruyen(id));
+
+	        // THÊM DÒNG NÀY
+	        model.addAttribute("comments", binhLuanService.getByTruyen(id));
 
 	        model.addAttribute("content", "truyen/detail");
 	        return "layout/main";
 	    }
-
 	    @GetMapping("/themtruyen")
 	    public String showAddForm(Model model) {
 
 	        model.addAttribute("truyen", new Truyen());
-	        model.addAttribute("dsTheLoai", theLoaiRepo.findAll());
+//	        model.addAttribute("dsTheLoai", theLoaiRepo.findAll());
+	        model.addAttribute("dsTheLoai", theLoaiRepo.findByStatusTheLoai(StatusTheLoai.ON));
 	        model.addAttribute("content", "truyen/add");
 	        model.addAttribute("title", "Thêm truyện");
 
@@ -213,7 +217,8 @@ public class TruyenController {
 	        }
 
 	        model.addAttribute("searched", isSearch);
-	        model.addAttribute("theLoais", tlSer.getAllTheLoai());
+//	        model.addAttribute("theLoais", tlSer.getAllTheLoai());
+	        model.addAttribute("theLoais", theLoaiRepo.findByStatusTheLoai(StatusTheLoai.ON));
 	        model.addAttribute("title", "DustNovel | Tìm kiếm nâng cao");
 	        model.addAttribute("content", "truyen/tim-kiem-nang-cao");
 
@@ -232,5 +237,29 @@ public class TruyenController {
 
 	        truyenService.save2(truyen);
 	        return "redirect:/DustNovel/truyen/" + id;
+	    
+	    @GetMapping("/the-loai/{id}")
+	    public String xemTheoTheLoai(@PathVariable Long id, Model model) {
+
+	        TheLoai theLoai = theLoaiRepo.findById(id).orElse(null);
+
+	        if (theLoai == null) {
+	            return "redirect:/DustNovel/home";
+	        }
+
+	        // Nếu OFF → log và chặn
+	        if (theLoai.getStatusTheLoai() == StatusTheLoai.OFF) {
+	            System.out.println("⚠ Thể loại này đang OFF: " + theLoai.getTenTheLoai());
+	            return "redirect:/DustNovel/home";
+	        }
+
+	        List<Truyen> dsTruyen = truyenRepo.findByTheLoai(id);																
+
+	        model.addAttribute("theLoai", theLoai);
+	        model.addAttribute("truyens", dsTruyen);
+	        model.addAttribute("content", "truyen/the-loai");
+	        model.addAttribute("error", "Thể loại này hiện đang tạm khóa");
+
+	        return "layout/main";
 	    }
 }

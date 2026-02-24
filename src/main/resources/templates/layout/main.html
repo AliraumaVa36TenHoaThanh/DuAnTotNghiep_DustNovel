@@ -198,7 +198,7 @@
 					<li class="nav-item dropdown position-static"><a class="nav-link dropdown-toggle" href="#"
 							data-bs-toggle="dropdown">📚 Thể loại</a>
 						<ul class="dropdown-menu theloai-dropdown">
-							<li th:each="tl : ${theLoais}"><a class="dropdown-item"
+							<li th:each="tl : ${theLoais}" th:if="${tl.statusTheLoai.name() == 'ON'}"><a class="dropdown-item"
 									th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}" th:text="${tl.tenTheLoai}"></a>
 							</li>
 						</ul>
