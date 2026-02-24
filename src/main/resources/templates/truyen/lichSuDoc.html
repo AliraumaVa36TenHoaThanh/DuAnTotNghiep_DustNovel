@@ -1,0 +1,104 @@
+<div th:fragment="content">
+
+    <h4 class="mb-4">📖 Truyện đã đọc</h4>
+
+    <div class="row">
+        <div class="col-md-3 mb-4"
+             th:each="ls : ${danhSachLichSu}">
+
+            <div class="card h-100 shadow-sm">
+
+                <!-- Ảnh bìa -->
+                <img th:src="${ls.truyen.tag18}
+                              ? 'https://i.pinimg.com/1200x/69/05/e3/6905e37f8ca8a420fd303393921ecec0.jpg'
+                              : (${ls.truyen.anhBia != null && !#strings.isEmpty(ls.truyen.anhBia)}
+                                 ? ${ls.truyen.anhBia}
+                                 : @{/images/aria.jpg})"
+                     class="card-img-top"
+                     style="aspect-ratio:9/11; object-fit:cover;">
+
+                <div class="card-body d-flex flex-column">
+
+                    <!-- Tên truyện -->
+                    <h6 class="card-title"
+                        th:text="${ls.truyen.tenTruyen}">
+                    </h6>
+
+                    <!-- Tên chương đang đọc -->
+                    <small class="text-primary mb-1">
+                        📄 <span th:text="${ls.chuong.tieuDe}"></span>
+                    </small>
+
+                    <!-- Thời gian đọc -->
+                    <small class="text-muted mb-2"
+                        th:text="'Đọc lần cuối: ' +
+                        ${#temporals.format(ls.lanDocCuoi, 'dd/MM/yyyy HH:mm')}">
+                    </small>
+
+                    <!-- Nút đọc tiếp -->
+                    <a th:href="@{/DustNovel/chuong/{id}(id=${ls.chuong.id})}"
+                       class="btn btn-sm btn-outline-primary mt-auto">
+                        Đọc tiếp
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center text-muted mt-4"
+         th:if="${#lists.isEmpty(danhSachLichSu)}">
+        Bạn chưa đọc truyện nào 📭
+    </div>
+	<div sec:authorize="!isAuthenticated()">
+        <div id="guest-history-container" class="history-grid">
+            </div>
+    </div>
+
+    <script sec:authorize="!isAuthenticated()">
+        document.addEventListener("DOMContentLoaded", function() {
+            renderGuestHistory();
+        });
+
+        function renderGuestHistory() {
+            var guestHistory = JSON.parse(localStorage.getItem('guest_history')) || [];
+            var container = document.getElementById('guest-history-container');
+
+            if (guestHistory.length === 0) {
+                container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #a1a1aa;">Bạn chưa đọc truyện nào.</div>';
+                return;
+            }
+
+            var html = '';
+            guestHistory.forEach(function(item) {
+                html += `
+                <div class="history-item" id="guest-item-${item.truyenId}">
+                    <div class="cover-container">
+                        <img src="${item.anhBia}" alt="Cover">
+                        <div class="overlay">
+                            <p class="chapter-title">${item.tenChuong}</p>
+                            <p class="volume-title">${item.tenTap}</p>
+                            <a href="javascript:void(0)" onclick="removeGuestHistory(${item.truyenId})" class="btn-delete">
+                                <i class="fas fa-times"></i> Xóa
+                            </a>
+                        </div>
+                    </div>
+                    <a href="/DustNovel/chuong/${item.chuongId}" style="text-decoration: none; color: white;">
+                        <p class="story-title mt-2">${item.tenTruyen}</p>
+                    </a>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // Hàm xử lý khi Guest bấm xóa 1 truyện
+        function removeGuestHistory(truyenId) {
+            var guestHistory = JSON.parse(localStorage.getItem('guest_history')) || [];
+            guestHistory = guestHistory.filter(item => item.truyenId !== truyenId);
+            localStorage.setItem('guest_history', JSON.stringify(guestHistory));
+            
+            // Render lại giao diện ngay lập tức
+            renderGuestHistory();
+        }
+    </script>
+</div>

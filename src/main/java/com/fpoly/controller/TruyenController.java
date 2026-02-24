@@ -4,6 +4,7 @@ import com.fpoly.model.Truyen;
 import com.fpoly.model.enums.LoaiTruyen;
 import com.fpoly.model.enums.TrangThaiTruyen;
 import com.fpoly.model.enums.StatusTheLoai;
+import com.fpoly.model.Chuong;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.model.TheLoai;
 import com.fpoly.service.TruyenService;
@@ -17,6 +18,7 @@ import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.CustomUserDetails;
 import com.fpoly.security.SecurityUtil;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -63,16 +65,22 @@ public class TruyenController {
 //	    }
 	    @GetMapping("/truyen/{id:\\d+}")
 	    public String detail(@PathVariable Long id, Model model) {
-
+	    	
 	        Truyen truyen = truyenService.findById(id);
+	        LocalDateTime ngayCapNhat = chuongService.layNgayCapNhatTruyen(id);
+	        long tongSoTu = chuongService.laySoTuTruyen(id);
 	        if (truyen == null) return "redirect:/DustNovel/home";
-
+	        Chuong chuongDau = chuongService.layChuongDau(id);
+	        Chuong chuongMoi = chuongService.layChuongMoiNhat(id);
+	        model.addAttribute("chuongDau", chuongDau);
+	        model.addAttribute("chuongMoi", chuongMoi);
 	        model.addAttribute("truyen", truyen);
 	        model.addAttribute("dsTap", tapService.findByTruyen(id));
-
-	        // THÊM DÒNG NÀY
 	        model.addAttribute("comments", binhLuanService.getByTruyen(id));
-
+	        model.addAttribute("luotXem", truyen.getLuotXem());
+	        model.addAttribute("tongSoTu", tongSoTu);
+	        model.addAttribute("ngayCapNhat", ngayCapNhat);
+	        
 	        model.addAttribute("content", "truyen/detail");
 	        return "layout/main";
 	    }
@@ -80,7 +88,6 @@ public class TruyenController {
 	    public String showAddForm(Model model) {
 
 	        model.addAttribute("truyen", new Truyen());
-//	        model.addAttribute("dsTheLoai", theLoaiRepo.findAll());
 	        model.addAttribute("dsTheLoai", theLoaiRepo.findByStatusTheLoai(StatusTheLoai.ON));
 	        model.addAttribute("content", "truyen/add");
 	        model.addAttribute("title", "Thêm truyện");
@@ -165,27 +172,64 @@ public class TruyenController {
 //
 //	        return "redirect:/DustNovel/truyen/" + tenTruyen + "/" + id;
 //	    }
+	    
+	    
+//	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
+//	    @PostMapping("/truyen/sua/{id}")
+//	    public String sua(
+//	            @PathVariable Long id,
+//	            @ModelAttribute Truyen truyen,
+//	            @RequestParam(required = false) List<Long> theLoaiIds
+//	    ) {
+//	        truyen.setId(id);
+//
+//	        Truyen old = truyenService.findById(id);
+//	        truyen.setNguoiDang(old.getNguoiDang());
+//
+//	        if (theLoaiIds != null) {
+//	            truyenService.save(truyen, theLoaiIds);
+//	        } else {
+//	            truyenRepo.save(truyen);
+//	        }
+//
+//	        return "redirect:/DustNovel/truyen/" + id;
+//	    }
 	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
 	    @PostMapping("/truyen/sua/{id}")
 	    public String sua(
 	            @PathVariable Long id,
-	            @ModelAttribute Truyen truyen,
+	            @ModelAttribute Truyen truyenForm, // Đây là data từ form gửi lên
 	            @RequestParam(required = false) List<Long> theLoaiIds
 	    ) {
-	        truyen.setId(id);
-
-	        Truyen old = truyenService.findById(id);
-	        truyen.setNguoiDang(old.getNguoiDang());
-
-	        if (theLoaiIds != null) {
-	            truyenService.save(truyen, theLoaiIds);
-	        } else {
-	            truyenRepo.save(truyen);
+	        // 1. Lấy truyện CŨ từ database lên (để giữ nguyên lượt xem, ngày tạo, ds chương...)
+	        Truyen truyenDB = truyenService.findById(id);
+	        if (truyenDB == null) {
+	            return "redirect:/DustNovel/home";
 	        }
+
+	        // 2. Chỉ cập nhật những trường được phép sửa từ form
+	        truyenDB.setTenTruyen(truyenForm.getTenTruyen());
+	        truyenDB.setMoTa(truyenForm.getMoTa());
+	        truyenDB.setTenTacGia(truyenForm.getTenTacGia());
+	        truyenDB.setLoaiTruyen(truyenForm.getLoaiTruyen());
+	        truyenDB.setTag18(truyenForm.getTag18());
+	        
+	        // Nếu có upload ảnh bìa mới thì mới cập nhật, không thì giữ ảnh cũ
+	        if (truyenForm.getAnhBia() != null && !truyenForm.getAnhBia().isBlank()) {
+	            truyenDB.setAnhBia(truyenForm.getAnhBia());
+	        }
+
+	        // 3. Cập nhật danh sách thể loại
+	        if (theLoaiIds != null) {
+	            List<TheLoai> dsTheLoai = theLoaiRepo.findAllById(theLoaiIds);
+	            truyenDB.setTheLoais(dsTheLoai);
+	        }
+
+	        // 4. Lưu lại vào DB
+	        truyenRepo.save(truyenDB);
 
 	        return "redirect:/DustNovel/truyen/" + id;
 	    }
-	    
 	    
 	    @GetMapping("/truyen/tim-kiem-nang-cao")
 	    

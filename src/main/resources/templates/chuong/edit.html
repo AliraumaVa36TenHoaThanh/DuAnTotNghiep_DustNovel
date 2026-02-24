@@ -2,7 +2,8 @@
 
     <h4>✏️ Sửa chương – <span th:text="${tap.tenTap}"></span></h4>
 
-    <form th:action="@{/DustNovel/chuong/sua}"
+    <form id="formSuaChuong" 
+          th:action="@{/DustNovel/chuong/sua/{id}(id=${chuong.id})}"
           method="post"
           th:object="${chuong}">
 

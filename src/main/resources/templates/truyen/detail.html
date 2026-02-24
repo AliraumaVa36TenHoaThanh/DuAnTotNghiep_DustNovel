@@ -160,21 +160,37 @@
 
 <div th:fragment="content">
     <div class="row">
-
+	
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <img th:src="${truyen.anhBia}" class="img-fluid rounded" alt="Ảnh bìa">
             </div>
+			
+			<div class="mt-3 d-grid gap-2">
+                
+                <div class="d-flex gap-2">
+                    <a th:if="${chuongDau != null}" 
+                       th:href="@{/DustNovel/chuong/{id}(id=${chuongDau.id})}" 
+                       class="btn btn-primary w-100 fw-bold shadow-sm">
+                        <i class="bi bi-book"></i> Đọc chương đầu
+                    </a>
+                    
+                    <a th:if="${chuongMoi != null}" 
+                       th:href="@{/DustNovel/chuong/{id}(id=${chuongMoi.id})}" 
+                       class="btn btn-info text-white w-100 fw-bold shadow-sm">
+                        <i class="bi bi-fire"></i> Đọc Chương Mới nhất
+                    </a>
+                </div>
+                <hr th:if="${@permissionService.canAddChuong(truyen.id) or @permissionService.canEditTruyen(truyen.id)}" 
+                    class="my-1 text-muted">
 
-            <div class="mt-3 d-grid gap-2">
-
-                <a class="btn btn-success"
+                <a class="btn btn-success shadow-sm"
                    th:href="@{/DustNovel/tap/them/{truyenId}(truyenId=${truyen.id})}"
                    th:if="${@permissionService.canAddChuong(truyen.id)}">
                     ➕ Thêm tập
                 </a>
 
-                <a class="btn btn-warning"
+                <a class="btn btn-warning shadow-sm"
                    th:href="@{/DustNovel/truyen/sua/{id}(id=${truyen.id})}"
                    th:if="${@permissionService.canEditTruyen(truyen.id)}">
                     ✏️ Sửa truyện
@@ -186,7 +202,7 @@
                       onsubmit="return confirm('Bạn có chắc muốn xoá truyện này không?')">
 
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <button type="submit" class="btn btn-danger w-100">
+                    <button type="submit" class="btn btn-danger w-100 shadow-sm">
                         ❌ Xoá truyện
                     </button>
                 </form>
@@ -218,31 +234,52 @@
 			
 			<div class="mb-3">
 				<p class="mb-1">
-    <b>Trạng thái:</b>
-    <span th:text="${truyen.trangThai.label}"></span>
-</p>
+                    <b>Trạng thái:</b>
+                    <span th:text="${truyen.trangThai.label}"></span>
+                </p>
 
-		<form th:if="${@permissionService.canEditTruyen(truyen.id)}"
-      th:action="@{/DustNovel/truyen/{id}/doi-trang-thai(id=${truyen.id})}"
-      method="post"
-      class="d-inline">
-
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-
-    <button class="btn btn-sm btn-outline-primary">	
-        🔄 Đổi trạng thái
-    </button>
-</form>
+                <form th:if="${@permissionService.canEditTruyen(truyen.id)}"
+                      th:action="@{/DustNovel/truyen/{id}/doi-trang-thai(id=${truyen.id})}"
+                      method="post"
+                      class="d-inline">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button class="btn btn-sm btn-outline-primary">	
+                        🔄 Đổi trạng thái
+                    </button>
+                </form>
 			</div>
 			
             <div class="mb-3">
-                <div class="mb-3">
-    <a class="badge bg-secondary me-1 text-decoration-none"
-       th:each="tl : ${truyen.theLoais}"
-       th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
-       th:text="${tl.tenTheLoai}">
-    </a>
-</div>
+                <a class="badge bg-secondary me-1 text-decoration-none"
+                   th:each="tl : ${truyen.theLoais}"
+                   th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
+                   th:text="${tl.tenTheLoai}">
+                </a>
+            </div>
+
+            <div class="stats-bar d-flex justify-content-around text-center py-3 mb-4 border-top border-bottom">
+                
+                <div class="stat-item flex-fill border-end">
+                    <div class="stat-title text-muted small mb-1">Lần cuối</div>
+                    <div class="stat-value fw-bold fs-5" 
+                         th:text="${ngayCapNhat != null ? #temporals.format(ngayCapNhat, 'dd/MM/yyyy') : 'Chưa có'}">
+                    </div>
+                </div>
+
+                <div class="stat-item flex-fill border-end">
+                    <div class="stat-title text-muted small mb-1">Số từ</div>
+                    <div class="stat-value fw-bold fs-5" 
+                         th:text="${tongSoTu != null ? #numbers.formatInteger(tongSoTu, 1, 'POINT') : '0'}">
+                    </div>
+                </div>
+
+                <div class="stat-item flex-fill">
+                    <div class="stat-title text-muted small mb-1">Lượt xem</div>
+                    <div class="stat-value fw-bold fs-5" 
+                         th:text="${luotXem != null ? #numbers.formatInteger(luotXem, 1, 'POINT') : '0'}">
+                    </div>
+                </div>
+
             </div>
 
             <div class="card bg-light mb-4">

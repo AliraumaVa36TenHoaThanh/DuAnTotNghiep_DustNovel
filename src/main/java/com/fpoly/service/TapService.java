@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.fpoly.model.Tap;
 import com.fpoly.model.Truyen;
+import com.fpoly.repository.ChuongRepository;
+import com.fpoly.repository.LichSuDocRepository;
 import com.fpoly.repository.TapRepository;
 
 @Service
@@ -14,7 +16,10 @@ public class TapService {
 
     @Autowired
     private TapRepository tapRepo;
-
+    @Autowired
+    private LichSuDocRepository lichSuDocRepo;
+    @Autowired
+    private ChuongRepository chuongRepo;
     @Autowired
     private TruyenService truyenService;
 
@@ -48,8 +53,10 @@ public class TapService {
         tap.setTenTap(tenTap);
         return tapRepo.save(tap);
     }
-
+    
     public void delete(Long tapId) {
+    	lichSuDocRepo.deleteByTapId(tapId);
+        chuongRepo.deleteByTapId(tapId);
         tapRepo.deleteById(tapId);
     }
 }
