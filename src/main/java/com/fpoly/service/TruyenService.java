@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.fpoly.model.Truyen;
 import com.fpoly.model.enums.LoaiTruyen;
+import com.fpoly.model.enums.TrangThaiTruyen;
 import com.fpoly.model.TheLoai;
 import com.fpoly.model.NguoiDung;
 import java.util.ArrayList;
@@ -32,7 +33,9 @@ public class TruyenService {
 		truyen.setTheLoais(dsTheLoai);
 		return truyenRepo.save(truyen);
 	}
-
+	public Truyen save2(Truyen truyen) {
+	    return truyenRepo.save(truyen);
+	}
 	public Truyen findById(Long id) {
 		return truyenRepo.findById(id).orElse(null);
 	}
@@ -109,7 +112,7 @@ public class TruyenService {
 
         truyen.setLoaiTruyen(LoaiTruyen.SÁNG_TÁC);
         truyen.setNguoiDang(user);
-        truyen.setTrangThai("ĐANG_RA"); 
+        truyen.setTrangThai(TrangThaiTruyen.DANG_TIEN_HANH);
         truyen.setTag18(false);
 
         truyenRepo.save(truyen);

@@ -1,75 +1,219 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="layout/main :: content">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout/main :: content">
 <div th:fragment="content">
-    <h4 class="text-center" th:text="${chuong.tieuDe}"></h4>
-    <p class="text-center text-muted">
-        Cập nhật:
-        <span th:text="${#temporals.format(chuong.ngayTao, 'dd/MM/yyyy HH:mm')}"></span>
+
+    <style>
+        /* Navigation layout */
+        .chapter-nav {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .nav-left { justify-self: start; }
+        .nav-center { justify-self: center; }
+        .nav-right { justify-self: end; }
+
+        /* Sidebar danh sách chương */
+        #chapter-list {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100vh;
+            background: #1a1a1a;
+            border-right: 1px solid #333;
+            z-index: 1050;
+            padding: 20px;
+            transition: 0.3s;
+            overflow-y: auto; /* Thêm cuộn cho sidebar */
+        }
+
+        .chapter-item {
+            display: block;
+            padding: 10px;
+            color: #bbb;
+            text-decoration: none;
+            font-size: 14px;
+            border-bottom: 1px solid #222;
+        }
+        .chapter-item:hover { background: #333; color: #fff; }
+        .active-chapter {
+            background: #2c3e50 !important;
+            color: #00d4ff !important;
+            border-left: 4px solid #00d4ff;
+            font-weight: bold;
+        }
+
+        /* Nút và Bảng cài đặt */
+        #reader-setting-btn {
+            position: fixed;
+            top: 100px; /* Hạ thấp để không đè Navbar */
+            right: 20px;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 1000;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 50%;
+        }
+
+        #reader-setting-panel {
+            position: fixed;
+            top: 160px;
+            right: 20px;
+            width: 220px;
+            background: #111;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .hidden { display: none !important; }
+    </style>
+
+    <h4 class="text-center fw-bold" th:text="${chuong.tieuDe}"></h4>
+    <p class="text-center text-muted small">
+        Cập nhật: <span th:text="${#temporals.format(chuong.ngayTao, 'dd/MM/yyyy HH:mm')}"></span>
     </p>
-    <hr>
-    <div class="fs-5 lh-lg" th:if="${canRead}" th:utext="${chuong.noiDung}"></div>
-    <hr>
 
-    <div class="d-flex justify-content-between">
-        <a th:if="${chuongTruoc != null}" th:href="@{/DustNovel/chuong/{id}(id=${chuongTruoc.id})}" class="btn btn-outline-secondary">⬅ Chương trước</a>
-        <span th:unless="${chuongTruoc != null}"></span>
+    <div id="reader-content" class="fs-5 lh-lg my-4" th:if="${canRead}" th:utext="${chuong.noiDung}"></div>
 
-        <a th:href="@{/DustNovel/truyen/{id}(id=${chuong.truyen.id})}" class="btn btn-outline-primary">🏠 Quay lại</a>
+    <div id="reader-setting-btn">⚙️</div>
 
-        <div th:if="${chuongSau != null}">
-            <a th:if="${@permissionService.canReadChuong(chuongSau, currentUser)}" 
-               th:href="@{/DustNovel/chuong/{id}(id=${chuongSau.id})}" 
-               class="btn btn-outline-secondary">Chương sau ➡</a>
-            
-            <button th:unless="${@permissionService.canReadChuong(chuongSau, currentUser)}" 
-                    class="btn btn-outline-danger" 
-                    data-bs-toggle="modal" 
-                    th:data-bs-target="'#muaChuongModal__' + ${chuongSau.id}">
-                Chương sau 🔒
-            </button>
+    <div id="reader-setting-panel" class="hidden">
+        <h6 class="border-bottom pb-2">⚙️ Cài đặt đọc</h6>
+        <label class="small text-muted">Font chữ</label>
+        <select id="fontSelect" class="form-select form-select-sm mb-2">
+            <option value="serif">Serif</option>
+            <option value="sans-serif">Sans-serif</option>
+            <option value="'Roboto', sans-serif">Roboto</option>
+             <option value="'Merriweather', serif">Merriweather (Sử thi)</option>
+    <option value="'EB Garamond', serif">EB Garamond (Sách cổ)</option>
+    <option value="'Cormorant Garamond', serif">Cormorant (Quý tộc cổ)</option>
+    <option value="'Spectral', serif">Spectral (Cổ phong)</option>
+    <option value="'Noto Serif', serif">Noto Serif (Đọc lâu)</option>
+        </select>
+
+        <label class="small text-muted">Cỡ chữ</label>
+        <input type="range" id="fontSize" class="form-range" min="14" max="50">
+
+        <button id="chapter-info-btn" class="btn btn-sm btn-outline-warning w-100 mt-3">ℹ️ Danh sách chương</button>
+    </div>
+
+    <div id="chapter-list" class="hidden">
+        <div class="p-2 border-bottom border-secondary mb-2">
+            <h6 class="text-warning mb-1" th:text="${chuong.truyen.tenTruyen}">Tên Truyện</h6>
+            <small class="text-muted">Danh sách chương</small>
         </div>
-        <span th:unless="${chuongSau != null}"></span>
+        <div class="list-group list-group-flush">
+            <a th:each="c : ${dsChuong}" 
+               th:href="@{/DustNovel/chuong/{id}(id=${c.id})}"
+               th:classappend="${c.id == chuong.id} ? 'active-chapter' : ''"
+               class="chapter-item">
+                <span th:text="'Chương ' + ${c.soChuong} + ': ' + ${c.tieuDe}"></span>
+                <i th:if="${!@permissionService.canReadChuong(c, currentUser)}" class="ms-1">🔒</i>
+            </a>
+        </div>
+    </div>
+
+    <div class="chapter-nav">
+        <div class="nav-left">
+            <a th:if="${chuongTruoc != null}" th:href="@{/DustNovel/chuong/{id}(id=${chuongTruoc.id})}" class="btn btn-outline-secondary">⬅ Trước</a>
+        </div>
+        <div class="nav-center">
+            <a th:href="@{/DustNovel/truyen/{id}(id=${chuong.truyen.id})}" class="btn btn-outline-primary">🏠 Truyện</a>
+        </div>
+        <div class="nav-right">
+            <div th:if="${chuongSau != null}">
+                <a th:if="${@permissionService.canReadChuong(chuongSau, currentUser)}" th:href="@{/DustNovel/chuong/{id}(id=${chuongSau.id})}" class="btn btn-outline-secondary">Sau ➡</a>
+                <button th:unless="${@permissionService.canReadChuong(chuongSau, currentUser)}" class="btn btn-outline-danger" data-bs-toggle="modal" th:data-bs-target="'#muaChuongModal__' + ${chuongSau.id}">Sau 🔒</button>
+            </div>
+        </div>
     </div>
 
     <div th:if="${chuongSau != null && !@permissionService.canReadChuong(chuongSau, currentUser)}">
         <div class="modal fade" th:id="'muaChuongModal__' + ${chuongSau.id}" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
+            <div class="modal-dialog modal-dialog-centered text-dark"> <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title fw-bold">Mua chương tiếp theo</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center">
-                        <p class="mb-1">Bạn đang mua: <b th:text="${chuongSau.tieuDe}"></b></p>
+                        <p>Bạn đang mua: <b th:text="${chuongSau.tieuDe}"></b></p>
                         <h4 class="text-danger fw-bold"><span th:text="${T(com.fpoly.config.GiaChuongKhoa).gia_chuong}"></span> Token</h4>
                         <hr>
                         <div th:if="${currentUser != null}" class="bg-light p-2 rounded">
-                            <span>Số dư của bạn: </span>	
-                            <b class="text-primary"><span th:text="${currentUser.token}"></span> Token</b>
-                        </div>
-                        <div th:unless="${currentUser != null}">
-                            <div class="alert alert-warning py-2 mb-0">
-                                ⚠️ Phải <a th:href="@{/DustNovel/login}" class="fw-bold">đăng nhập</a> mới mua được !
-                            </div>
+                            <span>Số dư: </span><b class="text-primary"><span th:text="${currentUser.token}"></span> Token</b>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a th:href="@{/DustNovel/truyen/{id}(id=${chuong.truyen.id})}" class="btn btn-secondary">Hủy & Về chi tiết</a>
-                        
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         <form th:if="${currentUser != null}" th:action="@{/DustNovel/chuong/{id}/mua(id=${chuongSau.id})}" method="post">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>	
-                            <button type="submit" class="btn btn-danger px-4" 
-                                    th:disabled="${currentUser.token < T(com.fpoly.config.GiaChuongKhoa).gia_chuong}">
-                                💰 Xác nhận mua & Đọc tiếp
-                            </button>
+                            <button type="submit" class="btn btn-danger px-4" th:disabled="${currentUser.token < T(com.fpoly.config.GiaChuongKhoa).gia_chuong}">Xác nhận mua</button>
                         </form>
-                        
-                        <a th:if="${currentUser == null}" th:href="@{/DustNovel/login}" class="btn btn-primary">Đăng nhập</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-</html>
+
+    <script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        const settingBtn   = document.getElementById("reader-setting-btn");
+        const settingPanel = document.getElementById("reader-setting-panel");
+        const fontSelect   = document.getElementById("fontSelect");
+        const fontSize     = document.getElementById("fontSize");
+        const chapterBtn   = document.getElementById("chapter-info-btn");
+        const chapterList  = document.getElementById("chapter-list");
+        const content      = document.getElementById("reader-content");
+
+        if (!content) return;
+
+        function applyStyle(property, value) {
+            content.style.setProperty(property, value, "important");
+        }
+
+        settingBtn.onclick = (e) => {
+            e.stopPropagation();
+            settingPanel.classList.toggle("hidden");
+            chapterList.classList.add("hidden");
+        };
+
+        fontSelect.onchange = (e) => {
+            applyStyle("font-family", e.target.value);
+            localStorage.setItem("dust-font", e.target.value);
+        };
+
+        fontSize.oninput = (e) => {
+            applyStyle("font-size", e.target.value + "px");
+            localStorage.setItem("dust-fontSize", e.target.value);
+        };
+
+        chapterBtn.onclick = (e) => {
+            e.stopPropagation();
+            chapterList.classList.toggle("hidden");
+            settingPanel.classList.add("hidden");
+            setTimeout(() => {
+                const active = document.querySelector(".active-chapter");
+                if (active) active.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 100);
+        };
+
+        document.addEventListener("click", (e) => {
+            if (!settingPanel.contains(e.target) && e.target !== settingBtn) settingPanel.classList.add("hidden");
+            if (!chapterList.contains(e.target) && e.target !== chapterBtn) chapterList.classList.add("hidden");
+        });
+
+        // Load settings
+        const savedFont = localStorage.getItem("dust-font");
+        if (savedFont) { fontSelect.value = savedFont; applyStyle("font-family", savedFont); }
+        const savedSize = localStorage.getItem("dust-fontSize");
+        if (savedSize) { fontSize.value = savedSize; applyStyle("font-size", savedSize + "px"); }
+    });
+    </script>
+</div> </html>

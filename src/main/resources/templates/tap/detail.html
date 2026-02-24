@@ -1,15 +1,36 @@
 <div th:fragment="tapDetail(tap, truyen, currentUser)">
-    <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-2">
-            <h6 class="mb-0 fw-bold" th:text="${tap.tenTap}"></h6>
-            <div th:if="${@permissionService.canAddChuongByTap(tap.id)}">
-                 <a class="btn btn-sm btn-outline-light fw-bold" 
-                    th:href="@{/DustNovel/chuong/them/{truyenId}/{tapId}(truyenId=${truyen.id}, tapId=${tap.id})}">
-                    <i class="bi bi-plus-lg"></i> Thêm chương
-                </a>
-            </div>
+   <div class="card mb-4 shadow-sm border-0">
+
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold" th:text="${tap.tenTap}"></h6>
+        <div class="d-flex align-items-center gap-2"
+             th:if="${@permissionService.canAddChuongByTap(tap.id)}">
+
+            <a class="btn btn-sm btn-outline-light fw-bold"
+               th:href="@{/DustNovel/chuong/them/{truyenId}/{tapId}
+               (truyenId=${truyen.id}, tapId=${tap.id})}">
+                <i class="bi bi-plus-lg"></i> Thêm chương
+            </a>
+
+            <a class="btn btn-sm btn-warning fw-bold"
+               th:href="@{/DustNovel/tap/sua/{id}(id=${tap.id})}">
+                ✏️ Sửa
+            </a>
+
+            <form th:action="@{/DustNovel/tap/xoa/{id}(id=${tap.id})}"
+                  method="post"
+                  class="m-0"
+                  onsubmit="return confirm('Xoá tập này?')">
+
+                <button type="submit" class="btn btn-sm btn-danger fw-bold">
+                    🗑️ Xoá
+                </button>
+            </form>
+
         </div>
-        
+    </div>
+
+</div>
         <ul class="list-group list-group-flush" th:id="'list-chuong-' + ${tap.id}">
             <th:block th:with="dsChuong=${@chuongService.findByTap(tap.id)}">
                 
@@ -20,8 +41,20 @@
                     <div class="d-flex align-items-center">
                         <div th:if="${@permissionService.canReadChuong(chap, currentUser)}">
                             <a th:href="@{/DustNovel/chuong/{id}(id=${chap.id})}"
-                               class="fw-bold text-dark text-decoration-none"
-                               th:text="${chap.tieuDe}"></a>
+   class="fw-bold text-dark text-decoration-none d-inline-flex align-items-center">
+
+   <span th:text="'Chương ' + ${chap.soChuong} + ': ' + ${chap.tieuDe}"></span>
+
+    <span th:if="${chap.newChuong}"
+      class="badge bg-danger ms-2"
+      style="font-size: 0.7rem;">
+    NEW!
+</span>
+
+</a>
+
+
+
                         </div>
                         <div th:unless="${@permissionService.canReadChuong(chap, currentUser)}">
                             <span class="text-muted" th:text="${chap.tieuDe}"></span>
@@ -30,15 +63,38 @@
                                 🔒 Mua (<span th:text="${chap.giaToken}"></span>)
                             </span>
                         </div>
+                        
                     </div>
+					
+                    <div th:if="${@permissionService.canEditChuong(chap.id)}"
+     class="ms-auto d-flex align-items-center gap-1">
 
-                    <div th:if="${@permissionService.canEditChuong(chap.id)}" class="ms-auto">
+    <!-- ✏️ SỬA -->
+    <a th:href="@{/DustNovel/chuong/sua/{id}(id=${chap.id})}"
+       class="btn btn-sm btn-warning"
+       title="Sửa chương">
+        ✏️
+    </a>
+
+    <!-- 🗑️ XOÁ -->
+    <form th:action="@{/DustNovel/chuong/xoa/{id}(id=${chap.id})}"
+          method="post"
+          class="m-0">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit"
+                class="btn btn-sm btn-danger"
+                title="Xoá chương"
+                onclick="return confirm('Xoá chương này?')">
+            🗑️
+        </button>
+    </form>
                         <form th:action="@{/DustNovel/chuong/{id}/toggle-khoa(id=${chap.id})}" method="post">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                             <button type="submit" th:class="${chap.khoa ? 'btn btn-sm btn-success' : 'btn btn-sm btn-outline-secondary'}">
                                 <span th:text="${chap.khoa ? '🔓 Mở khóa' : '🔒 Khóa'}"></span>
                             </button>
                         </form>
+                        
                     </div>
 
                     <div th:if="${chap.khoa}" th:replace="~{chuong/mua-modal :: muaModal(${chap}, ${currentUser})}"></div>
