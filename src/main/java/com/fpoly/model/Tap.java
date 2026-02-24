@@ -16,7 +16,7 @@ public class Tap {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
     @ManyToOne
     @JoinColumn(name = "truyen_id", nullable = false)
     private Truyen truyen;
@@ -34,6 +34,7 @@ public class Tap {
     public void prePersist() {
         this.ngayTao = LocalDateTime.now();
     }
-    
+    @OneToMany(mappedBy = "tap", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Chuong> danhSachChuong;
    
 }

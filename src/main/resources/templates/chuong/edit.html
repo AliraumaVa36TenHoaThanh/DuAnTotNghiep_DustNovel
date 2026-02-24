@@ -1,0 +1,57 @@
+<div th:fragment="content">
+
+    <h4>✏️ Sửa chương – <span th:text="${tap.tenTap}"></span></h4>
+
+    <form th:action="@{/DustNovel/chuong/sua}"
+          method="post"
+          th:object="${chuong}">
+
+        <input type="hidden" th:field="*{id}"/>
+        <input type="hidden" th:field="*{tap.id}"/>
+
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label class="form-label fw-bold">Số chương</label>
+                <input type="number"
+                       th:field="*{soChuong}"
+                       class="form-control"
+                       required>
+            </div>
+
+            <div class="col-md-9 mb-3">
+                <label class="form-label fw-bold">Tiêu đề chương</label>
+                <input type="text"
+                       th:field="*{tieuDe}"
+                       class="form-control"
+                       required>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Nội dung</label>
+            <textarea th:field="*{noiDung}"
+                      class="form-control"
+                      rows="12"></textarea>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit"
+                    class="btn btn-warning px-4">
+                💾 Cập nhật
+            </button>
+
+            <a th:href="@{/DustNovel/chuong/{id}(id=${chuong.id})}"
+               class="btn btn-secondary px-4">
+                Hủy
+            </a>
+
+            <form th:action="@{/DustNovel/chuong/xoa/{id}(id=${chuong.id})}"
+                  method="post"
+                  onsubmit="return confirm('Xoá chương này?')">
+                <button class="btn btn-danger px-4">
+                    🗑️ Xoá
+                </button>
+            </form>
+        </div>
+    </form>
+</div>

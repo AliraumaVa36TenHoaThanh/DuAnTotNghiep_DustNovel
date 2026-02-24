@@ -2,6 +2,7 @@ package com.fpoly.controller;
 
 import com.fpoly.model.Truyen;
 import com.fpoly.model.enums.LoaiTruyen;
+import com.fpoly.model.enums.TrangThaiTruyen;
 import com.fpoly.model.enums.StatusTheLoai;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.model.TheLoai;
@@ -97,7 +98,7 @@ public class TruyenController {
 	        Long UserId = cud.getId();          
 	        NguoiDung user = cud.getUser();     
 
-
+	        
 	        truyen.setNguoiDang(user);
 
 	        if (truyen.getAnhBia() == null || truyen.getAnhBia().isBlank()) {
@@ -136,31 +137,58 @@ public class TruyenController {
 	    }
 	    
 	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
-	    @GetMapping("/truyen/{tenTruyen}/sua/{id}")
-	    public String formSua(
-	            @PathVariable String tenTruyen,
-	            @PathVariable Long id,
-	            Model model) {
+	    @GetMapping("/truyen/sua/{id}")
+	    public String formSua(@PathVariable Long id, Model model) {
 
-	        model.addAttribute("truyen", truyenService.findById(id));
+	        Truyen truyen = truyenService.findById(id);
+	        if (truyen == null) {
+	            return "redirect:/DustNovel/home";
+	        }
+
+	        model.addAttribute("truyen", truyen);
+	        model.addAttribute("dsTheLoai", theLoaiRepo.findAll());
 	        model.addAttribute("content", "truyen/edit");
 	        model.addAttribute("title", "Sửa truyện");
+
 	        return "layout/main";
 	    }
 	    
+//	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
+//	    @PostMapping("/truyen/{tenTruyen}/sua/{id}")
+//	    public String sua(
+//	            @PathVariable String tenTruyen,
+//	            @PathVariable Long id,
+//	            @ModelAttribute Truyen truyen) {
+//
+//	        truyen.setId(id);
+//	        truyenService.suaTruyen(id, truyen);
+//
+//	        return "redirect:/DustNovel/truyen/" + tenTruyen + "/" + id;
+//	    }
 	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
-	    @PostMapping("/truyen/{tenTruyen}/sua/{id}")
+	    @PostMapping("/truyen/sua/{id}")
 	    public String sua(
-	            @PathVariable String tenTruyen,
 	            @PathVariable Long id,
-	            @ModelAttribute Truyen truyen) {
-
+	            @ModelAttribute Truyen truyen,
+	            @RequestParam(required = false) List<Long> theLoaiIds
+	    ) {
 	        truyen.setId(id);
-	        truyenService.suaTruyen(id, truyen);
 
-	        return "redirect:/DustNovel/truyen/" + tenTruyen + "/" + id;
+	        Truyen old = truyenService.findById(id);
+	        truyen.setNguoiDang(old.getNguoiDang());
+
+	        if (theLoaiIds != null) {
+	            truyenService.save(truyen, theLoaiIds);
+	        } else {
+	            truyenRepo.save(truyen);
+	        }
+
+	        return "redirect:/DustNovel/truyen/" + id;
 	    }
+	    
+	    
 	    @GetMapping("/truyen/tim-kiem-nang-cao")
+	    
 	    public String timKiemNangCao(
 	            @RequestParam(required = false) String tenTruyen,
 	            @RequestParam(required = false) String tenTacGia,
@@ -196,6 +224,19 @@ public class TruyenController {
 
 	        return "layout/main";
 	    }
+	    @PostMapping("/truyen/{id}/doi-trang-thai")
+	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
+	    public String doiTrangThai(@PathVariable Long id) {
+	        Truyen truyen = truyenService.findById(id);
+
+	        if (truyen.getTrangThai() == TrangThaiTruyen.ĐANG_RA) {
+	            truyen.setTrangThai(TrangThaiTruyen.HOÀN_THÀNH);
+	        } else {
+	            truyen.setTrangThai(TrangThaiTruyen.ĐANG_RA);
+	        }
+
+	        truyenService.save2(truyen);
+	        return "redirect:/DustNovel/truyen/" + id;
 	    
 	    @GetMapping("/the-loai/{id}")
 	    public String xemTheoTheLoai(@PathVariable Long id, Model model) {
