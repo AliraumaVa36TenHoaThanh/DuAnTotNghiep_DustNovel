@@ -6,4 +6,4 @@ import java.util.List;
 
 public interface BinhLuanRepository extends JpaRepository<BinhLuan, Long> {
     List<BinhLuan> findByTruyenIdOrderByNgayBinhLuanDesc(Long truyenId);
-}
+} 

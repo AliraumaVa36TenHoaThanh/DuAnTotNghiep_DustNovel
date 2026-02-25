@@ -3,13 +3,23 @@ package com.fpoly.controller.admin;
 
 import com.fpoly.AdminService.AdminUserService;
 import com.fpoly.model.NguoiDung;
+import com.fpoly.model.Truyen;
 import com.fpoly.repository.NguoiDungRepository;
+import com.fpoly.repository.TruyenRepository;
+import com.fpoly.security.CustomUserDetails;
+
 import java.util.List;
+
 import java.util.ArrayList;
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 
 import com.fpoly.service.TheLoaiService;
 import com.fpoly.service.TruyenService;
@@ -30,9 +40,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+
+
 @Controller
 @RequestMapping("/dba")
 public class QuanLyNguoiDungController {
+
 	@Autowired
 	TruyenRepository truyenRepo;
 	@Autowired
@@ -167,104 +180,84 @@ public class QuanLyNguoiDungController {
 	    theLoai.setStatusTheLoai(StatusTheLoai.ON);
         theLoaiRepository.save(theLoai);
         return "redirect:/dba/truyen-the-loai";
+
+
+    @Autowired
+    private AdminUserService adminUserService;
+
+    @Autowired
+    private NguoiDungRepository repo;
+
+    @Autowired
+    private TruyenRepository truyenRepo;
+
+    // =============================
+    // LIST USER
+    // =============================
+    @GetMapping("/user")
+    public String list(Model model) {
+
+        model.addAttribute("users", adminUserService.getAllUsers());
+        model.addAttribute("content", "/view/admin/user/index");
+        model.addAttribute("title", "Quản Lý Người Dùng");
+
+        return "/layout/admin_base";
     }
-	
-	@GetMapping("/truyen-the-loai/check-ten")
-	@ResponseBody
-	public boolean checkTen(@RequestParam String ten) {
-	    return theLoaiRepository.existsByTenTheLoai(ten);
-	}
-	
-	
-	@GetMapping("/truyen-the-loai/chi-tiet/{id}")
-	public String xemTruyenTheoTheLoai(
-	        @PathVariable("id") Long idTheLoai,Model model) {
-	    List<Truyen> listTruyen = truyenRepository.findTruyenByTheLoaiId(idTheLoai);
-	    TheLoai theLoai =  theLoaiRepository.findById(idTheLoai).orElse(null);
-	    model.addAttribute("listTruyenXem", listTruyen);
-	    model.addAttribute("theLoai", theLoai);
-	    model.addAttribute("content", "view/admin/truyen/ListXemTheLoai");
-	    return "layout/admin_base";
-	}
-	
-    
-	@GetMapping("/truyen-the-loai/sua/{id}")
-	public String formSuaTheLoai(@PathVariable Long id, Model model) {
-	    TheLoai theLoai = theLoaiRepository.findById(id).orElse(null);
-	    model.addAttribute("theLoai", theLoai);
-	    model.addAttribute("content", "view/admin/truyen/SuaTheLoai");
-	    return "layout/admin_base";
-	}	
-	@PostMapping("/truyen-the-loai/sua")
-	public String xuLySuaTheLoai(@ModelAttribute TheLoai theLoai, Model model, RedirectAttributes redirectAttributes) {
-		
-		if (theLoai.getTenTheLoai() == null || theLoai.getTenTheLoai().trim().isEmpty()) {
-	        model.addAttribute("errorTenTheLoai", "Tên thể loại không được để trống");
-	        model.addAttribute("content", "view/admin/truyen/SuaTheLoai");
-	        return "layout/admin_base";
-	    }
-		
-		if (theLoaiRepository.existsByTenTheLoaiAndIdNot(
-	            theLoai.getTenTheLoai(),
-	            theLoai.getId())) {
-	        model.addAttribute("errorTenTheLoai", "Tên thể loại đã tồn tại");
-	        model.addAttribute("content", "view/admin/truyen/SuaTheLoai");
-	        return "layout/admin_base";
-	    }
-		theLoai.setStatusTheLoai(StatusTheLoai.ON);
-	    theLoaiRepository.save(theLoai);
-	    return "redirect:/dba/truyen-the-loai";
-	}
-	
 
-    
-	@GetMapping("/truyen-the-loai/delete/{id}")
-	public String xoaTam(@PathVariable Long id,
-	                     RedirectAttributes redirectAttributes) {
+    // =============================
+    // FORM EDIT USER
+    // =============================
+    @GetMapping("/user/editUser/{id}")
+    public String editUser(@PathVariable Long id, Model model){
 
-	    TheLoai tl = theLoaiRepository.findById(id).orElse(null);
-	    if (tl != null) {
-	        tl.setStatusTheLoai(StatusTheLoai.OFF);
-	        theLoaiRepository.save(tl);
-	    }
-	    return "redirect:/dba/truyen-the-loai";
-	}
-	
-		
-	
-	@GetMapping("/truyen-the-loai/da-tam-dung")
-	public String danhSachTamDung(Model model) {
+        model.addAttribute("user",
+                repo.findById(id).orElseThrow());
 
-	    List<TheLoai> listTamDung =
-	            theLoaiRepository.findByStatusTheLoai(StatusTheLoai.OFF);
+        model.addAttribute("content",
+                "/view/admin/user/editUser");
+        model.addAttribute("title", "Chỉnh Sửa Người Dùng");
 
-	    model.addAttribute("listTheLoaiDaDung", listTamDung);
-	    model.addAttribute("content", "view/admin/truyen/ListTheLoaiDaTamDung");
+        return "/layout/admin_base";
+    }
 
-	    return "layout/admin_base";
-	}
+    // =============================
+    // UPDATE USER
+    // =============================
+    @PostMapping("/user/update")
+    public String updateUser(@ModelAttribute NguoiDung user) {
 
+        adminUserService.saveUser(user);
 
-	@GetMapping("/truyen-the-loai/khoi-phuc/{id}")
-	public String khoiPhuc(@PathVariable Long id,
-	                       RedirectAttributes redirectAttributes) {
+        return "redirect:/dba/user";
+    }
 
-	    TheLoai tl = theLoaiRepository.findById(id).orElse(null);
+    // =============================
+    // DELETE USER
+    // =============================
+    @GetMapping("/user/delete/{id}")
+    public String deleteUser(@PathVariable Long id) {
 
-	    if (tl != null) {
-	        tl.setStatusTheLoai(StatusTheLoai.ON);
-	        theLoaiRepository.save(tl);
-	    }
+        adminUserService.deleteUser(id);
 
-	    return "redirect:/dba/truyen-the-loai/da-tam-dung";
-	}
-	
-	
-	@GetMapping("/truyen-the-loai/xoa-han/{id}")
-	public String xoaHan(@PathVariable Long id) {
-	    theLoaiRepository.deleteById(id);
-	    return "redirect:/dba/truyen-the-loai/da-tam-dung";
-	}
+        return "redirect:/dba/user";
+    }
 
-	
+    // =============================
+    // QUẢN LÝ TRUYỆN
+    // =============================
+    @GetMapping("/user/truyen")
+    public String truyenAdmin(Model model, Authentication authentication) {
+
+        CustomUserDetails userDetails =
+                (CustomUserDetails) authentication.getPrincipal();
+
+        List<Truyen> listTruyen = truyenRepo.findAll();
+
+        model.addAttribute("listTruyenUser", listTruyen);
+        model.addAttribute("content", "/view/admin/truyen/quanLyTruyen");
+        model.addAttribute("title", "Quản Lý Truyện");
+
+        return "/layout/admin_base";
+
+    }
 }

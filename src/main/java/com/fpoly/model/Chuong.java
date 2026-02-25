@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "chuong")
@@ -49,7 +50,12 @@ public class Chuong {
     @Column(name = "gia_token")
     private Long giaToken = 0L;
     
-   
-
+    @Transient
+    public boolean isNewChuong() {
+        return ngayTao != null &&
+               ngayTao.isAfter(LocalDateTime.now().minusHours(24));
+    }
+    @OneToMany(mappedBy = "chuong", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MoKhoaChuong> danhSachMoKhoa;
     
 }

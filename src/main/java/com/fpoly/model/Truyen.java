@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import lombok.Getter;
 import lombok.Setter;
 import com.fpoly.model.enums.LoaiTruyen;
+import com.fpoly.model.enums.TrangThaiTruyen;
+
 import java.time.LocalDateTime;
 import java.util.List;
 @Entity
@@ -27,10 +29,11 @@ public class Truyen {
     
     @Enumerated(EnumType.STRING)
     @Column(name = "loai_truyen")
-    private LoaiTruyen loaiTruyen; // SÁNG_TÁC / DỊCH
+    private LoaiTruyen loaiTruyen; 
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "trang_thai")
-    private String trangThai; // ĐANG_RA / HOÀN_THÀNH
+    private TrangThaiTruyen trangThai;
 
     @Column(name = "tag_18")
     private Boolean tag18;
@@ -48,6 +51,9 @@ public class Truyen {
     protected void onCreate() {
         this.ngayTao = LocalDateTime.now();
     }
+    @Column(name = "luot_xem", insertable = false)
+    private Long luotXem;
+    
     @ManyToMany
     @JoinTable(
         name = "truyen_the_loai",
@@ -56,5 +62,6 @@ public class Truyen {
     )
     private List<TheLoai> theLoais = new ArrayList<>();
     
-    
+    @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tap> danhSachTap;
 }

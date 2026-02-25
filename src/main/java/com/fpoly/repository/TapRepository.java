@@ -1,6 +1,7 @@
 package com.fpoly.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,5 +22,8 @@ public interface TapRepository extends JpaRepository<Tap, Long> {
 	    @Transactional
 	    @Query("DELETE FROM Tap t WHERE t.truyen.id = :truyenId")
 	    void deleteByTruyenId(@Param("truyenId") Long truyenId);
+	    
+	    Optional<Tap> findFirstByTruyenIdAndSoTapGreaterThanOrderBySoTapAsc(Long truyenId, Integer soTap);
+	    Optional<Tap> findFirstByTruyenIdAndSoTapLessThanOrderBySoTapDesc(Long truyenId, Integer soTap);
 
 }

@@ -92,8 +92,6 @@ public class TapController {
         tapService.add(truyenId, tenTap);
         return "redirect:/DustNovel/truyen/" + truyenId;
     }
-
-    /* ========== SỬA TẬP ========== */
     @PreAuthorize("@permissionService.canManageTap(#tapId)")
     @GetMapping("/sua/{tapId}")
     public String showEdit(@PathVariable Long tapId, Model model) {
@@ -110,14 +108,12 @@ public class TapController {
 
     @PreAuthorize("@permissionService.canManageTap(#tapId)")
     @PostMapping("/sua")
-    public String edit(@RequestParam Long tapId,
-                       @RequestParam String tenTap) {
+    public String edit(@RequestParam Long tapId,@RequestParam String tenTap) {
 
         Tap tap = tapService.update(tapId, tenTap);
         return "redirect:/DustNovel/truyen/" + tap.getTruyen().getId();
     }
 
-    /* ========== XOÁ TẬP ========== */
     @PreAuthorize("@permissionService.canManageTap(#tapId)")
     @PostMapping("/xoa/{tapId}")
     public String delete(@PathVariable Long tapId) {

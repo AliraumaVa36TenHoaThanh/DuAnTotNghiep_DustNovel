@@ -1,12 +1,16 @@
 package com.fpoly.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.fpoly.model.Chuong;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.model.Tap;
 import com.fpoly.model.Truyen;
+import com.fpoly.model.enums.TrangThaiTruyen;
 import com.fpoly.model.enums.VaiTro;
 import com.fpoly.repository.ChuongRepository;
 import com.fpoly.repository.MoKhoaChuongRepository;
@@ -32,7 +36,9 @@ public class PermissionService {
     @Autowired
     private TapRepository tapRepo;
 
-  
+    @Autowired
+    private TruyenService truyenService;
+    
     private NguoiDung currentUser() {
         return securityUtil.getCurrentUserFromDB();
     }
@@ -149,5 +155,20 @@ public class PermissionService {
         return tap.getTruyen().getNguoiDang().getId()
                 .equals(user.getId());
     }
+    
+    @PostMapping("/truyen/{id}/doi-trang-thai")
+    @PreAuthorize("@permissionService.canEditTruyen(#id)")
+    public String doiTrangThai(@PathVariable Long id) {
+        Truyen truyen = truyenService.findById(id);
 
+        if (truyen.getTrangThai() == TrangThaiTruyen.ĐANG_RA) {
+            truyen.setTrangThai(TrangThaiTruyen.HOÀN_THÀNH);
+        } else {
+            truyen.setTrangThai(TrangThaiTruyen.ĐANG_RA);
+        }
+
+        truyenService.save2(truyen);
+        return "redirect:/DustNovel/truyen/" + id;
+    }
+   
 }
