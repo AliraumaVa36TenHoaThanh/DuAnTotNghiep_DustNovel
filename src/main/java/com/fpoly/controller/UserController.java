@@ -45,8 +45,9 @@ public class UserController {
 
 	// ================= PROFILE PAGE =================
 	@GetMapping("/profile")
-	public String profile() {
-		return "user/profile";
+	public String profile(Model model) {
+		model.addAttribute("content", "user/profile");
+		return "layout/main";
 	}
 
 	// ================= Cập nhật PROFILE =================

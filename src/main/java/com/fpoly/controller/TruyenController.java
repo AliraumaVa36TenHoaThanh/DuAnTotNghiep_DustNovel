@@ -24,6 +24,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.File;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/DustNovel")
@@ -88,8 +91,11 @@ public class TruyenController {
 	    @PostMapping("/themtruyen")
 	    public String addTruyen(
 	            @ModelAttribute Truyen truyen,
-	            @RequestParam List<Long> theLoaiIds
-	    ) {
+	            @RequestParam (value = "theLoaiIds", required = false) List<Long> theLoaiIds,
+	            @RequestParam(value = "file", required = false) MultipartFile file,
+	            Model model
+	    )  throws IOException {
+	    	    	
 	        CustomUserDetails cud =
 	        	    (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -98,9 +104,38 @@ public class TruyenController {
 
 
 	        truyen.setNguoiDang(user);
+	     // =========================
+	        //  THÊM PHẦN UPLOAD ẢNH
+	        // =========================
+	        if (file != null && !file.isEmpty()) {
+
+	            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+	            String uploadDir = System.getProperty("user.dir")
+	                    + "/src/main/resources/static/uploads/truyen/";
+
+	            File dir = new File(uploadDir);
+	            if (!dir.exists()) dir.mkdirs();
+
+	            file.transferTo(new File(uploadDir + fileName));
+
+	            truyen.setAnhBia("/uploads/truyen/" + fileName);
+	        }
 
 	        if (truyen.getAnhBia() == null || truyen.getAnhBia().isBlank()) {
 	            truyen.setAnhBia("/images/aria.jpg");
+	        }
+	        
+	    //  Nếu chưa chọn thể loại
+	    	if (theLoaiIds == null || theLoaiIds.isEmpty()) {
+
+	            model.addAttribute("error", "Vui lòng chọn ít nhất một thể loại!");
+	            model.addAttribute("dsTheLoai", theLoaiRepo.findByStatusTheLoai(StatusTheLoai.ON));
+	            model.addAttribute("truyen", truyen);
+	            model.addAttribute("content", "truyen/add");
+	            model.addAttribute("title", "Thêm truyện");
+
+	            return "layout/main"; // không redirect để giữ dữ liệu
 	        }
 
 	        truyenService.save(truyen, theLoaiIds);
@@ -196,28 +231,5 @@ public class TruyenController {
 	        return "layout/main";
 	    }
 	    
-	    @GetMapping("/the-loai/{id}")
-	    public String xemTheoTheLoai(@PathVariable Long id, Model model) {
-
-	        TheLoai theLoai = theLoaiRepo.findById(id).orElse(null);
-
-	        if (theLoai == null) {
-	            return "redirect:/DustNovel/home";
-	        }
-
-	        // Nếu OFF → log và chặn
-	        if (theLoai.getStatusTheLoai() == StatusTheLoai.OFF) {
-	            System.out.println("⚠ Thể loại này đang OFF: " + theLoai.getTenTheLoai());
-	            return "redirect:/DustNovel/home";
-	        }
-
-	        List<Truyen> dsTruyen = truyenRepo.findByTheLoai(id);																
-
-	        model.addAttribute("theLoai", theLoai);
-	        model.addAttribute("truyens", dsTruyen);
-	        model.addAttribute("content", "truyen/the-loai");
-	        model.addAttribute("error", "Thể loại này hiện đang tạm khóa");
-
-	        return "layout/main";
-	    }
+	   
 }

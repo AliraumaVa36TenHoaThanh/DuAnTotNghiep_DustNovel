@@ -5,18 +5,30 @@ import com.fpoly.AdminService.AdminUserService;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.repository.NguoiDungRepository;
 import java.util.List;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import com.fpoly.service.TheLoaiService;
+import com.fpoly.service.TruyenService;
 import com.fpoly.service.admin.TruyenAdminService;
 import com.fpoly.model.TheLoai;
 import com.fpoly.model.Truyen;
 import com.fpoly.repository.TheLoaiRepository;
 import com.fpoly.repository.TruyenRepository;
+import com.fpoly.security.CustomUserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.fpoly.model.enums.StatusTheLoai;
+import java.io.File;
+import java.io.IOException;
 
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Controller
 @RequestMapping("/dba")
@@ -29,6 +41,11 @@ public class QuanLyNguoiDungController {
 	TheLoaiRepository theLoaiRepository;
 	@Autowired
 	TruyenRepository truyenRepository;
+	@Autowired
+	TruyenService truyenService;
+	@Autowired
+	TheLoaiRepository theLoaiRepo;
+
 
 	@GetMapping("/user")
 	public String list(Model model) {
@@ -49,6 +66,70 @@ public class QuanLyNguoiDungController {
 		truyenAdminSer.xoaTruyen(id);
 		return "redirect:/dba/user/truyen";
 	}
+	
+	@GetMapping("/user/truyen/them")
+	public String formThemTruyenAdmin(Model model) {
+
+	    model.addAttribute("truyen", new Truyen()); 
+	    model.addAttribute("dsTheLoai", theLoaiRepo.findByStatusTheLoai(StatusTheLoai.ON));	
+	    model.addAttribute("content", "view/admin/truyen/ThemTruyenAdmin");
+
+	    return "layout/admin_base";
+	}
+	
+	@PostMapping("/user/truyen/them")
+	public String themTruyen(
+	        @ModelAttribute Truyen truyen,
+	        @RequestParam(value = "theLoaiIds", required = false) List<Long> theLoaiIds,
+	        @RequestParam(value = "file", required = false) MultipartFile file, Model model
+	) throws IOException {
+
+	    CustomUserDetails cud =
+	            (CustomUserDetails) SecurityContextHolder
+	                    .getContext()
+	                    .getAuthentication()
+	                    .getPrincipal();
+
+	    NguoiDung user = cud.getUser();
+	    truyen.setNguoiDang(user);
+
+	    //  THÊM PHẦN UPLOAD 
+	    if (file != null && !file.isEmpty()) {
+
+	        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+	        String uploadDir = System.getProperty("user.dir")
+	                + "/src/main/resources/static/uploads/truyen/";
+
+	        File dir = new File(uploadDir);
+	        if (!dir.exists()) dir.mkdirs();
+
+	        file.transferTo(new File(uploadDir + fileName));
+
+	        truyen.setAnhBia("/uploads/truyen/" + fileName);
+	    }
+
+	    // Nếu không upload file và không nhập link
+	    if (truyen.getAnhBia() == null || truyen.getAnhBia().isBlank()) {
+	        truyen.setAnhBia("/images/aria.jpg");
+	    }
+
+	    if (theLoaiIds == null || theLoaiIds.isEmpty()) {
+
+	        model.addAttribute("error", "Vui lòng chọn ít nhất một thể loại!");
+	        model.addAttribute("dsTheLoai", theLoaiRepo.findByStatusTheLoai(StatusTheLoai.ON));
+	        model.addAttribute("truyen", truyen);
+	        model.addAttribute("content", "view/admin/truyen/ThemTruyenAdmin");
+
+	        return "layout/admin_base";
+	    }
+
+	    truyenService.save(truyen, theLoaiIds);
+
+	    return "redirect:/DustNovel/home";
+	}
+	
+	
 	
 	@GetMapping("/truyen-the-loai")
 	public String danhSachTheLoai(Model model) {
