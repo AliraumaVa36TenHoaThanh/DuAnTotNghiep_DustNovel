@@ -1,462 +1,41 @@
-<!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="content">
+<div class="wrapper">
 
-<link href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css"
-	rel="stylesheet">
+<!-- ================= BOOTSTRAP ================= -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ================= CROPPER ================= -->
+<link href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet">
 <script src="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.js"></script>
 
 <meta name="_csrf" th:content="${_csrf.token}">
 <meta name="_csrf_header" th:content="${_csrf.headerName}">
-
-
-<head>
 <meta charset="UTF-8">
 <title>Hồ sơ cá nhân</title>
 
-<style>
-*, *::before, *::after {
-	box-sizing: border-box;
-}
-
-body {
-	margin: 0;
-	min-height: 100vh;
-	font-family: "Segoe UI", Arial, sans-serif;
-	background: url("/images/bglogin.jpg");
-	background-size: cover;
-}
-
-.header {
-	height: 315px;
-	background: #cfcfcf;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 40px;
-	letter-spacing: 6px;
-	color: rgba(0, 0, 0, 0.15);
-	font-weight: 700;
-	background-size: cover;
-	background-position: top;
-	background-repeat: no-repeat;
-}
-
-.banner-tool {
-	position: absolute;
-	top: 0;
-	left: 50%;
-	transform: translateX(-50%);
-	background: rgba(0, 0, 0, 0.15);
-	border-radius: 0 0 40px 40px;
-	padding: 14px 46px;
-	display: flex;
-	align-items: center;
-	gap: 16px;
-	opacity: 0;
-	transition: 0.25s ease;
-	z-index: 10;
-}
-
-.banner-icon {
-	font-size: 26px;
-	color: white;
-	cursor: pointer;
-	user-select: none;
-}
-
-.banner-icon.delete {
-	background: none;
-	border: none;
-	padding: 0;
-	transform: translateY(-7px);
-	font-size: 20px;
-}
-
-.header:hover .banner-tool {
-	opacity: 1;
-}
-
-.container {
-	max-width: 1150px;
-	margin: -60px auto 50px;
-	display: flex;
-	gap: 30px;
-}
-
-.profile-left {
-	width: 320px;
-	background: white;
-	border-radius: 16px;
-	padding: 25px;
-	text-align: center;
-	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-}
-
-.profile-right {
-	flex: 1;
-	background: white;
-	border-radius: 16px;
-	padding: 40px;
-	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-}
-
-label {
-	display: block;
-	font-weight: 600;
-	margin-top: 18px;
-	color: black;
-}
-
-.avatar-box {
-	position: relative;
-	width: 120px;
-	height: 120px;
-	margin: -80px auto 10px;
-	border-radius: 50%;
-	overflow: hidden;
-}
-
-.avatar-box label {
-	position: absolute;
-	top: 0;
-	left: -5px;
-	margin: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 34px;
-	height: 34px;
-	background: transparent;
-	border: none;
-	box-shadow: none;
-	font-size: 34px;
-	cursor: pointer;
-	color: white;
-	z-index: 4;
-}
-
-.avatar-fallback {
-	position: absolute;
-	inset: 0;
-	background: #d9d9d9;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 48px;
-	font-weight: bold;
-	color: #555;
-	z-index: 1;
-}
-
-.avatar-img {
-	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	z-index: 2;
-}
-
-.avatar-tool {
-	position: absolute;
-	bottom: 0;
-	left: 50%;
-	transform: translateX(-50%);
-	background: rgba(0, 0, 0, 0.15);
-	border-radius: 40px 40px 0 0;
-	padding: 12px 18px;
-	display: flex;
-	align-items: center;
-	gap: 14px;
-	opacity: 0;
-	transition: 0.25s ease;
-	z-index: 3;
-}
-
-.avatar-icon {
-	font-size: 20px;
-	color: white;
-	cursor: pointer;
-	user-select: none;
-	transition: transform 0.2s ease;
-}
-
-.avatar-icon.delete {
-	background: none;
-	border: none;
-	padding: 0;
-	font-size: 15px;
-	color: white;
-	transform: translateY(-3px);
-}
-
-.avatar-box:hover .avatar-tool {
-	opacity: 1;
-}
-
-.status {
-	color: #28a745;
-	font-weight: bold;
-	margin: 10px 0 20px;
-}
-
-.stats {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 10px;
-	margin-bottom: 20px;
-}
-
-.stats div {
-	background: #f1f3f5;
-	border-radius: 10px;
-	padding: 10px 0;
-	font-size: 14px;
-}
-
-.stats strong {
-	display: block;
-	font-size: 18px;
-}
-
-.profile-left button {
-	width: 100%;
-	padding: 11px;
-	border-radius: 10px;
-	border: none;
-	font-weight: 600;
-	cursor: pointer;
-	margin-top: 10px;
-}
-
-.btn-danger {
-	background: #e9ecef;
-	color: black;
-}
-
-.btn-danger:hover {
-	background: black;
-	color: white;
-}
-
-.btn-logout {
-	background: #e9ecef;
-	color: black;
-	border: 1px solid white;
-}
-
-.btn-logout:hover {
-	background: black;
-	color: white;
-}
-
-input {
-	width: 100%;
-	padding: 13px;
-	margin-top: 6px;
-	border-radius: 10px;
-	border: 1px solid #ccc;
-	font-size: 15px;
-	background: #f2f2f2;
-	margin-bottom: 10px;
-}
-
-input:disabled {
-	cursor: not-allowed;
-}
-
-input.editable {
-	background: white;
-}
-
-.error {
-	color: #dc3545;
-	font-size: 14px;
-	margin-top: 4px;
-}
-
-.success {
-	background: #e6fffa;
-	color: #0f5132;
-	padding: 14px;
-	border-radius: 10px;
-	margin-bottom: 20px;
-}
-
-.btn-edit {
-	background: #198754;
-	color: white;
-	padding: 12px 26px;
-	border-radius: 10px;
-	border: none;
-	cursor: pointer;
-	font-weight: 600;
-	margin: 15px 0 25px;
-}
-
-.btn-edit:hover {
-	background: black;
-	color: white;
-}
-
-#btnUpdate {
-	background: #198754;
-	color: white;
-	padding: 12px 26px;
-	border-radius: 10px;
-	border: none;
-	font-weight: 600;
-	cursor: pointer;
-	display: none;
-}
-
-#btnUpdate:hover {
-	background: black;
-	color: white;
-}
-
-.form-actions {
-	margin-top: 30px;
-	display: flex;
-	align-items: center;
-	gap: 25px;
-}
-
-a {
-	text-decoration: none;
-	font-weight: 600;
-	color: #198754;
-}
-
-a:hover {
-	color: red;
-}
-
-.password-wrapper {
-	position: relative;
-	width: 100%;
-}
-
-.password-wrapper input {
-	width: 100%;
-	padding: 13px 44px 13px 13px;
-	box-sizing: border-box;
-}
-
-.toggle-password {
-	position: absolute;
-	right: 14px;
-	top: 50%;
-	transform: translateY(-50%);
-	cursor: pointer;
-	font-size: 18px;
-	color: #666;
-	user-select: none;
-}
-
-.toggle-password:hover {
-	color: #000;
-}
-
-.avatar-modal {
-	position: fixed;
-	inset: 0;
-	background: rgba(0, 0, 0, 0.65);
-	display: none;
-	align-items: center;
-	justify-content: center;
-	z-index: 9999;
-}
-
-.avatar-modal-box {
-	background: #fff;
-	padding: 16px;
-	border-radius: 14px;
-	width: 420px;
-}
-
-#previewAvatar {
-	width: 100%;
-	height: 300px;
-	object-fit: cover;
-	display: block;
-	border-radius: 8px;
-}
-
-#previewBanner {
-	width: 100%;
-	height: 300px;
-	object-fit: cover;
-	display: block;
-	border-radius: 8px;
-}
-
-.cropper-container {
-	max-width: 100% !important;
-}
-
-.avatar-modal-actions {
-	margin-top: 14px;
-	display: flex;
-	gap: 12px;
-}
-
-.avatar-modal-actions button {
-	flex: 1;
-	padding: 12px;
-	border-radius: 10px;
-	font-weight: 600;
-	border: none;
-	cursor: pointer;
-}
-
-.avatar-modal-actions button:first-child {
-	background: #dc3545;
-	color: white;
-}
-
-.avatar-modal-actions button:first-child:hover {
-	background: black;
-}
-
-.avatar-modal-actions button:last-child {
-	background: #198754;
-	color: white;
-}
-
-.reward-link {
-    margin-left: 30px; 
-    font-size: 17px;
-}
-
-
-</style>
 
 
 <script>
 
 function enableEdit() {
-	document.querySelectorAll(".editable").forEach(i => i.disabled = false);
-	document.getElementById("btnUpdate").style.display = "inline-block";
+    document.querySelectorAll(".editable").forEach(i => i.disabled = false);
+    document.getElementById("btnUpdate").classList.remove("d-none");
 }
 
 window.onload = function () {
-	if (document.querySelector(".error")) {
-		enableEdit();
-	}
+    if (document.querySelector(".error")) {
+        enableEdit();
+    }
 }
 
 function confirmLogout() {
-	return confirm("Bạn có chắc chắn muốn đăng xuất không?");
+    return confirm("Bạn có chắc chắn muốn đăng xuất không?");
 }
-
-
 
 function confirmDeleteAvatar() {
-	return confirm("Bạn có chắc chắn muốn xóa ảnh đại diện không?");
+    return confirm("Bạn có chắc chắn muốn xóa ảnh đại diện không?");
 }
-
-
 
 let cropper = null;
 let selectedFile = null;
@@ -465,54 +44,27 @@ function openAvatarEditor(input) {
     if (!input.files || !input.files[0]) return;
 
     selectedFile = input.files[0];
-
-    const modal = document.getElementById("avatarModal");
     const img = document.getElementById("previewAvatar");
-
     img.src = URL.createObjectURL(selectedFile);
-    modal.style.display = "flex";
 
-    if (cropper) {
-        cropper.destroy();
-        cropper = null;
-    }
+    const modal = new bootstrap.Modal(document.getElementById('avatarModal'));
+    modal.show();
+
+    if (cropper) cropper.destroy();
 
     img.onload = () => {
         cropper = new Cropper(img, {
-            aspectRatio: 1,        
-            viewMode: 1,
-            dragMode: "none",     
-            cropBoxMovable: true,   
-            cropBoxResizable: true, 
-            autoCropArea: 0.6,
-            background: false,
-            guides: true,
-            center: true,
-            responsive: true
+            aspectRatio: 1,
+            viewMode: 1
         });
     };
-}
-
-function closeAvatarModal() {
-    const modal = document.getElementById("avatarModal");
-    modal.style.display = "none";
-
-    if (cropper) {
-        cropper.destroy();
-        cropper = null;
-    }
-
-    selectedFile = null;
 }
 
 function submitAvatar() {
     if (!cropper) return;
 
-    cropper.getCroppedCanvas({
-        width: 400,
-        height: 400,
-        imageSmoothingQuality: "high"
-    }).toBlob(blob => {
+    cropper.getCroppedCanvas({ width: 400, height: 400 })
+    .toBlob(blob => {
         const formData = new FormData();
         formData.append("file", blob, "avatar.png");
 
@@ -520,73 +72,47 @@ function submitAvatar() {
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
 
         const headers = {};
-        if (csrfToken && csrfHeader) {
-            headers[csrfHeader] = csrfToken;
-        }
+        if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
 
         fetch("/DustNovel/user/avatar", {
             method: "POST",
             body: formData,
             headers: headers,
-            credentials: "same-origin"  
+            credentials: "same-origin"
         })
         .then(res => {
-            if (!res.ok) throw new Error("Upload failed");
+            if (!res.ok) throw new Error();
             location.reload();
         })
-        .catch(err => {
-            console.error(err);
-            alert("Lỗi khi cập nhật avatar");
-        });
+        .catch(() => alert("Lỗi khi cập nhật avatar"));
     });
 }
 
 let bannerCropper = null;
-let bannerFile = null;
 
 function openBannerEditor(input) {
     if (!input.files || !input.files[0]) return;
 
-    bannerFile = input.files[0];
-
-    const modal = document.getElementById("bannerModal");
     const img = document.getElementById("previewBanner");
+    img.src = URL.createObjectURL(input.files[0]);
 
-    img.src = URL.createObjectURL(bannerFile);
-    modal.style.display = "flex";
+    const modal = new bootstrap.Modal(document.getElementById('bannerModal'));
+    modal.show();
 
-    if (bannerCropper) {
-        bannerCropper.destroy();
-        bannerCropper = null;
-    }
-
-    img.onload = () => {
+    if (bannerCropper) bannerCropper.destroy();
+img.onload = () => {
         bannerCropper = new Cropper(img, {
-            aspectRatio: 16 / 5,   
-            viewMode: 1,
-            autoCropArea: 1,
-            background: false,
-            responsive: true
+            aspectRatio: 16 / 5,
+            viewMode: 1
         });
     };
-}
-
-function closeBannerModal() {
-    document.getElementById("bannerModal").style.display = "none";
-    if (bannerCropper) {
-        bannerCropper.destroy();
-        bannerCropper = null;
-    }
 }
 
 function submitBanner() {
     if (!bannerCropper) return;
 
-    bannerCropper.getCroppedCanvas({
-        width: 1600,
-        height: 500,
-        imageSmoothingQuality: "high"
-    }).toBlob(blob => {
+    bannerCropper.getCroppedCanvas({ width: 1600, height: 500 })
+    .toBlob(blob => {
         const formData = new FormData();
         formData.append("file", blob, "banner.jpg");
 
@@ -594,9 +120,7 @@ function submitBanner() {
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
 
         const headers = {};
-        if (csrfToken && csrfHeader) {
-            headers[csrfHeader] = csrfToken;
-        }
+        if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
 
         fetch("/DustNovel/user/banner", {
             method: "POST",
@@ -613,136 +137,216 @@ function submitBanner() {
 }
 
 </script>
-</head>
-<body >
 
-	<div class="header"
-		th:style="${user.banner != null} ? 'background-image:url(' + @{${user.banner}} + ')' : ''">
-		<div class="banner-tool" onclick="event.stopPropagation()">
-			<span class="banner-icon"
-				onclick="document.getElementById('bannerInput').click()">📷</span>
-			<form th:if="${user.banner != null}"
-				th:action="@{/DustNovel/user/banner/delete}" method="post"
-				onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner không?')">
-				<button type="submit" class="banner-icon delete">🗑️</button>
-			</form>
-		</div>
-		<form th:action="@{/DustNovel/user/banner}" method="post"
-			enctype="multipart/form-data">
-			<input id="bannerInput" type="file" name="file" accept="image/*"
-				hidden onchange="openBannerEditor(this)">
-		</form>
-	</div>
-	<div id="bannerModal" class="avatar-modal">
-		<div class="avatar-modal-box" style="width: 900px;">
-			<img id="previewBanner">
-			<div class="avatar-modal-actions">
-				<button type="button" onclick="closeBannerModal()">Đóng</button>
-				<button type="button" onclick="submitBanner()">Đổi banner</button>
-			</div>
-		</div>
-	</div>
+<!-- ================= BANNER ================= -->
+
+<div class="bg-dark text-white text-center py-5"
+     th:style="${user.banner != null} ? 'background:url(' + @{${user.banner}} + ') center/cover no-repeat' : ''">
+
+    <button class="btn btn-light btn-sm"
+            onclick="document.getElementById('bannerInput').click()">📷 Đổi banner</button>
+
+    <form th:if="${user.banner != null}"
+          th:action="@{/DustNovel/user/banner/delete}"
+          method="post"
+          class="d-inline"
+          onsubmit="return confirm('Bạn có chắc chắn muốn xóa banner không?')">
+        <button class="btn btn-danger btn-sm">🗑️</button>
+    </form>
+
+    <form th:action="@{/DustNovel/user/banner}" method="post" enctype="multipart/form-data">
+        <input id="bannerInput" type="file" name="file" hidden
+               accept="image/*" onchange="openBannerEditor(this)">
+    </form>
+</div>
+
+<!-- ================= CONTENT ================= -->
+
+<div class="container py-5">
+<div class="row g-4">
+
+<!-- LEFT -->
+<div class="col-lg-4">
+<div class="card shadow-sm">
+<div class="card-body text-center">
+
+<div class="mb-3">
+<div th:if="${user.avatar == null}"
+     class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mx-auto fs-2"
+     style="width:120px;height:120px;"
+     th:text="${#strings.toUpperCase(#strings.substring(user.tenDangNhap,0,1))}">
+</div>
+
+<img th:if="${user.avatar != null}"
+     th:src="@{${user.avatar}}"
+     class="rounded-circle border border-3"
+     width="120" height="120">
+</div>
+
+<button class="btn btn-outline-primary btn-sm mb-2"
+        onclick="document.getElementById('avatarInput').click()">📷 Đổi ảnh</button>
+
+<form th:if="${user.avatar != null}"
+      th:action="@{/DustNovel/user/avatar/delete}"
+      method="post"
+      onsubmit="return confirmDeleteAvatar()">
+    <button class="btn btn-danger btn-sm">🗑️ Xóa ảnh</button>
+</form>
+<input id="avatarInput" type="file" hidden accept="image/*"
+       onchange="openAvatarEditor(this)">
+
+<h5 class="mt-3 mb-0" th:text="${user.tenDangNhap}"></h5>
+<p class="text-muted" th:text="${user.email}"></p>
+<span class="badge bg-success mb-3">Đang hoạt động</span>
+
+<div class="row border-top pt-3">
+<div class="col text-center">
+<strong>0</strong><br><small>Truyện</small>
+</div>
+<div class="col text-center">
+<strong>0</strong><br><small>Theo dõi</small>
+</div>
+<div class="col text-center">
+<strong>0</strong><br><small>Bình luận</small>
+</div>
+</div>
+
+<div class="mt-4 d-grid gap-2">
+<form th:action="@{/DustNovel/user/delete}" method="post"
+      onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản?')">
+<button class="btn btn-outline-danger w-100">Xóa tài khoản</button>
+</form>
+
+<form th:action="@{/DustNovel/logout}" method="post"
+      onsubmit="return confirmLogout()">
+<button class="btn btn-dark w-100">Đăng xuất</button>
+</form>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- RIGHT -->
+<div class="col-lg-8">
+<div class="card shadow-sm">
+<div class="card-body">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h4 class="mb-0">Thông tin tài khoản</h4>
+<button type="button" class="btn btn-outline-primary btn-sm"
+        onclick="enableEdit()">Thay đổi mật khẩu</button>
+</div>
+
+<a href="/DustNovel/ma-thuong" class="d-block mb-3 text-decoration-none">
+→ Nhập mã thưởng ←
+</a>
+
+<div th:if="${success != null and success == true}"
+     class="alert alert-success">
+Cập nhật mật khẩu thành công
+</div>
+
+<form th:action="@{/DustNovel/user/profile/update}" method="post">
+
+<div class="mb-3">
+<label class="form-label">Tên đăng nhập</label>
+<input class="form-control" disabled
+       th:value="${tenDangNhapValue != null ? tenDangNhapValue : user.tenDangNhap}">
+<input type="hidden" name="tenDangNhap"
+       th:value="${tenDangNhapValue != null ? tenDangNhapValue : user.tenDangNhap}">
+</div>
+
+<div class="mb-3">
+<label class="form-label">Email</label>
+<input name="email" class="form-control editable" disabled
+       th:value="${emailValue != null ? emailValue : user.email}">
+<div class="text-danger small error"
+     th:if="${emailError}" th:text="${emailError}"></div>
+</div>
+
+<div class="mb-3">
+<label class="form-label">Đổi mật khẩu</label>
+<input type="password" name="matKhauMoi"
+       class="form-control editable" disabled
+       th:value="${matKhauMoi}">
+<div class="text-danger small error"
+     th:if="${matKhauMoiError}" th:text="${matKhauMoiError}"></div>
+</div>
+
+<div class="mb-3">
+<input type="password" name="xacNhanMatKhau"
+       class="form-control editable" disabled
+       th:value="${xacNhanMatKhau}">
+<div class="text-danger small error"
+     th:if="${xacNhanMatKhauError}" th:text="${xacNhanMatKhauError}"></div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center">
+<button id="btnUpdate" type="submit"
+        class="btn btn-primary d-none">
+Cập nhật mật khẩu
+</button>
+<a href="/DustNovel/home">← Quay về trang chủ</a>
+</div>
+
+</form>
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ================= AVATAR MODAL ================= -->
+<div class="modal fade" id="avatarModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-body p-0">
+        <div class="w-100 text-center">
+          <img id="previewAvatar" class="w-100 d-block">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Đóng
+        </button>
+        <button type="button" class="btn btn-primary" onclick="submitAvatar()">
+          Đổi ảnh
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 
+<!-- ================= BANNER MODAL ================= -->
+<div class="modal fade" id="bannerModal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
 
-	<div class="container">
-		<div class="profile-left">
-			<div class="avatar-box">
-				<div class="avatar-fallback"
-					th:text="${#strings.toUpperCase(#strings.substring(user.tenDangNhap,0,1))}">
-				</div>
-				<img th:if="${user.avatar != null}" th:src="@{${user.avatar}}"
-					class="avatar-img" />
-				<div class="avatar-tool" onclick="event.stopPropagation()">
-					<span class="avatar-icon"
-						onclick="document.getElementById('avatarInput').click()">📷</span>
-					<form th:if="${user.avatar != null}"
-						th:action="@{/DustNovel/user/avatar/delete}" method="post"
-						onsubmit="return confirmDeleteAvatar()">
-						<button type="submit" class="avatar-icon delete">🗑️</button>
-					</form>
-				</div>
-				<input id="avatarInput" type="file" name="file" accept="image/*"
-					hidden onchange="openAvatarEditor(this)">
-				<div id="avatarModal" class="avatar-modal">
-					<div class="avatar-modal-box">
-						<img id="previewAvatar">
-						<div class="avatar-modal-actions">
-							<button type="button" onclick="closeAvatarModal()">Đóng</button>
-							<button type="button" onclick="submitAvatar()">Đổi ảnh</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<h3 th:text="${user.tenDangNhap}"></h3>
-			<p th:text="${user.email}"></p>
-			<div class="status">Đang hoạt động</div>
-			<div class="stats">
-				<div>
-					<strong>0</strong>Truyện
-				</div>
-				<div>
-					<strong>0</strong>Theo dõi
-				</div>
-				<div>
-					<strong>0</strong>Bình luận
-				</div>
-			</div>
-			<form th:action="@{/DustNovel/user/delete}" method="post"
-				onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản?')">
-				<button class="btn-danger">Xóa tài khoản</button>
-			</form>
-			<form th:action="@{/DustNovel/logout}" method="post"
-				onsubmit="return confirmLogout()">
-				<button class="btn-logout">Đăng xuất</button>
-			</form>
-		</div>
+      <div class="modal-body p-0">
+        <div class="w-100">
+          <img id="previewBanner" class="w-100 d-block">
+        </div>
+      </div>
 
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Đóng
+        </button>
+        <button type="button" class="btn btn-primary" onclick="submitBanner()">
+          Đổi banner
+        </button>
+      </div>
 
-		<div class="profile-right">
-			<h2>THÔNG TIN TÀI KHOẢN</h2>
-			<button type="button" class="btn-edit" onclick="enableEdit()">Thay
-				đổi mật khẩu</button>
-			<a href="/DustNovel/ma-thuong" class="reward-link">
-                → Nhập mã thưởng ←
-            </a>	
-			<div th:if="${success != null and success == true}" class="success">Cập
-				nhật mật khẩu thành công</div>
-				
-			<form th:action="@{/DustNovel/user/profile/update}" method="post">
-				<label>Tên đăng nhập</label> <input disabled
-					th:value="${tenDangNhapValue != null ? tenDangNhapValue : user.tenDangNhap}">
-				<input type="hidden" name="tenDangNhap"
-					th:value="${tenDangNhapValue != null ? tenDangNhapValue : user.tenDangNhap}">
-				<div class="error" th:if="${tenDangNhapError}"
-					th:text="${tenDangNhapError}"></div>
-					
-				<label>Email</label> <input name="email" placeholder="Ví dụ: example@gmail.com" class="editable" disabled
-					th:value="${emailValue != null ? emailValue : user.email}">
-				<div class="error" th:if="${emailError}" th:text="${emailError}"></div>
-				
-				<label>Đổi mật khẩu (không bắt buộc)</label>
-				<div class="password-wrapper">
-					<input id="matKhauMoi" class="editable" disabled type="password"
-						name="matKhauMoi" placeholder="Ví dụ: Abc@1234"
-						th:value="${matKhauMoi}">
-				  </div>
-				<div class="error" th:if="${matKhauMoiError}"
-					th:text="${matKhauMoiError}"></div>
+    </div>
+  </div>
+</div>
 
-				<div class="password-wrapper">
-					<input id="xacNhanMatKhau" class="editable" disabled
-						type="password" name="xacNhanMatKhau"
-						placeholder="Nhập lại mật khẩu mới" th:value="${xacNhanMatKhau}">
-				</div>
-				<div class="error" th:if="${xacNhanMatKhauError}"
-					th:text="${xacNhanMatKhauError}"></div>
-				<div class="form-actions">
-					<button id="btnUpdate" type="submit">Cập nhật mật khẩu</button>
-					<a href="/DustNovel/home">← Quay về trang chủ</a>
-				</div>
-			</form>
-		</div>
-	</div>
-</body>
-</html>
+</div>
+</div>

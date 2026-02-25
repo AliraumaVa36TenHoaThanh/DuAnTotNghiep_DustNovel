@@ -1,6 +1,7 @@
 package com.fpoly.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import lombok.Getter;
 import lombok.Setter;
 import com.fpoly.model.enums.LoaiTruyen;
@@ -59,7 +60,7 @@ public class Truyen {
         joinColumns = @JoinColumn(name = "truyen_id"),
         inverseJoinColumns = @JoinColumn(name = "the_loai_id")
     )
-    private List<TheLoai> theLoais;
+    private List<TheLoai> theLoais = new ArrayList<>();
     
     @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tap> danhSachTap;

@@ -41,6 +41,7 @@ public class SecurityConfig {
                         "/css/**",
                         "/js/**",
                         "/images/**",
+                        "/uploads/**" ,
 
                         // auth
                         "/DustNovel/login",

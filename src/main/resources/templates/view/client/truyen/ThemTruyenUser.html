@@ -1,11 +1,14 @@
 <div th:fragment="content">
-<div class="card">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<div style="background:#f2f2f2; padding:40px 40px 40px 10px;">
+<div class="card" style="margin-left: 330px;">
+<div class="card-body" style="padding-left: 30px;">
+
     <div class="card-header">
         <h4>Thêm truyện</h4>
-    </div>
-
-    <div class="card-body">
-        <form th:action="@{/DustNovel/themtruyen}" th:object="${truyen}" method="post" enctype="multipart/form-data">
+    </div>  
+        <form th:action="@{/dbu/truyen/them}" th:object="${truyenUser}" method="post" enctype="multipart/form-data">
 
             <div class="mb-3">
                 <label>Tên truyện</label>
@@ -93,9 +96,20 @@
             
 
             <button class="btn btn-primary">Lưu truyện</button>
-        </form>
+
+					<a th:href="@{/dbu/truyen-sang-tac}"
+						style="text-decoration: none; color: #198754; margin-left: 35px; margin-right: 30px;">
+						<i class="fa-solid fa-arrow-left"></i> Quay về truyện sáng tác
+					</a> <a th:href="@{/dbu/truyen-dich}"
+						style="text-decoration: none; color: #198754;"> <i
+						class="fa-solid fa-arrow-left"></i> Quay về truyện dịch
+					</a>
+				</form>
     </div>
 </div>
+</div>
+</div>
+
 <script>
     function previewAnhBia(url) {
         const img = document.getElementById('previewAnhBia');
@@ -106,22 +120,17 @@
         }
     }
     
+    //  PREVIEW KHI CHỌN FILE
     function previewFile(event) {
-
         const file = event.target.files[0];
-        const img  = document.getElementById('previewAnhBia');
+        const img = document.getElementById('previewAnhBia');
 
         if (file) {
-
             const reader = new FileReader();
-
-            reader.onload = function (e) {
+            reader.onload = function(e) {
                 img.src = e.target.result;
             };
-
             reader.readAsDataURL(file);
         }
     }
-    
 </script>
-</div>
