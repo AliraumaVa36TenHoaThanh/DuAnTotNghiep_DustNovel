@@ -33,6 +33,9 @@ public class TruyenService {
 	public Truyen findById(Long id) {
 		return truyenRepo.findById(id).orElse(null);
 	}
+	public void save(Truyen t) {
+	    truyenRepo.save(t);
+	}
 
 	public List<Truyen> getTruyenSangTac() {
 		return truyenRepo.findByLoaiTruyen(LoaiTruyen.SÁNG_TÁC);

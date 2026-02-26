@@ -26,170 +26,176 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/DustNovel")
 public class TruyenController {
-		@Autowired
-	     TruyenService truyenService;
-	    @Autowired
-	     ChuongService chuongService;
-	    @Autowired
-	     NguoiDungRepository nguoiDungRepo;
-	    @Autowired
-	    TheLoaiRepository theLoaiRepo;	
-	    @Autowired
-	    TruyenRepository truyenRepo;
-	    @Autowired
-	    SecurityUtil securityUtil;
-	    @Autowired
-	    TheLoaiService tlSer;
-	    @Autowired
-	    TapService tapService;
-	    
-//	    @GetMapping("/truyen/{id:\\d+}")
-//	    public String detail(@PathVariable Long id, Model model) {
-//	    	
-//	    	Truyen truyen = truyenService.findById(id);
-//	        NguoiDung user = securityUtil.getCurrentUserFromDB(); 
-//	        model.addAttribute("currentUser", user); 
-//
-//	        model.addAttribute("truyen", truyen);
-//	        model.addAttribute("dsTap", tapService.findByTruyen(id));
-//	        model.addAttribute("content", "truyen/detail");
-//	        return "layout/main";
-//	    }
-	    @GetMapping("/truyen/{id:\\d+}")
-	    public String detail(@PathVariable Long id, Model model) {
 
-	        Truyen truyen = truyenService.findById(id);
-	        if (truyen == null) return "redirect:/DustNovel/home";
+    @Autowired
+    TruyenService truyenService;
 
-	        NguoiDung user = securityUtil.getCurrentUserFromDB();
+    @Autowired
+    ChuongService chuongService;
 
-	        model.addAttribute("currentUser", user);
-	        model.addAttribute("truyen", truyen);
+    @Autowired
+    NguoiDungRepository nguoiDungRepo;
 
-	        model.addAttribute("dsTap", tapService.findByTruyen(id));
+    @Autowired
+    TheLoaiRepository theLoaiRepo;
 
-	        model.addAttribute("content", "truyen/detail");
-	        return "layout/main";
-	    }
+    @Autowired
+    TruyenRepository truyenRepo;
 
-	    @GetMapping("/themtruyen")
-	    public String showAddForm(Model model) {
+    @Autowired
+    SecurityUtil securityUtil;
 
-	        model.addAttribute("truyen", new Truyen());
-	        model.addAttribute("dsTheLoai", theLoaiRepo.findAll());
-	        model.addAttribute("content", "truyen/add");
-	        model.addAttribute("title", "Thêm truyện");
+    @Autowired
+    TheLoaiService tlSer;
 
-	        return "layout/main";
-	    }
-	    @PostMapping("/themtruyen")
-	    public String addTruyen(
-	            @ModelAttribute Truyen truyen,
-	            @RequestParam List<Long> theLoaiIds
-	    ) {
-	        CustomUserDetails cud =
-	        	    (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    @Autowired
+    TapService tapService;
 
-	        Long UserId = cud.getId();          
-	        NguoiDung user = cud.getUser();     
+    // ================= CHI TIẾT TRUYỆN + TĂNG VIEW =================
+    @GetMapping("/truyen/{id:\\d+}")
+    public String detail(@PathVariable Long id, Model model) {
 
+        Truyen truyen = truyenService.findById(id);
+        if (truyen == null) {
+            return "redirect:/DustNovel/home";
+        }
 
-	        truyen.setNguoiDang(user);
+        // ⭐⭐⭐ TĂNG LƯỢT XEM ⭐⭐⭐
+        truyen.setLuotXem(truyen.getLuotXem() + 1);
+        truyenRepo.save(truyen);
 
-	        if (truyen.getAnhBia() == null || truyen.getAnhBia().isBlank()) {
-	            truyen.setAnhBia("/images/aria.jpg");
-	        }
+        NguoiDung user = securityUtil.getCurrentUserFromDB();
 
-	        truyenService.save(truyen, theLoaiIds);
-	        return "redirect:/DustNovel/home";
-	    }
+        model.addAttribute("currentUser", user);
+        model.addAttribute("truyen", truyen);
+        model.addAttribute("dsTap", tapService.findByTruyen(id));
+        model.addAttribute("content", "truyen/detail");
 
-	    @GetMapping("/truyen/tim-kiem")
-	    public String timKiemTruyen(
-	            @RequestParam("keyword") String keyword,
-	            Model model
-	    ) {
+        return "layout/main";
+    }
 
-	        List<Truyen> truyens = truyenRepo
-	                .findByTenTruyenContainingIgnoreCase(keyword);
+    // ================= THÊM TRUYỆN =================
+    @GetMapping("/themtruyen")
+    public String showAddForm(Model model) {
 
-	        model.addAttribute("keyword", keyword);
-	        model.addAttribute("truyens", truyens);
-	        model.addAttribute(
-	                "title",
-	                "DustNovel | Tìm kiếm truyện: " + keyword
-	            );
-	        model.addAttribute("content", "truyen/tim-kiem");
+        model.addAttribute("truyen", new Truyen());
+        model.addAttribute("dsTheLoai", theLoaiRepo.findAll());
+        model.addAttribute("content", "truyen/add");
+        model.addAttribute("title", "Thêm truyện");
 
-	        return "layout/main";
-	    }
-	    
-	    @PreAuthorize("@permissionService.canDeleteTruyen(#id)")
-	    @PostMapping("/truyen/{ten_truyen}/xoa/{id}")
-	    public String xoaTruyen(@PathVariable Long id) {
-	        truyenService.xoaTruyen(id);
-	        return "redirect:/DustNovel/home";
-	    }
-	    
-	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
-	    @GetMapping("/truyen/{tenTruyen}/sua/{id}")
-	    public String formSua(
-	            @PathVariable String tenTruyen,
-	            @PathVariable Long id,
-	            Model model) {
+        return "layout/main";
+    }
 
-	        model.addAttribute("truyen", truyenService.findById(id));
-	        model.addAttribute("content", "truyen/edit");
-	        model.addAttribute("title", "Sửa truyện");
-	        return "layout/main";
-	    }
-	    
-	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
-	    @PostMapping("/truyen/{tenTruyen}/sua/{id}")
-	    public String sua(
-	            @PathVariable String tenTruyen,
-	            @PathVariable Long id,
-	            @ModelAttribute Truyen truyen) {
+    @PostMapping("/themtruyen")
+    public String addTruyen(
+            @ModelAttribute Truyen truyen,
+            @RequestParam List<Long> theLoaiIds
+    ) {
+        CustomUserDetails cud =
+                (CustomUserDetails) SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getPrincipal();
 
-	        truyen.setId(id);
-	        truyenService.suaTruyen(id, truyen);
+        NguoiDung user = cud.getUser();
+        truyen.setNguoiDang(user);
 
-	        return "redirect:/DustNovel/truyen/" + tenTruyen + "/" + id;
-	    }
-	    @GetMapping("/truyen/tim-kiem-nang-cao")
-	    public String timKiemNangCao(
-	            @RequestParam(required = false) String tenTruyen,
-	            @RequestParam(required = false) String tenTacGia,
-	            @RequestParam(required = false) Boolean showTag18,
-	            @RequestParam(required = false) LoaiTruyen loaiTruyen,
-	            @RequestParam Map<String, String> params,
-	            Model model
-	    ) {
+        if (truyen.getAnhBia() == null || truyen.getAnhBia().isBlank()) {
+            truyen.setAnhBia("/images/aria.jpg");
+        }
 
-	        boolean isSearch =
-	                tenTruyen != null ||
-	                tenTacGia != null ||
-	                loaiTruyen != null ||
-	                showTag18 != null ||
-	                params.keySet().stream().anyMatch(k -> k.startsWith("theLoai["));
+        truyenService.save(truyen, theLoaiIds);
+        return "redirect:/DustNovel/home";
+    }
 
-	        if (isSearch) {
-	            List<Truyen> ketQua = truyenService.timKiemNangCao(
-	                    tenTruyen,
-	                    tenTacGia,
-	                    loaiTruyen,
-	                    params,
-	                    showTag18
-	            );
-	            model.addAttribute("dsTruyen", ketQua);
-	        }
+    // ================= TÌM KIẾM =================
+    @GetMapping("/truyen/tim-kiem")
+    public String timKiemTruyen(
+            @RequestParam("keyword") String keyword,
+            Model model
+    ) {
 
-	        model.addAttribute("searched", isSearch);
-	        model.addAttribute("theLoais", tlSer.getAllTheLoai());
-	        model.addAttribute("title", "DustNovel | Tìm kiếm nâng cao");
-	        model.addAttribute("content", "truyen/tim-kiem-nang-cao");
+        List<Truyen> truyens =
+                truyenRepo.findByTenTruyenContainingIgnoreCase(keyword);
 
-	        return "layout/main";
-	    }
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("truyens", truyens);
+        model.addAttribute("title", "DustNovel | Tìm kiếm truyện: " + keyword);
+        model.addAttribute("content", "truyen/tim-kiem");
 
+        return "layout/main";
+    }
+
+    // ================= XOÁ TRUYỆN =================
+    @PreAuthorize("@permissionService.canDeleteTruyen(#id)")
+    @PostMapping("/truyen/{ten_truyen}/xoa/{id}")
+    public String xoaTruyen(@PathVariable Long id) {
+        truyenService.xoaTruyen(id);
+        return "redirect:/DustNovel/home";
+    }
+
+    // ================= SỬA TRUYỆN =================
+    @PreAuthorize("@permissionService.canEditTruyen(#id)")
+    @GetMapping("/truyen/{tenTruyen}/sua/{id}")
+    public String formSua(
+            @PathVariable String tenTruyen,
+            @PathVariable Long id,
+            Model model) {
+
+        model.addAttribute("truyen", truyenService.findById(id));
+        model.addAttribute("content", "truyen/edit");
+        model.addAttribute("title", "Sửa truyện");
+
+        return "layout/main";
+    }
+
+    @PreAuthorize("@permissionService.canEditTruyen(#id)")
+    @PostMapping("/truyen/{tenTruyen}/sua/{id}")
+    public String sua(
+            @PathVariable String tenTruyen,
+            @PathVariable Long id,
+            @ModelAttribute Truyen truyen) {
+
+        truyen.setId(id);
+        truyenService.suaTruyen(id, truyen);
+
+        return "redirect:/DustNovel/truyen/" + id;
+    }
+
+    // ================= TÌM KIẾM NÂNG CAO =================
+    @GetMapping("/truyen/tim-kiem-nang-cao")
+    public String timKiemNangCao(
+            @RequestParam(required = false) String tenTruyen,
+            @RequestParam(required = false) String tenTacGia,
+            @RequestParam(required = false) Boolean showTag18,
+            @RequestParam(required = false) LoaiTruyen loaiTruyen,
+            @RequestParam Map<String, String> params,
+            Model model
+    ) {
+
+        boolean isSearch =
+                tenTruyen != null ||
+                tenTacGia != null ||
+                loaiTruyen != null ||
+                showTag18 != null ||
+                params.keySet().stream().anyMatch(k -> k.startsWith("theLoai["));
+
+        if (isSearch) {
+            List<Truyen> ketQua = truyenService.timKiemNangCao(
+                    tenTruyen,
+                    tenTacGia,
+                    loaiTruyen,
+                    params,
+                    showTag18
+            );
+            model.addAttribute("dsTruyen", ketQua);
+        }
+
+        model.addAttribute("searched", isSearch);
+        model.addAttribute("theLoais", tlSer.getAllTheLoai());
+        model.addAttribute("title", "DustNovel | Tìm kiếm nâng cao");
+        model.addAttribute("content", "truyen/tim-kiem-nang-cao");
+
+        return "layout/main";
+    }
 }

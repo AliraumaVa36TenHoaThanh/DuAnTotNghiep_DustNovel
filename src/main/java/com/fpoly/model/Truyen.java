@@ -23,13 +23,13 @@ public class Truyen {
 
     @Column(name = "ten_tac_gia")
     private String tenTacGia;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "loai_truyen")
-    private LoaiTruyen loaiTruyen; // SÁNG_TÁC / DỊCH
+    private LoaiTruyen loaiTruyen;
 
     @Column(name = "trang_thai")
-    private String trangThai; // ĐANG_RA / HOÀN_THÀNH
+    private String trangThai;
 
     @Column(name = "tag_18")
     private Boolean tag18;
@@ -43,10 +43,14 @@ public class Truyen {
 
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
+
     @PrePersist
     protected void onCreate() {
         this.ngayTao = LocalDateTime.now();
+        if (this.tongLike == null) this.tongLike = 0L;
+        if (this.luotXem == null) this.luotXem = 0L;
     }
+
     @ManyToMany
     @JoinTable(
         name = "truyen_the_loai",
@@ -54,6 +58,19 @@ public class Truyen {
         inverseJoinColumns = @JoinColumn(name = "the_loai_id")
     )
     private List<TheLoai> theLoais;
-    
-    
+
+    /* ===== FIX NULL ===== */
+    @Column(name = "tong_like", nullable = false)
+    private Long tongLike = 0L;
+
+    @Column(name = "luot_xem", nullable = false)
+    private Long luotXem = 0L;
+
+    public Long getTongLike() {
+        return tongLike == null ? 0 : tongLike;
+    }
+
+    public Long getLuotXem() {
+        return luotXem == null ? 0 : luotXem;
+    }
 }
