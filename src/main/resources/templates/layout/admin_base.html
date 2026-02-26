@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataTable - Mazer Admin Dashboard</title>
+    <title>Dashboard Admin - DustNovel</title>
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -17,6 +17,22 @@
     <link rel="stylesheet" href="/assets/css/app.css">
     <link rel="shortcut icon" href="/assets/images/favicon.svg" type="image/x-icon">
 </head>
+<style>
+	.sidebar-header {
+	    height: 100px !important;   /* tăng chiều cao khung */
+	}
+
+	.sidebar-logo {
+	    height: 90px !important;
+	    width: auto;
+	}
+	.logo-text {
+	    font-size: 22px;
+	    font-weight: bold;
+	    color: #6c5ce7;   /* bạn có thể đổi màu */
+	    white-space: nowrap;
+	}
+</style>
 
 <body>
     <div id="app">
@@ -29,6 +45,7 @@
 						        <img src="/images/logo.png"
 						             alt="Logo"
 						             class="sidebar-logo">
+									 <span class="logo-text ms-2">DustNovel</span>
 						    </a>
 						</div>
                         <div class="toggler">
@@ -49,7 +66,7 @@
 						<li class="sidebar-item">
 						    <a href="table-datatable.html" class='sidebar-link'>
 						        <i class="bi bi-file-earmark-spreadsheet-fill"></i>
-						        <span>Quản Lý NgD</span>
+						        <span>Quản Lý Người Dùng</span>
 						    </a>
 						</li>
 						<li class="sidebar-item">
@@ -61,15 +78,9 @@
                          <li class="sidebar-item">
                              <a href="/dba/truyen-the-loai" class="sidebar-link">
                                  <i class="bi bi-stack"></i>
-                                 <span>Quản lý thể loại</span>
+                                 <span>Quản Lý Thể Loại</span>
                              </a>
-                        </li>	
-						<li class="sidebar-item  ">
-						    <a href="index.html" class='sidebar-link'>
-						        <i class="bi bi-grid-fill"></i>
-						        <span>Doanh Thu</span>
-						    </a>
-						</li>
+                        </li>
                         <li class="sidebar-item  has-sub">
                             <a href="#" class='sidebar-link'>
                                 <i class="bi bi-stack"></i>
@@ -100,36 +111,15 @@
 						</li>
                         <li class="sidebar-item  has-sub">
                             <a href="#" class='sidebar-link'>
-                                <i class="bi bi-collection-fill"></i>
-                                <span>Thể Loại</span>
-                            </a>
-                            <ul class="submenu ">
-                                <li class="submenu-item ">
-                                    <a href="extra-component-avatar.html">List Thể Loại</a>
-                                </li>
-                                <li class="submenu-item ">
-                                    <a href="extra-component-sweetalert.html">Quản Lý Thể Loại</a>
-                                </li>
-                            </ul>
-                        </li>
-						<li class="sidebar-item  ">
-						    <a href="index.html" class='sidebar-link'>
-						        <i class="bi bi-grid-fill"></i>
-						        <span>Quản Lý Truyện</span>
-						    </a>
-						</li>
-
-                        <li class="sidebar-item  has-sub">
-                            <a href="#" class='sidebar-link'>
                                 <i class="bi bi-grid-1x2-fill"></i>
                                 <span>Nạp Tiền</span>
                             </a>
                             <ul class="submenu ">
                                 <li class="submenu-item ">
-                                    <a th:href="@{/dba/nap-tien}">Yêu Cầu Nạp Tiền</a>
+                                    <a th:href="@{/dba/nap-tien}">Yêu Cầu & Lịch Sử Nạp Tiền</a>
                                 </li>
                                 <li class="submenu-item ">
-                                    <a href="layout-vertical-1-column.html">Lịch Sử Nạp Tiền</a>
+                                    <a th:href="@{/dba/thong-tin-nap}">Quản Lý Doanh Thu</a>
                                 </li>
                             </ul>
                         </li>
@@ -146,15 +136,6 @@
 			</div>
 
 			<footer>
-			                <div class="footer clearfix mb-0 text-muted">
-			                    <div class="float-start">
-			                        <p>2021 &copy; Mazer</p>
-			                    </div>
-			                    <div class="float-end">
-			                        <p>Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
-			                                href="http://ahmadsaugi.com">A. Saugi</a></p>
-			                    </div>
-			                </div>
 			            </footer>
 			        </div>
 			    </div>
