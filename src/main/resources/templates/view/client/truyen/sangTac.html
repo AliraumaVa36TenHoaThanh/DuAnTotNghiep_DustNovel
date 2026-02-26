@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Truyện sáng tác</title>
+
+<link
+   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+   rel="stylesheet">
+
+<link
+   rel="stylesheet"
+   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+* {
+	box-sizing: border-box;
+	font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+	margin: 0;
+	background: #f4f6f9;
+	color: #111;
+}
+
+.sidebar {
+	width: 260px;
+	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: #ffffff;
+	border-right: 1px solid #e0e0e0;
+	padding: 20px;
+}
+
+.main-content {
+	margin-left: 260px;
+	padding: 30px;
+}
+
+.card {
+	background: #ffffff;
+	border-radius: 12px;
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+	padding: 20px;
+	margin-left: 40px;
+}
+
+.page-title {
+	font-size: 22px;
+	font-weight: 600;
+	margin-bottom: 15px;
+}
+
+.toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.search-box {
+	display: flex;
+	gap: 10px;
+}
+
+.search-box input {
+	padding: 8px 12px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+	width: 260px;
+}
+
+.btn-add {
+	padding: 8px 14px;
+	border-radius: 6px;
+	background: #35dcd1;
+	color: #fff;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	background: #ffffff;
+}
+
+thead {
+	background: #f1f3f5;
+}
+
+th, td {
+	padding: 14px;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+	text-align: left;
+}
+
+.badge {
+	padding: 6px 14px;
+	border-radius: 20px;
+	font-size: 13px;
+	font-weight: 600;
+	display: inline-block;
+}
+
+.badge-dangra {
+	background: #fff3cd;   
+	color: #b45309; 
+}
+
+.badge-hoanthanh {
+	background: #dcfce7;
+    color: #166534;
+}
+
+.action-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border-radius: 8px;
+	color: #fff;
+	text-decoration: none;
+	margin: 0 4px;
+	font-size: 16px;
+}
+
+.btn-view {
+	background: #0d6efd;
+}
+
+.btn-edit {
+	background: #28a745;
+}
+
+.btn-delete {
+	background: #dc3545;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.empty {
+	text-align: center;
+	color: #777;
+	font-style: italic;
+}
+
+
+.form-select-sm {
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+    padding-left: .5rem;
+    font-size: .875rem;
+    border-radius: var(--bs-border-radius-sm);
+}
+
+.filter-box {
+    position: relative;
+    width: 260px;
+}
+
+.filter-header {
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    padding: 4px 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    margin-right:100px
+}
+
+.filter-header span {
+    color: #9ca3af; 
+    font-size: 14px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.filter-list {
+    display: none;
+    position: absolute;
+    top: 45px;
+    width: 500px; 
+    background: #fff;
+    border: 2px solid #000;
+    border-radius: 8px;
+    padding: 15px;
+    z-index: 999;   
+    display: none;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    max-height: 250px;       
+    overflow-y: auto;  
+}
+
+.filter-item {
+    padding: 10px 12px;
+    font-size: 13px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 18px;
+    white-space: nowrap;       
+    transition: 0.2s;
+}
+
+.filter-item:hover {
+    background: #4f6ef7;
+    color: #fff;
+}
+
+.filter-item.active {
+    background: #4f6ef7;
+    color: #fff;
+}
+
+.filter-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.filter-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.filter-list::-webkit-scrollbar-thumb {
+    background: #c5c5c5;
+    border-radius: 10px;
+}
+
+.filter-list::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+.filter-list.show {
+    display: grid;   
+}
+
+#filterText.selected {
+    color: #111 !important;
+    font-weight: 400;
+}
+
+#searchInput:disabled {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+</style>
+</head>
+
+<body>
+
+	<div class="sidebar">
+		<h3>Menu</h3>
+	</div>
+
+	<div class="main-content">
+		<div class="card">
+
+			<div class="page-title">Truyện sáng tác</div>
+
+			<div class="toolbar">
+				<span>Danh sách truyện sáng tác của bạn</span>
+				<div class="search-box">
+					<input type="text" id="searchInput" placeholder="Tìm tên truyện...">
+					<a th:href="@{/dbu/truyen/them}" class="btn-add">+ Thêm truyện</a>
+				</div>
+			</div>
+			
+			<div class="d-flex align-items-center gap-3 mb-3">
+
+				<label class="mb-0">Hiển thị :</label> <select id="rowLimit"
+					class="form-select form-select-sm" style="width: 80px;">
+					<option value="5">5</option>
+					<option value="10" selected>10</option>
+					<option value="15">15</option>
+					<option value="20">20</option>
+				</select>
+
+				<div class="filter-box">
+					<div class="filter-header" onclick="toggleFilter()">
+						<span id="filterText">Tên truyện</span> <i
+							class="fa-solid fa-chevron-down"></i>
+					</div>
+
+					<div class="filter-list" id="filterList">
+
+						<!-- Tất cả -->
+						<div class="filter-item active" onclick="locTatCa(this)">
+							Tất cả</div>
+
+						<!-- Chỉ truyện sáng tác (vì controller đã lọc rồi) -->
+						<div th:each="truyen : ${listTruyen}" class="filter-item"
+							th:text="${truyen.tenTruyen}"
+							th:attr="data-ten=${truyen.tenTruyen}"
+							onclick="chonTenTruyen(this)"></div>
+
+					</div>
+				</div>
+
+			</div>
+
+			<table>
+				<thead>
+					<tr>
+						<th>Tên truyện</th>
+						<th>Người đăng</th>
+						<th>Trạng thái</th>
+						<th>Ngày tạo</th>
+						<th class="text-center">Quản lý</th>
+					</tr>
+				</thead>
+
+				<tbody id="storyTable">
+					<tr th:each="truyen : ${listTruyen}">
+						<td th:text="${truyen.tenTruyen}">Tên truyện</td>
+
+						<td th:text="${truyen.nguoiDang.tenDangNhap}">Người đăng</td>
+
+						<td><span th:if="${truyen.trangThai == 'ĐANG_RA'}"
+							class="badge badge-dangra"> Đang ra </span> <span
+							th:if="${truyen.trangThai == 'HOÀN_THÀNH'}"
+							class="badge badge-hoanthanh"> Hoàn thành </span></td>
+
+
+						<td th:text="${#temporals.format(truyen.ngayTao,'dd/MM/yyyy')}">
+							01/02/2026</td>
+
+
+						<td class="text-center">						
+					  	 <a class="btn btn-sm btn-success me-1"
+							th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}">
+							<i class="fa-solid fa-eye"></i>
+						</a>
+							
+					     <a class="btn btn-sm btn-info me-1 text-white"
+							th:href="@{/DustNovel/sua/{id}(id=${truyen.id})}">
+							<i class="fa-solid fa-pen-to-square"></i>
+						</a>
+							
+						<a href="#"class="btn btn-sm btn-danger"
+                            onclick="return xoaTruyen(this)"
+                            th:data-url="@{/DustNovel/chuong/xoa/{id}(id=${truyen.id})}">
+                            <i class="fa fa-trash me-1"></i>
+                          </a>
+                       </td>
+					</tr>
+
+					<tr th:if="${#lists.isEmpty(listTruyen)}">
+						<td colspan="4" class="empty">Chưa có truyện sáng tác nào</td>
+					</tr>
+				</tbody>
+			</table>
+             <div class="d-flex justify-content-center mt-3">
+         <ul class="pagination" id="pagination"></ul>
+      </div>
+		</div>
+	</div>
+
+<script>
+const searchInput = document.getElementById("searchInput");
+const rows = document.querySelectorAll("#storyTable tr");
+const rowLimitSelect = document.getElementById("rowLimit");
+const pagination = document.getElementById("pagination");
+
+searchInput.addEventListener("keyup", function () {
+
+    const keyword = this.value.toLowerCase().trim();
+
+    //  Nếu đang search
+    if (keyword !== "") {
+        rowLimitSelect.disabled = true;
+        pagination.style.pointerEvents = "none";
+        pagination.style.opacity = "0.4";
+    } 
+    //  Nếu xóa hết search
+    else {
+        rowLimitSelect.disabled = false;
+        pagination.style.pointerEvents = "auto";
+        pagination.style.opacity = "1";
+    }
+
+    // Logic search giữ nguyên
+    rows.forEach(row => {
+        const cell = row.cells[0];
+        if (!cell) return;
+
+        row.style.display =
+            cell.textContent.toLowerCase().includes(keyword)
+                ? ""
+                : "none";
+    });
+});
+
+function xoaTruyen(el) {
+    if (confirm("Bạn chắc chắn muốn xóa truyện này chứ ?")) {
+        alert("Bạn đã xóa thành công !");
+        window.location.href = el.dataset.url;
+    }
+    return false;
+}
+
+
+
+let currentPage = 1;
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const rows = document.querySelectorAll("#storyTable tr");
+    const pagination = document.getElementById("pagination");
+    const rowLimitSelect = document.getElementById("rowLimit");
+
+    function displayTable(page) {
+
+        const limit = parseInt(rowLimitSelect.value);
+        const start = (page - 1) * limit;
+        const end = start + limit;
+
+        rows.forEach((row, index) => {
+            row.style.display =
+                (index >= start && index < end) ? "" : "none";
+        });
+
+        currentPage = page;
+        setupPagination();
+    }
+
+    function setupPagination() {
+
+        pagination.innerHTML = "";
+        const limit = parseInt(rowLimitSelect.value);
+        const pageCount = Math.ceil(rows.length / limit);
+
+        // Prev
+        const prev = document.createElement("li");
+        prev.className = "page-item";
+        prev.innerHTML = `<a class="page-link" href="#">‹</a>`;
+
+        if (currentPage === 1) {
+            prev.style.pointerEvents = "none";
+            prev.style.opacity = "0.4";
+        }
+
+        prev.onclick = function () {
+            if (currentPage > 1) {
+                displayTable(currentPage - 1);
+            }
+        };
+
+        pagination.appendChild(prev);
+
+        // Page numbers
+        for (let i = 1; i <= pageCount; i++) {
+
+            const li = document.createElement("li");
+            li.className = "page-item " + (i === currentPage ? "active" : "");
+            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+
+            li.onclick = function () {
+                displayTable(i);
+            };
+
+            pagination.appendChild(li);
+        }
+
+        // Next
+        const next = document.createElement("li");
+        next.className = "page-item";
+        next.innerHTML = `<a class="page-link" href="#">›</a>`;
+
+        if (currentPage === pageCount) {
+            next.style.pointerEvents = "none";
+            next.style.opacity = "0.4";
+        }
+
+        next.onclick = function () {
+            if (currentPage < pageCount) {
+                displayTable(currentPage + 1);
+            }
+        };
+
+        pagination.appendChild(next);
+    }
+
+    rowLimitSelect.addEventListener("change", function () {
+        currentPage = 1;
+        displayTable(1);
+    });
+
+    displayTable(1);
+
+});
+
+
+
+/* ===================== FILTER ===================== */
+
+function toggleFilter() {
+    const list = document.getElementById("filterList");
+    list.style.display = list.style.display === "block" ? "none" : "grid";
+}
+
+function locTatCa(el) {
+
+    isFiltering = false;
+
+    const searchInput = document.getElementById("searchInput");
+    const pagination = document.getElementById("pagination");
+    const rowLimitSelect = document.getElementById("rowLimit");
+
+    // bật lại search
+    searchInput.disabled = false;
+    searchInput.style.opacity = "1";
+
+    pagination.style.pointerEvents = "auto";
+    pagination.style.opacity = "1";
+    rowLimitSelect.disabled = false;
+
+    document.getElementById("filterText").innerText = "Tất cả";
+    document.getElementById("filterText").classList.remove("selected");
+
+    document.querySelectorAll(".filter-item")
+        .forEach(item => item.classList.remove("active"));
+
+    el.classList.add("active");
+
+    const rows = document.querySelectorAll("#storyTable tr");
+    rows.forEach(row => row.style.display = "");
+
+    if (typeof displayTable === "function") {
+        displayTable(1);
+    }
+
+    document.getElementById("filterList").style.display = "none";
+}
+
+
+function chonTenTruyen(el) {
+
+    isFiltering = true;
+
+    const searchInput = document.getElementById("searchInput");
+    const pagination = document.getElementById("pagination");
+    const rowLimitSelect = document.getElementById("rowLimit");
+
+    // vô hiệu hóa search
+    searchInput.value = "";
+    searchInput.disabled = true;
+    searchInput.style.opacity = "0.5";
+
+    pagination.style.pointerEvents = "none";
+    pagination.style.opacity = "0.5";
+    rowLimitSelect.disabled = true;
+
+    const ten = el.dataset.ten.toLowerCase();
+
+    document.getElementById("filterText").innerText = el.innerText;
+    document.getElementById("filterText").classList.add("selected");
+    
+    document.querySelectorAll(".filter-item").forEach(item =>
+        item.classList.remove("active")
+    );
+
+    el.classList.add("active");
+
+    const rows = document.querySelectorAll("#storyTable tr");
+
+    rows.forEach(row => {
+        const tenTruyen = row.cells[0]?.textContent.toLowerCase() || "";
+        row.style.display = tenTruyen === ten ? "" : "none";
+    });
+
+    document.getElementById("filterList").style.display = "none";
+}
+
+</script>
+
+</body>
+</html>

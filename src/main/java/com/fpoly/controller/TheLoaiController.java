@@ -36,6 +36,15 @@ public class TheLoaiController {
 		List<Truyen> truyens = truyenRepository.findByTheLoais_Id(id);
 		model.addAttribute("theLoai", theLoai);
 		model.addAttribute("truyens", truyens);
+		
+		//  Nếu OFF thì thêm thông báo (nhưng vẫn hiển thị truyện)
+        if (theLoai.getStatusTheLoai() != null &&
+            theLoai.getStatusTheLoai().name().equals("OFF")) {
+
+            model.addAttribute("warningMessage",
+                    " 🛑 Thể loại này đã ngừng hoạt động, nhưng sẽ mở lại trong tương lai ! ");
+        }
+        
 		model.addAttribute("title", "DustNovel | Thể loại: " + theLoai.getTenTheLoai());
 		model.addAttribute("content", "truyen/the-loai");
 		return "layout/main";

@@ -1,0 +1,12 @@
+<div sec:authorize="@permissionService.canToggleChuong(${chuong.id})">
+
+    <form th:action="@{/chuong/{id}/toggle-khoa(id=${chuong.id})}"
+          method="post">
+
+        <button class="btn btn-warning"
+                th:text="${chuong.khoa} ? 'Mở khóa' : 'Khóa'">
+        </button>
+
+    </form>
+
+</div>

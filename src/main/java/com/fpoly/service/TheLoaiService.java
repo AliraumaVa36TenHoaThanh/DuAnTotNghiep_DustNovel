@@ -14,19 +14,24 @@ import com.fpoly.repository.TruyenRepository;
 public class TheLoaiService {
 
 	@Autowired
-	private TheLoaiRepository theLoaiRepo;
+    private TheLoaiRepository theLoaiRepo;
 
-	@Autowired
-	private TruyenRepository truyenRepo;
+    @Autowired
+    private TruyenRepository truyenRepo;
 
-	public List<TheLoai> getAllTheLoai() {
-		return theLoaiRepo.findAll();
-	}
-	public List<Truyen> getTruyenByTheLoai(Long theLoaiId) {
-		return truyenRepo.findByTheLoaiId(theLoaiId);
-	}
+    // Lấy tất cả thể loại
+    public List<TheLoai> getAllTheLoai() {
+        return theLoaiRepo.findAll();
+    }
 
-	public TheLoai findById(Long id) {
-		return theLoaiRepo.findById(id).orElse(null);
-	}
+    // Lấy danh sách truyện theo thể loại
+    public List<Truyen> getTruyenByTheLoai(Long theLoaiId) {
+        return truyenRepo.findByTheLoais_Id(theLoaiId); // sửa đúng method
+    }
+
+    // Tìm thể loại theo ID
+    public TheLoai findById(Long id) {
+        return theLoaiRepo.findById(id).orElse(null);
+    }
+	
 }

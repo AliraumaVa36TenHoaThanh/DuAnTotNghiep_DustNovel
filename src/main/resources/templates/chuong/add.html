@@ -1,28 +1,32 @@
 <div th:fragment="content">
-<div class="card">
-    <div class="card-header">
-        <h4>Thêm chương mới</h4>
-    </div>
-    <div class="card-body">
-       <form th:action="@{/DustNovel/chuong/them}" th:object="${chuong}" method="post">
-            <input type="hidden" th:field="*{truyen.id}"/>
-            <div class="mb-3">
-                <label>Tiêu đề chương</label>
-                <input type="text" th:field="*{tieuDe}" class="form-control" required>
+
+    <h4>➕ Thêm chương cho tập: <span th:text="${tap.tenTap}"></span></h4>
+
+    <form th:action="@{/DustNovel/chuong/them}" method="post" th:object="${chuong}">
+        <input type="hidden" th:field="*{tap.id}"/>
+
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label class="form-label fw-bold">Số chương</label>
+                <input type="number" th:field="*{soChuong}" class="form-control" placeholder="VD: 1" required>
+                <div class="form-text">Hệ thống đã tự gợi ý số chương tiếp theo.</div>
             </div>
-            <div class="mb-3">
-                <label>Số chương</label>
-                <input type="number" th:field="*{soChuong}" class="form-control" required>
+
+            <div class="col-md-9 mb-3">
+                <label class="form-label fw-bold">Tiêu đề chương</label>
+                <input type="text" th:field="*{tieuDe}" class="form-control" placeholder="Nhập tên chương..." required>
             </div>
-            <div class="mb-3">
-                <label>Nội dung</label>
-                <textarea th:field="*{noiDung}" rows="12"
-                          class="form-control" required></textarea>
-            </div>
-            <button class="btn btn-primary">Lưu chương</button>
-            <a th:href="@{/DustNovel/truyen/{id}(id=${chuong.truyen.id})}"
-               class="btn btn-secondary">Hủy</a>
-        </form>
-    </div>
-</div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Nội dung</label>
+            <textarea th:field="*{noiDung}" class="form-control" rows="10" placeholder="Nội dung chương truyện..."></textarea>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-success px-4">💾 Lưu chương</button>
+            <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}" class="btn btn-secondary px-4">Hủy</a>
+        </div>
+    </form>
+
 </div>

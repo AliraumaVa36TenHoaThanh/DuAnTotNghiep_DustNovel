@@ -1,0 +1,19 @@
+<div id="chapter-list" class="hidden">
+
+    <div class="mb-2">
+        <div class="fw-bold text-white"
+             th:text="${chuong.truyen.tenTruyen}">
+        </div>
+        <div class="text-muted small"
+             th:text="${chuong.tap.tenTap}">
+        </div>
+        <hr class="border-secondary">
+    </div>
+
+    <th:block th:each="c : ${dsChuongTrongTap}">
+        <a th:href="@{/DustNovel/chuong/{id}(id=${c.id})}"
+           th:text="${c.tieuDe}">
+        </a>
+    </th:block>
+
+</div>

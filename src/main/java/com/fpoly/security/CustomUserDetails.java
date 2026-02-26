@@ -1,4 +1,4 @@
-package com.fpoly.security;
+	package com.fpoly.security;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +25,13 @@ public class CustomUserDetails implements UserDetails {
     public NguoiDung getUser() {
         return user;
     }
+    
+    private NguoiDung nguoiDung;
+
+    public NguoiDung getNguoiDung() {
+        return user;
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -51,5 +58,8 @@ public class CustomUserDetails implements UserDetails {
     @Override public boolean isCredentialsNonExpired() { return true; }
     @Override public boolean isEnabled() {return "HOAT_DONG".equalsIgnoreCase(user.getTrangThai());}
     
-    
+    public boolean isAdmin() {
+        return getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+    }
 }

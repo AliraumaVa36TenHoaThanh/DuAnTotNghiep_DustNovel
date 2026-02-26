@@ -1,0 +1,109 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+<div id="main">
+
+    <div class="page-heading">
+
+        <!-- TITLE -->
+        <div class="page-title mb-4">
+            <h3>Chỉnh sửa người dùng</h3>
+            <p class="text-muted">Cập nhật thông tin tài khoản</p>
+        </div>
+
+
+        <section class="section">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+                    <h5 class="mb-0">Form chỉnh sửa</h5>
+                </div>
+
+
+                <div class="card-body">
+
+                    <form th:action="@{/dba/user/update}"
+                          th:object="${user}"
+                          method="post">
+
+                        <!-- ID hidden -->
+                        <input type="hidden" th:field="*{id}"/>
+
+
+                        <div class="row">
+
+                            <!-- USERNAME -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tên đăng nhập</label>
+                                <input type="text"
+                                       class="form-control"
+                                       th:field="*{tenDangNhap}"
+                                       readonly>
+                            </div>
+
+
+                            <!-- EMAIL -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email"
+                                       class="form-control"
+                                       th:field="*{email}">
+                            </div>
+
+
+                            <!-- ROLE -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Vai trò</label>
+
+                                <select class="form-select"
+                                        th:field="*{vaiTro}">
+
+                                    <option value="USER">USER</option>
+                                    <option value="ADMIN">ADMIN</option>
+
+                                </select>
+                            </div>
+
+
+                            <!-- STATUS -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Trạng thái</label>
+
+                                <select class="form-select"
+                                        th:field="*{trangThai}">
+
+                                    <option value="HOAT_DONG">Hoạt động</option>
+                                    <option value="KHOA">Khóa</option>
+
+                                </select>
+                            </div>
+
+                        </div>
+
+
+                        <!-- BUTTON -->
+                        <div class="mt-4">
+
+                            <button class="btn btn-primary">
+                                Cập nhật
+                            </button>
+
+                            <a th:href="@{/dba/user}"
+                               class="btn btn-secondary">
+                                Quay lại
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+</div>
