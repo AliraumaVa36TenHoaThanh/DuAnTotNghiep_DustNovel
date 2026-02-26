@@ -9,6 +9,21 @@
 	<!-- THEME CSS -->
 	<link rel="stylesheet" th:href="@{/css/theme.css}">
 	<style>
+	.phieu-box {
+    background: linear-gradient(135deg, #fff7d6, #ffe08a);
+    border-radius: 10px;
+    padding: 6px 10px;
+    border: 1px dashed #f1c40f;
+}
+
+.phieu-box .token-label {
+    font-weight: 600;
+    color: #b8860b;
+}
+
+.phieu-box .token-value {
+    font-size: 1rem;
+}
 		.custom-item {
 		    display: flex;
 		    align-items: center;
@@ -265,6 +280,11 @@
 							<li class="px-3 py-2">
 								<div class="token-box"> <span class="token-label">🪙 Token</span> <span
 										class="token-value" th:text="${userToken}">0</span> </div>
+										<div class="token-box phieu-box mb-2">
+        <span class="token-label">🎟️ Phiếu thưởng</span>
+        <span class="token-value text-warning fw-bold"
+              th:text="${userPhieuThuong}">0</span>
+    </div>
 								<div class="theme-switch"> <span class="theme-label">Giao diện</span> <label
 										class="switch"> <input type="checkbox" id="themeToggle"> <span
 											class="slider"></span> </label> </div>
