@@ -103,7 +103,8 @@ public class UserController {
 			model.addAttribute("emailValue", email);
 			model.addAttribute("matKhauMoi", matKhauMoi);
 			model.addAttribute("xacNhanMatKhau", xacNhanMatKhau);
-			return "user/profile";
+			model.addAttribute("content", "user/profile");
+			return "layout/main";
 		}
 
 		if (!user.getEmail().equals(email)) {
