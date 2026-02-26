@@ -33,7 +33,7 @@ public class LichSuDocController {
             lichSuDocService.layLichSu(user.getId())
         );
 
-        model.addAttribute("content", "truyen/lichSuDoc");
+        model.addAttribute("content", "truyen/lichsudoc");
         model.addAttribute("title", "Lịch sử đọc");
 
         return "layout/main";
