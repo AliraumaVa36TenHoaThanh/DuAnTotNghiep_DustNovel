@@ -9,6 +9,28 @@
 	<!-- THEME CSS -->
 	<link rel="stylesheet" th:href="@{/css/theme.css}">
 	<style>
+		.custom-item {
+		    display: flex;
+		    align-items: center;
+		    gap: -1px;
+		    padding: 8px 12px;   /* giảm padding trái */
+		    margin-left: -4px;   /* kéo nhẹ về trái */
+		    border-radius: 8px;
+		    transition: all 0.2s ease;
+		    font-weight: 500;
+		}
+
+		.custom-item i {
+		    font-size: 18px;
+		    width: 20px;         /* giảm width icon */
+		    text-align: center;
+		    color: #4a4a4a;
+		}
+
+		.custom-item:hover {
+		    background-color: #f2f4f7;
+		    transform: translateX(3px);
+		}
 		/* ===== THEME TOGGLE SWITCH ===== */
 		.theme-switch {
 			display: flex;
@@ -211,11 +233,6 @@
 							📊 Dashboard
 						</a>
 					</li>
-					<li class="nav-item" sec:authorize="hasRole('USER')">
-						<a class="nav-link" th:href="@{/dbu/}">
-							📊 Dashboard
-						</a>
-					</li>
 				</ul>
 				<form class="d-flex ms-auto me-3" th:action="@{/DustNovel/truyen/tim-kiem}" method="get"> <input
 						class="form-control search-input me-2" type="search" name="keyword" placeholder="Tìm truyện...">
@@ -253,7 +270,19 @@
 											class="slider"></span> </label> </div>
 							</li>
 							<li>
-  								  <a class="dropdown-item" th:href="@{/DustNovel/lich-su-doc}">📖 Lịch sử đọc </a>
+							    <a class="dropdown-item custom-item"
+							       th:href="@{/DustNovel/lich-su-doc}">
+							        <i class="bi bi-book"></i>
+							        <span>📖 Lịch sử đọc</span>
+							    </a>
+							</li>
+
+							<li sec:authorize="hasRole('USER')">
+							    <a class="dropdown-item custom-item"
+							       th:href="@{/dbu/}">
+							        <i class="bi bi-bar-chart"></i>
+							        <span>📊 Hệ Thống 36</span>
+							    </a>
 							</li>
 							<li>
 								<hr class="dropdown-divider">
@@ -269,7 +298,7 @@
 		</div>
 	</nav>
 	<div class="container my-4">
-		<div th:replace="${content} :: content"></div>
+		<div th:replace="~{${content} :: content}"></div>
 	</div>
 	<footer class="text-center py-2 border-top"> <small>© 2025 - DustNovel</small> </footer>
 	<script> const toggle = document.getElementById("themeToggle"); function applyTheme(theme) {document.body.setAttribute("data-theme", theme); localStorage.setItem("theme", theme); toggle.checked = theme === "dark";} toggle.addEventListener("change", () => {applyTheme(toggle.checked ? "dark" : "light");}); (function () {const saved = localStorage.getItem("theme") || "light"; applyTheme(saved);})(); </script>
