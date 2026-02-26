@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import com.fpoly.model.Chuong;
 import com.fpoly.model.MoKhoaChuong;
 import com.fpoly.model.NguoiDung;
+import com.fpoly.model.PhieuThuong;
 import com.fpoly.model.Tap;
 import com.fpoly.repository.ChuongRepository;
 import com.fpoly.repository.LichSuDocRepository;
@@ -26,6 +27,7 @@ import com.fpoly.security.SecurityUtil;
 import com.fpoly.service.ChuongService;
 import com.fpoly.service.LichSuDocService;
 import com.fpoly.service.PermissionService;
+import com.fpoly.service.PhieuThuongService;
 import com.fpoly.service.TapService;
 import com.fpoly.service.TruyenService;
 
@@ -57,7 +59,9 @@ public class ChuongController {
 	LichSuDocService lichSuDocService;
     @Autowired
     LichSuDocRepository lichSuDocRepo;
-	
+    @Autowired
+    PhieuThuongService phieuThuongService;
+    
 	@GetMapping("/{id}")
 	public String read(@PathVariable Long id, Model model) {
 		boolean canEditChuong = false;
@@ -263,42 +267,44 @@ public class ChuongController {
 //    }
     
     // ĐỊT MẸ THẰNG NÀO MÀ XÓA CÁI NÀY CỦA T LÀ T GIẾT SẠCH !
-    @PostMapping("/{id}/mua")
-    @Transactional
-    public String mua(@PathVariable Long id) {
-
-        NguoiDung user = securityUtil.getCurrentUserFromDB();
-        if (user == null) return "redirect:/DustNovel/login";
-
-        Chuong c = chuongRepo.findById(id).orElseThrow();
-
-        if (moKhoaChuongRepo.existsByNguoiDung_IdAndChuong_Id(
-                user.getId(), id)) {
-            return "redirect:/DustNovel/chuong/" + id;
-        }
-
-        long gia = com.fpoly.config.GiaChuongKhoa.gia_chuong;
-        if (user.getToken() < gia)
-            return "redirect:/DustNovel/nap-tien";
-
-        user.setToken(user.getToken() - gia);
-        nguoiDungRepo.save(user);
-        
-        NguoiDung nguoiDang = c.getNguoiDang();
-        if (nguoiDang != null) {
-            long tokenHienTai = (nguoiDang.getToken() != null) ? nguoiDang.getToken() : 0L;
-            nguoiDang.setToken(tokenHienTai + gia);
-            nguoiDungRepo.save(nguoiDang);
-        }
-        
-        MoKhoaChuong mk = new MoKhoaChuong();
-        mk.setNguoiDung(user);
-        mk.setChuong(c);
-        mk.setGiaToken(gia);
-        moKhoaChuongRepo.save(mk);
-
-        return "redirect:/DustNovel/chuong/" + id;
-    }
+//    @PostMapping("/{id}/mua")
+//    @Transactional
+//    public String mua(@PathVariable Long id) {
+//
+//        NguoiDung user = securityUtil.getCurrentUserFromDB();
+//        if (user == null) return "redirect:/DustNovel/login";
+//
+//        Chuong c = chuongRepo.findById(id).orElseThrow();
+//
+//        if (moKhoaChuongRepo.existsByNguoiDung_IdAndChuong_Id(
+//                user.getId(), id)) {
+//            return "redirect:/DustNovel/chuong/" + id;
+//        }
+//
+//        long gia = com.fpoly.config.GiaChuongKhoa.gia_chuong;
+//        if (user.getToken() < gia)
+//            return "redirect:/DustNovel/nap-tien";
+//
+//        user.setToken(user.getToken() - gia);
+//        nguoiDungRepo.save(user);
+//        
+//        NguoiDung nguoiDang = c.getNguoiDang();
+//        if (nguoiDang != null) {
+//            long tokenHienTai = (nguoiDang.getToken() != null) ? nguoiDang.getToken() : 0L;
+//            nguoiDang.setToken(tokenHienTai + gia);
+//            nguoiDungRepo.save(nguoiDang);
+//        }
+//        
+//        MoKhoaChuong mk = new MoKhoaChuong();
+//        mk.setNguoiDung(user);
+//        mk.setChuong(c);
+//        mk.setGiaToken(gia);
+//        moKhoaChuongRepo.save(mk);
+//
+//        return "redirect:/DustNovel/chuong/" + id;
+//    }
+    
+    
     @PreAuthorize("@permissionService.canEditChuong(#id)")
     @PostMapping("/xoa/{id}")
     @Transactional
@@ -359,5 +365,70 @@ public class ChuongController {
          chuongService.save(chuongDB);
          return "redirect:/DustNovel/truyen/" + chuongDB.getTruyen().getId();
     }
+    @PostMapping("/{id}/mua")
+    public String muaChuong(@PathVariable Long id, Model model) {
+
+        NguoiDung user = securityUtil.getCurrentUserFromDB();
+        if (user == null) return "redirect:/DustNovel/login";
+
+        Chuong chuong = chuongRepo.findById(id).orElseThrow();
+
+        PhieuThuong phieu = user.getPhieuThuong();
+        if (phieu != null && phieu.getSoLuong() > 0) {
+            model.addAttribute("chuong", chuong);
+            model.addAttribute("soPhieu", phieu.getSoLuong());
+            model.addAttribute("content", "chuong/hoi-dung-phieu");
+            return "layout/main";
+        }
+        return "redirect:/DustNovel/chuong/" + id + "/mua-token";
+    }
     
+    @PostMapping("/{id}/mua-phieu")
+    @Transactional
+    public String muaBangPhieu(@PathVariable Long id) {
+
+        NguoiDung user = securityUtil.getCurrentUserFromDB();
+        Chuong chuong = chuongRepo.findById(id).orElseThrow();
+
+        
+		phieuThuongService.muaChuongBangPhieu(user, chuong);
+
+        return "redirect:/DustNovel/chuong/" + id;
+    }
+    
+    @PostMapping("/{id}/mua-token")
+    @Transactional
+    public String muaBangToken(@PathVariable Long id) {
+    	NguoiDung user = securityUtil.getCurrentUserFromDB();
+      if (user == null) return "redirect:/DustNovel/login";
+
+      Chuong c = chuongRepo.findById(id).orElseThrow();
+
+      if (moKhoaChuongRepo.existsByNguoiDung_IdAndChuong_Id(
+              user.getId(), id)) {
+          return "redirect:/DustNovel/chuong/" + id;
+      }
+
+      long gia = com.fpoly.config.GiaChuongKhoa.gia_chuong;
+      if (user.getToken() < gia)
+          return "redirect:/DustNovel/nap-tien";
+
+      user.setToken(user.getToken() - gia);
+      nguoiDungRepo.save(user);
+      
+      NguoiDung nguoiDang = c.getNguoiDang();
+      if (nguoiDang != null) {
+          long tokenHienTai = (nguoiDang.getToken() != null) ? nguoiDang.getToken() : 0L;
+          nguoiDang.setToken(tokenHienTai + gia);
+          nguoiDungRepo.save(nguoiDang);
+      }
+      
+      MoKhoaChuong mk = new MoKhoaChuong();
+      mk.setNguoiDung(user);
+      mk.setChuong(c);
+      mk.setGiaToken(gia);
+      moKhoaChuongRepo.save(mk);
+
+      return "redirect:/DustNovel/chuong/" + id;
+    }
 }
