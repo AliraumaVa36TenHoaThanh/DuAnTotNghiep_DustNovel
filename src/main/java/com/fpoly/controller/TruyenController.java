@@ -306,7 +306,7 @@ public class TruyenController {
 
 	    
 	   
-=======
+
 	    @PostMapping("/truyen/{id}/doi-trang-thai")
 	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
 	    public String doiTrangThai(@PathVariable Long id) {
