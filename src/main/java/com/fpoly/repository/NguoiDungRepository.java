@@ -27,4 +27,7 @@ public interface NguoiDungRepository extends JpaRepository<NguoiDung, Long> {
             ORDER BY NEWID()
         """, nativeQuery = true)
         List<NguoiDung> findRandom5Users();
+    
+    List<NguoiDung> findTop5ByOrderByTokenDesc();
+    
 }
