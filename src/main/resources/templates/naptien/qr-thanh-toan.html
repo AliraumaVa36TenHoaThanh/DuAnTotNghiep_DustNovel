@@ -1,0 +1,64 @@
+<div th:fragment="content" class="container mt-5 text-center">
+    
+    <div id="qr-container" class="card mx-auto shadow-sm" style="max-width: 500px;">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Thanh toán <span th:text="${don.tenGoiNap}"></span></h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">Mở App Ngân hàng và quét mã QR dưới đây</p>
+            
+            <img th:src="'https://img.vietqr.io/image/MB-0705722973-compact.png?amount=' 
+                        + ${don.soTienThuc} + '&addInfo=' + ${don.noiDungCk}"
+                 width="300" class="img-fluid border p-2 rounded mb-3">
+            
+            <ul class="list-group list-group-flush text-start">
+                <li class="list-group-item">Số tiền cần chuyển: <strong class="text-danger fs-5" th:text="${#numbers.formatDecimal(don.soTienThuc, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong></li>
+                <li class="list-group-item">Nội dung chuyển khoản: <strong class="text-primary fs-5" th:text="${don.noiDungCk}"></strong></li>
+            </ul>
+
+            <div class="alert alert-warning mt-3 mb-0">
+                <div class="spinner-border spinner-border-sm text-warning me-2" role="status"></div>
+                <strong>Đang chờ thanh toán...</strong> Hệ thống sẽ tự động cộng Token ngay khi nhận được tiền.
+            </div>
+        </div>
+    </div>
+
+    <div id="success-container" class="card mx-auto shadow-sm border-success" style="max-width: 500px; display: none;">
+        <div class="card-body py-5">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 6rem;"></i>
+            <h2 class="text-success mt-4 fw-bold">Bạn đã thanh toán thành công !</h2>
+            <p class="fs-5 text-muted">Hệ thống đang tự động chuyển về trang nạp tiền...</p>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const maDonNap = /*[[${don.id}]]*/ 0;
+        
+        const interval = setInterval(function() {
+            // Thêm tham số timestamp (?t=...) để chống trình duyệt lưu Cache GET request
+            const url = '/DustNovel/nap-tien-tu-dong/api/check-status/' + maDonNap + '?t=' + new Date().getTime();
+            
+            fetch(url)
+                .then(response => response.text())
+                .then(status => {
+                    console.log("Trạng thái từ Server:", status); 
+                    
+                    // Dùng trim() để cắt khoảng trắng thừa 2 đầu
+                    if (status.trim() === 'SUCCESS') {
+                        clearInterval(interval); // Dừng vòng lặp gọi API
+                        
+                        // Ẩn màn hình QR, hiện màn hình Thành công
+                        document.getElementById('qr-container').style.display = 'none';
+                        document.getElementById('success-container').style.display = 'block';
+
+                        // Đợi 2 giây cho người dùng đọc chữ Thành công rồi redirect về trang nạp tiền
+                        setTimeout(function() {
+                            window.location.href = '/DustNovel/nap-tien-tu-dong';
+                        }, 2000);
+                    }
+                })
+                .catch(error => console.error('Lỗi khi kiểm tra trạng thái:', error));
+        }, 3000); 
+    </script>
+
+</div>

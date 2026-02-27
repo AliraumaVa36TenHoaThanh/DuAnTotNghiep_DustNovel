@@ -1,0 +1,30 @@
+<div th:fragment="content" class="container mt-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">BẢNG GIÁ NẠP TOKEN</h2>
+        <p class="text-muted">Tỉ giá quy đổi: 20 VNĐ = 1 Token</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <th:block th:each="gia : ${ {10000, 20000, 50000, 100000, 200000, 500000} }">
+            <div class="col-md-4 col-lg-2 mb-4">
+                <div class="card h-100 shadow-sm border-primary text-center">
+                    <div class="card-header bg-primary text-white fw-bold fs-5">
+                        <span th:text="${#numbers.formatDecimal(gia, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                    </div>
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h3 class="card-title text-warning fw-bold mb-3">
+                            <i class="bi bi-coin"></i> <span th:text="${gia / 20}"></span>
+                        </h3>
+                        <p class="text-muted small">Token</p>
+                    </div>
+                    <div class="card-footer bg-white border-0 pb-3">
+                        <form th:action="@{/DustNovel/nap-tien-tu-dong/tao-don}" method="post">
+                            <input type="hidden" name="soTienVnd" th:value="${gia}">
+                            <button type="submit" class="btn btn-outline-primary w-100 fw-bold">Mua Ngay</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </div>
+</div>
