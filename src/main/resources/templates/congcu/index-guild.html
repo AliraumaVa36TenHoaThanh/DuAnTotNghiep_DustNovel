@@ -1,0 +1,145 @@
+<div xmlns:th="http://www.thymeleaf.org"
+     th:fragment="content"
+     class="container mt-4">
+
+    <h2 th:text="${nhom.tenNhom}"></h2>
+        <strong>Trưởng nhóm:</strong>
+        <span th:text="${nhom.truongNhom.tenDangNhap}"></span>
+    </p>
+
+    <p>
+        <strong>Mô tả:</strong>
+        <span th:text="${nhom.moTa}"></span>
+    </p>
+	<div class="mt-3"
+	     th:if="${!laTruongNhom}">
+
+	    <!-- Nếu chưa gửi yêu cầu -->
+	    <form th:if="${!daGuiYeuCau}"
+	          th:action="@{/DustNovel/nhom-dich/{id}/yeu-cau(id=${nhom.id})}"
+	          method="post">
+
+	        <button class="btn btn-success">
+	            ✅ Yêu cầu tham gia
+	        </button>
+
+	    </form>
+
+	    <!-- Nếu đã gửi -->
+	    <div th:if="${daGuiYeuCau}"
+	         class="alert alert-warning mt-2">
+	        ⏳ Bạn đã gửi yêu cầu, đang chờ duyệt.
+	    </div>
+
+	</div>
+    <hr>
+
+	<h4>👥 Thành viên</h4>
+
+	<!-- Nếu có thành viên -->
+	<div th:if="${!#lists.isEmpty(danhSachThanhVien)}">
+
+	    <table class="table table-bordered mt-3">
+	        <thead>
+	        <tr>
+	            <th>Tên</th>
+	            <th>Vai trò</th>
+	            <th>Kick thành viên</th>
+	        </tr>
+	        </thead>
+
+	        <tbody>
+	        <tr th:each="tv : ${danhSachThanhVien}">
+	            <td th:text="${tv.nguoiDung.tenDangNhap}"></td>
+	            <td th:text="${tv.vaiTro}"></td>
+				<td>
+
+				    <!-- Nếu là trưởng nhóm và không phải chính mình -->
+				    <div th:if="${laTruongNhom and tv.nguoiDung.id != nhom.truongNhom.id}">
+
+				        <form th:action="@{/DustNovel/nhom-dich/kick/{id}(id=${tv.id})}"
+				              method="post"
+				              style="display:inline;">
+
+				            <input type="hidden" name="nhomId"
+				                   th:value="${nhom.id}" />
+
+				            <button class="btn btn-danger btn-sm">
+				                ❌ Kick
+				            </button>
+
+				        </form>
+
+				    </div>
+
+				    <!-- Nếu không phải trưởng nhóm -->
+				    <div th:if="${!laTruongNhom or tv.nguoiDung.id == nhom.truongNhom.id}">
+				        <span class="badge bg-success"
+				              th:text="${tv.trangThai}">
+				        </span>
+				    </div>
+
+				</td>
+	        </tr>
+	        </tbody>
+	    </table>
+	</div>
+
+	<!-- Nếu không có -->
+	<div th:if="${#lists.isEmpty(danhSachThanhVien)}"
+	     class="alert alert-info">
+	    Chưa có thành viên nào.
+	</div>
+	<div th:if="${laTruongNhom}" class="mt-5">
+
+	    <h4>📩 Yêu cầu tham gia</h4>
+
+	    <table class="table table-bordered mt-3"
+	           th:if="${!#lists.isEmpty(danhSachYeuCau)}">
+
+	        <thead class="table-warning">
+	        <tr>
+	            <th>Tên người gửi</th>
+	            <th>Ngày gửi</th>
+	            <th>Hành động</th>
+	        </tr>
+	        </thead>
+
+	        <tbody>
+	        <tr th:each="yc : ${danhSachYeuCau}">
+	            <td th:text="${yc.nguoiMoi.tenDangNhap}"></td>
+	            <td th:text="${#temporals.format(yc.ngayMoi, 'dd/MM/yyyy HH:mm')}"></td>
+	            <td>
+
+	                <form th:action="@{/DustNovel/nhom-dich/duyet/{id}(id=${yc.id})}"
+	                      method="post"
+	                      style="display:inline;">
+	                    <input type="hidden" name="nhomId"
+	                           th:value="${nhom.id}" />
+	                    <button class="btn btn-success btn-sm">
+	                        ✅ Duyệt
+	                    </button>
+	                </form>
+
+	                <form th:action="@{/DustNovel/nhom-dich/tu-choi/{id}(id=${yc.id})}"
+	                      method="post"
+	                      style="display:inline;">
+	                    <input type="hidden" name="nhomId"
+	                           th:value="${nhom.id}" />
+	                    <button class="btn btn-danger btn-sm">
+	                        ❌ Từ chối
+	                    </button>
+	                </form>
+
+	            </td>
+	        </tr>
+	        </tbody>
+	    </table>
+
+	    <div th:if="${#lists.isEmpty(danhSachYeuCau)}"
+	         class="alert alert-info mt-2">
+	        Không có yêu cầu nào.
+	    </div>
+
+	</div>
+</div>
