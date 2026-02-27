@@ -52,4 +52,19 @@ public interface ChuongRepository extends JpaRepository<Chuong, Long> {
     @Transactional
     @Query("DELETE FROM LichSuDoc l WHERE l.chuong.tap.id = :tapId")
     void deleteByTapId(@Param("tapId") Long tapId);
+    
+    @Query("""
+    		SELECT c FROM Chuong c
+    		WHERE c.tap.truyen.id = :truyenId
+    		ORDER BY c.tap.soTap ASC, c.soChuong ASC
+    		""")
+    		List<Chuong> findTatCaChuongTheoThuTuAsc(Long truyenId);
+
+
+    		@Query("""
+    		SELECT c FROM Chuong c
+    		WHERE c.tap.truyen.id = :truyenId
+    		ORDER BY c.tap.soTap DESC, c.soChuong DESC
+    		""")
+    		List<Chuong> findTatCaChuongTheoThuTuDesc(Long truyenId);
 }

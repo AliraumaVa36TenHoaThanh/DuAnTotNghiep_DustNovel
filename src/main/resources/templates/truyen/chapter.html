@@ -75,7 +75,9 @@
         .hidden { display: none !important; }
     </style>
 
-    <h4 class="text-center fw-bold" th:text="${chuong.tieuDe}"></h4>
+    <h4 class="text-center fw-bold"
+    th:text="'Chương ' + ${chuong.soChuong} + ': ' + ${chuong.tieuDe}">
+</h4>
     <p class="text-center text-muted small">
         Cập nhật: <span th:text="${#temporals.format(chuong.ngayTao, 'dd/MM/yyyy HH:mm')}"></span>
     </p>

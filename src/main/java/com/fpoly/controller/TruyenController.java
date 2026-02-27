@@ -68,13 +68,17 @@ public class TruyenController {
 //	    }
 	    @GetMapping("/truyen/{id:\\d+}")
 	    public String detail(@PathVariable Long id, Model model) {
-	    	
+	    	NguoiDung user = securityUtil.getCurrentUserFromDB();
 	        Truyen truyen = truyenService.findById(id);
 	        LocalDateTime ngayCapNhat = chuongService.layNgayCapNhatTruyen(id);
 	        long tongSoTu = chuongService.laySoTuTruyen(id);
 	        if (truyen == null) return "redirect:/DustNovel/home";
-	        Chuong chuongDau = chuongService.layChuongDau(id);
-	        Chuong chuongMoi = chuongService.layChuongMoiNhat(id);
+////	        Chuong chuongDau = chuongService.layChuongDau(id);
+////	        Chuong chuongMoi = chuongService.layChuongMoiNhat(id);
+//	        model.addAttribute("chuongDau", chuongDau);
+//	        model.addAttribute("chuongMoi", chuongMoi);
+	        Chuong chuongDau = chuongService.layChuongDauCoTheDoc(id, user);
+	        Chuong chuongMoi = chuongService.layChuongMoiCoTheDoc(id, user);
 	        model.addAttribute("chuongDau", chuongDau);
 	        model.addAttribute("chuongMoi", chuongMoi);
 	        model.addAttribute("truyen", truyen);
