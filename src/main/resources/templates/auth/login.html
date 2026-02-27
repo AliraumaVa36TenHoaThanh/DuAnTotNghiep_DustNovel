@@ -41,7 +41,16 @@
                         Đã đăng xuất
                     </div>
 
-                    <form th:action="@{/DustNovel/login}" method="post">
+						<!-- Login khi tài khoản đã bị khóa -->
+						<div th:if="${param.lockedLogin}" class="alert alert-warning">
+							Tài khoản này đã tạm thời khóa.</div>
+
+						<!-- Khi user tự khóa tài khoản -->
+						<div th:if="${param.lockedByAdmin}" class="alert alert-warning">
+							Bạn đã khóa tài khoản. Nếu có nhu cầu mở lại hãy liên hệ admin để
+							được hỗ trợ mở khóa trở lại.</div>
+
+						<form th:action="@{/DustNovel/login}" method="post">
 
                         <div class="mb-3">
                             <label for="username" class="form-label">
