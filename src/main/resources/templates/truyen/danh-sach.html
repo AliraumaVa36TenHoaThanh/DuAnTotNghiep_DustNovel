@@ -1,0 +1,85 @@
+<div th:fragment="content">
+    <div class="container mt-4">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+            <h3 class="fw-bold text-primary m-0" th:text="${pageTitle}">Danh sách truyện</h3>
+            <span class="text-muted fw-bold" th:text="${dsTruyen.totalElements} + ' truyện'"></span>
+        </div>
+
+        <div th:if="${dsTruyen.empty}" class="alert alert-info text-center py-5 shadow-sm">
+            <i class="bi bi-emoji-frown fs-1 d-block mb-3"></i>
+            <h5>Chưa có truyện nào thuộc danh mục này!</h5>
+            <a th:href="@{/DustNovel/home}" class="btn btn-outline-primary mt-3">Về Trang chủ</a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 mb-4" th:each="truyen : ${dsTruyen.content}" th:with="chuongMoi=${@chuongService.layChuongMoiNhat(truyen.id)}">
+                <div class="card h-100 shadow-sm border-0 bg-light" style="transition: transform 0.2s;">
+
+                    <img th:src="${truyen.tag18} 
+                                  ? 'https://i.pinimg.com/1200x/69/05/e3/6905e37f8ca8a420fd303393921ecec0.jpg' 
+                                  : (${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)} 
+                                     ? ${truyen.anhBia} : @{/images/aria.jpg})"
+                         class="card-img-top rounded-top" style="aspect-ratio:9/11; object-fit:cover;">
+
+                    <div class="card-body d-flex flex-column">
+
+                        <h6 class="card-title fw-bold text-truncate" th:text="${truyen.tenTruyen}" th:title="${truyen.tenTruyen}"></h6>
+
+                        <div th:if="${chuongMoi != null}" class="mb-2 text-truncate" style="font-size: 0.85rem;">
+                            <span class="badge bg-danger me-1">New!</span>
+                            <a th:href="@{/DustNovel/chuong/{id}(id=${chuongMoi.id})}" 
+                               class="text-decoration-none text-primary fw-bold"
+                               th:text="'Chương ' + ${chuongMoi.soChuong} + ': ' + ${chuongMoi.tieuDe}" 
+                               th:title="'Chương ' + ${chuongMoi.soChuong} + ': ' + ${chuongMoi.tieuDe}">
+                            </a>
+                        </div>
+                        <div th:unless="${chuongMoi != null}" class="mb-2 text-muted" style="font-size: 0.85rem;">
+                            <i>Chưa có chương</i>
+                        </div>
+
+                        <small class="text-muted mb-2" th:text="'Tác giả: ' + ${truyen.tenTacGia}"></small>
+                        
+                        <div class="mb-2 d-flex flex-wrap gap-1">
+                            <a th:each="tl : ${truyen.theLoais}" 
+                               th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}" 
+                               th:text="${tl.tenTheLoai}" 
+                               class="badge bg-secondary text-decoration-none">
+                            </a>
+                        </div>
+                        
+                        <small class="text-danger mb-2 fw-bold" th:if="${truyen.tag18}">🔞 Nội dung 18+</small>
+
+                        <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}" class="btn btn-sm btn-outline-primary mt-auto fw-bold">
+                            Xem truyện
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <nav th:if="${dsTruyen.totalPages > 1}" aria-label="Page navigation" class="mt-5 mb-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${dsTruyen.first} ? 'disabled'">
+                    <a class="page-link shadow-sm" th:href="@{''(page=${dsTruyen.number})}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo; Trước</span>
+                    </a>
+                </li>
+                <li class="page-item" 
+                    th:each="i : ${#numbers.sequence(1, dsTruyen.totalPages)}" 
+                    th:classappend="${dsTruyen.number + 1 == i} ? 'active'">
+                    <a class="page-link shadow-sm fw-bold" th:href="@{''(page=${i})}" th:text="${i}"></a>
+                </li>
+                <li class="page-item" th:classappend="${dsTruyen.last} ? 'disabled'">
+                    <a class="page-link shadow-sm" th:href="@{''(page=${dsTruyen.number + 2})}" aria-label="Next">
+                        <span aria-hidden="true">Sau &raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <style>
+        .card:hover { transform: translateY(-5px); }
+    </style>
+</div>

@@ -46,7 +46,7 @@ public class Chuong {
     
     @Column(name = "khoa", columnDefinition = "BIT")
     private boolean khoa;
-
+    
     @Column(name = "gia_token")
     private Long giaToken = 0L;
     
