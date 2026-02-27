@@ -4,7 +4,10 @@ import com.fpoly.repository.ChuongRepository;
 import com.fpoly.repository.LichSuDocRepository;
 import com.fpoly.repository.TheLoaiRepository;
 import com.fpoly.repository.TruyenRepository;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.ui.Model;
 
 
@@ -141,12 +146,32 @@ public class TruyenService {
 	    );
 	}
 
-	// ===== TRUYỆN DỊCH THEO USER =====
 	public List<Truyen> getTruyenDichByUser(Long userId) {
 	    return truyenRepo.findByUserAndLoai(
 	            userId,
 	            LoaiTruyen.DỊCH
 	    );
+	}
+	
+	public Page<Truyen> getTruyenOrderByChuongMoiNhat(
+	        LoaiTruyen loaiTruyen,
+	        Pageable pageable
+	) {
+	    Page<Long> idPage =
+	        truyenRepo.findIdsByLoaiTruyenOrderByChuongMoiNhat(loaiTruyen, pageable);
+
+	    List<Truyen> truyenList =
+	        truyenRepo.findByIdIn(idPage.getContent());
+
+	    Map<Long, Truyen> map = truyenList.stream()
+	        .collect(Collectors.toMap(Truyen::getId, t -> t));
+
+	    List<Truyen> ordered =
+	        idPage.getContent().stream()
+	            .map(map::get)
+	            .toList();
+
+	    return new PageImpl<>(ordered, pageable, idPage.getTotalElements());
 	}
 	
 }

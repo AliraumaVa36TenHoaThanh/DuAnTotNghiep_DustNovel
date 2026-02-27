@@ -1,7 +1,8 @@
 package com.fpoly.repository;
 
 import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -127,4 +128,74 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     @Modifying
     @Query("UPDATE Truyen t SET t.luotXem = t.luotXem + 1 WHERE t.id = :id")
     void tangLuotXem(@Param("id") Long id);
+    
+    @Query("SELECT t FROM Truyen t LEFT JOIN Chuong c ON t.id = c.truyen.id WHERE t.loaiTruyen = :loaiTruyen GROUP BY t.id, t.tenTruyen, t.moTa, t.tenTacGia, t.loaiTruyen, t.trangThai, t.tag18, t.nguoiDang.id, t.anhBia, t.ngayTao, t.tongLike, t.luotXem ORDER BY MAX(c.ngayTao) DESC NULLS LAST, t.ngayTao DESC")
+    List<Truyen> findByLoaiTruyenOrderByChuongMoiNhat(@Param("loaiTruyen") LoaiTruyen loaiTruyen);
+    
+//    @Query("SELECT t FROM Truyen t " +
+//            "LEFT JOIN t.danhSachTap tap " +
+//            "LEFT JOIN tap.danhSachChuong c " +
+//            "WHERE t.loaiTruyen = :loaiTruyen " +
+//            "GROUP BY t " +
+//            "ORDER BY MAX(c.ngayTao) DESC NULLS LAST, t.ngayTao DESC")
+//     List<Truyen> findByLoaiTruyenOrderByChuongMoiNhatHome(@Param("loaiTruyen") LoaiTruyen loaiTruyen);
+    @Query("SELECT t FROM Truyen t " +
+            "LEFT JOIN t.danhSachTap tap " +
+            "LEFT JOIN tap.danhSachChuong c " +
+            "WHERE t.loaiTruyen = :loaiTruyen " +
+            "GROUP BY t " +
+            "ORDER BY COALESCE(MAX(c.ngayTao), t.ngayTao) DESC")
+     List<Truyen> findByLoaiTruyenOrderByChuongMoiNhatHome(@Param("loaiTruyen") LoaiTruyen loaiTruyen);
+    
+    @Query("SELECT t FROM Truyen t " +
+            "LEFT JOIN t.danhSachTap tap " +
+            "LEFT JOIN tap.danhSachChuong c " +
+            "WHERE t.loaiTruyen = :loaiTruyen " +
+            "GROUP BY t " +
+            "ORDER BY COALESCE(MAX(c.ngayTao), t.ngayTao) DESC")
+    Page<Truyen> findByPage(@Param("loaiTruyen") LoaiTruyen loaiTruyen, Pageable pageable);
+    
+//    @Query(
+//    	    value = """
+//    	        SELECT t
+//    	        FROM Truyen t
+//    	        LEFT JOIN t.danhSachTap tap
+//    	        LEFT JOIN tap.danhSachChuong c
+//    	        WHERE t.loaiTruyen = :loaiTruyen
+//    	        GROUP BY t
+//    	        ORDER BY COALESCE(MAX(c.ngayTao), t.ngayTao) DESC
+//    	    """,
+//    	    countQuery = """
+//    	        SELECT COUNT(t)
+//    	        FROM Truyen t
+//    	        WHERE t.loaiTruyen = :loaiTruyen
+//    	    """
+//    	)
+//    	Page<Truyen> findByLoaiTruyenOrderByChuongMoiNhatPage(
+//    	    @Param("loaiTruyen") LoaiTruyen loaiTruyen,
+//    	    Pageable pageable
+//    	);
+    @Query(
+    	    value = """
+    	        SELECT t
+    	        FROM Truyen t
+    	        WHERE t.loaiTruyen = :loaiTruyen
+    	        ORDER BY (
+    	            SELECT MAX(c.ngayTao)
+    	            FROM Chuong c
+    	            JOIN c.tap tap
+    	            WHERE tap.truyen.id = t.id
+    	        ) DESC
+    	        """,
+    	    countQuery = """
+    	        SELECT COUNT(t)
+    	        FROM Truyen t
+    	        WHERE t.loaiTruyen = :loaiTruyen
+    	        """
+    	)
+    	Page<Truyen> findByLoaiTruyenOrderByChuongMoiNhatPage(
+    	    @Param("loaiTruyen") LoaiTruyen loaiTruyen,
+    	    Pageable pageable
+    	);
+   
 }
