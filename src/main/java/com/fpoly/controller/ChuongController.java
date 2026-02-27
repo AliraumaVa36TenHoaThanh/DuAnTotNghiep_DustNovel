@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.fpoly.model.BinhLuan;
 import com.fpoly.model.Chuong;
 import com.fpoly.model.MoKhoaChuong;
 import com.fpoly.model.NguoiDung;
@@ -22,12 +23,14 @@ import com.fpoly.repository.NguoiDungRepository;
 import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.CustomUserDetails;
 import com.fpoly.security.SecurityUtil;
+import com.fpoly.service.BinhLuanService;
 import com.fpoly.service.ChuongService;
 import com.fpoly.service.PermissionService;
 import com.fpoly.service.TapService;
 import com.fpoly.service.TruyenService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/DustNovel/chuong")
@@ -52,7 +55,10 @@ public class ChuongController {
 	@Autowired
 	TapService tapService;
 	
-
+	
+	
+	@Autowired
+	private BinhLuanService binhLuanService;
 	
 	@GetMapping("/{id}")
 	public String read(@PathVariable Long id, Model model) {
@@ -71,6 +77,11 @@ public class ChuongController {
 	                + "/tap/" + chuong.getTap().getId()
 	                + "?error=not_purchased&chapId=" + id;
 	    }
+	    List<BinhLuan> comments =
+	            binhLuanService.getByChuong(id);
+
+	    model.addAttribute("comments", comments);
+
 	    
 	    Chuong chuongTruoc = chuongService.chuongTruoc(chuong);
 	    Chuong chuongSau = chuongService.chuongSau(chuong);
@@ -426,5 +437,95 @@ public class ChuongController {
 
         return "redirect:/DustNovel/truyen/";
     }
-    
+    @PostMapping("/{id}/comment")
+    public String commentChuong(@PathVariable("id") Long chuongId,
+                                 @RequestParam String noiDung,
+                                 HttpSession session) {
+
+    	NguoiDung user = securityUtil.getCurrentUserFromDB();
+    	if (user == null) {
+    	    return "redirect:/DustNovel/login";
+    	}
+
+        binhLuanService.saveForChuong(chuongId, user.getId(), noiDung);
+
+        return "redirect:/DustNovel/chuong/" + chuongId;
+    }
+    @PostMapping("/comment/delete")
+    public String deleteComment(@RequestParam Long commentId,
+                                @RequestParam Long chuongId,
+                                HttpSession session) {
+
+    	NguoiDung user = securityUtil.getCurrentUserFromDB();
+        if (user == null) {
+            return "redirect:/DustNovel/login";
+        }
+
+        binhLuanService.deletecmtChuong(commentId, user.getId());
+
+        return "redirect:/DustNovel/chuong/" + chuongId;
+    }
+    @PostMapping("/comment/update")
+    public String updateComment(@RequestParam Long commentId,
+                                @RequestParam Long chuongId,
+                                @RequestParam String noiDung,
+                                HttpSession session) {
+
+    	NguoiDung user = securityUtil.getCurrentUserFromDB();
+        if (user == null) {
+            return "redirect:/DustNovel/login";
+        }
+
+        binhLuanService.updatecmtChuong(commentId, noiDung, user.getId());
+
+        return "redirect:/DustNovel/chuong/" + chuongId;
+    }
+    @PostMapping("/comment/reply")
+    public String replyComment(@RequestParam Long parentId,
+                               @RequestParam Long chuongId,
+                               @RequestParam String noiDung) {
+
+        NguoiDung user = securityUtil.getCurrentUserFromDB();
+        if (user == null) {
+            return "redirect:/DustNovel/login";
+        }
+
+        binhLuanService.replyForChuong(
+                chuongId,
+                user.getId(),
+                parentId,
+                noiDung
+        );
+
+        return "redirect:/DustNovel/chuong/" + chuongId;
+    }
+    // nút sửa phần reply cmt
+    @PostMapping("/comment/reply/update")
+    public String updateReply(@RequestParam Long replyId,
+                              @RequestParam Long chuongId,
+                              @RequestParam String noiDung) {
+
+        NguoiDung user = securityUtil.getCurrentUserFromDB();
+        if (user == null) {
+            return "redirect:/DustNovel/login";
+        }
+
+        binhLuanService.updateReply(replyId, noiDung, user.getId());
+
+        return "redirect:/DustNovel/chuong/" + chuongId;
+    }
+    // nút xóa phần reply cmt
+    @PostMapping("/comment/reply/delete")
+    public String deleteReply(@RequestParam Long replyId,
+                              @RequestParam Long chuongId) {
+
+        NguoiDung user = securityUtil.getCurrentUserFromDB();
+        if (user == null) {
+            return "redirect:/DustNovel/login";
+        }
+
+        binhLuanService.deleteReply(replyId, user.getId());
+
+        return "redirect:/DustNovel/chuong/" + chuongId;
+    }
 }

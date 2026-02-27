@@ -32,7 +32,15 @@ public class BinhLuanController {
 
         return "redirect:/DustNovel/truyen/" + truyenId;
     }
+    @PostMapping("/chuong/add")
+    public String commentChuong(@RequestParam Long chuongId,
+                                @RequestParam String noiDung,
+                                @AuthenticationPrincipal CustomUserDetails user) {
 
+        binhLuanService.save(chuongId, user.getId(), noiDung);
+
+        return "redirect:/DustNovel/chuong/" + chuongId;
+    }
     // ================= REPLY =================
     @PostMapping("/reply")
     public String replyComment(@RequestParam Long truyenId,
@@ -91,4 +99,6 @@ public class BinhLuanController {
 
         return "redirect:/DustNovel/truyen/" + truyenId;
     }
+    
+    
 }
