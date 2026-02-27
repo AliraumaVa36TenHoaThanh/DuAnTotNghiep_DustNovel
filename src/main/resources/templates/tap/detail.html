@@ -69,14 +69,12 @@
                     <div th:if="${@permissionService.canEditChuong(chap.id)}"
      class="ms-auto d-flex align-items-center gap-1">
 
-    <!-- ✏️ SỬA -->
     <a th:href="@{/DustNovel/chuong/sua/{id}(id=${chap.id})}"
        class="btn btn-sm btn-warning"
        title="Sửa chương">
         ✏️
     </a>
 
-    <!-- 🗑️ XOÁ -->
     <form th:action="@{/DustNovel/chuong/xoa/{id}(id=${chap.id})}"
           method="post"
           class="m-0">
