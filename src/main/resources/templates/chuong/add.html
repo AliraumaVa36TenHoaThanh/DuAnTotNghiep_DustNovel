@@ -18,10 +18,16 @@
             </div>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label fw-bold">Nội dung</label>
-            <textarea th:field="*{noiDung}" class="form-control" rows="10" placeholder="Nội dung chương truyện..."></textarea>
-        </div>
+       <textarea name="noiDung"
+          class="form-control"
+          required
+          minlength="1"
+          placeholder="Nhập nội dung chương"
+></textarea>
+
+<div class="invalid-feedback">
+    Nội dung chương ít nhất phải 1 ký tự
+</div>
 
         <div class="mt-4">
             <button type="submit" class="btn btn-success px-4">💾 Lưu chương</button>
