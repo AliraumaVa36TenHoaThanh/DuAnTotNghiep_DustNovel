@@ -48,7 +48,11 @@
                                 <input type="email"
                                        class="form-control"
                                        th:field="*{email}">
-                            </div>
+
+									<!-- Hiển thị lỗi -->
+									<div class="text-danger mt-1" th:if="${errorEmail}"
+										th:text="${errorEmail}"></div>
+								</div>
 
 
                             <!-- ROLE -->

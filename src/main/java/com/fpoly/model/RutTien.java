@@ -28,6 +28,15 @@ public class RutTien {
 
     @Column(name = "token_thuc_nhan", nullable = false)
     private Long tokenThucNhan;
+    
+    @Column(name = "ngan_hang", length = 100, nullable = false)
+    private String nganHang;
+
+    @Column(name = "so_tai_khoan", length = 50, nullable = false)
+    private String soTaiKhoan;
+
+    @Column(name = "ten_chu_tai_khoan", length = 150, nullable = false)
+    private String tenChuTaiKhoan;
 
     @Column(name = "trang_thai", length = 30)
     private String trangThai; // CHO_DUYET / DA_TRA / TU_CHOI

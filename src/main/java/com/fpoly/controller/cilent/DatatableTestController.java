@@ -6,14 +6,19 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import java.util.List;
-
+import java.io.IOException;
 import com.fpoly.model.TheLoai;
 import com.fpoly.model.Truyen;
 import com.fpoly.model.enums.*;
 import com.fpoly.repository.TheLoaiRepository;
 import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.CustomUserDetails;
+import com.fpoly.service.TruyenService;
 
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.fpoly.model.NguoiDung;
+import java.io.File;
 @Controller
 @RequestMapping("/dbu")
 public class DatatableTestController {
@@ -22,6 +27,9 @@ public class DatatableTestController {
 	
 	@Autowired
 	private TheLoaiRepository theLoaiRepository;
+	
+	@Autowired
+	private TruyenService truyenService;
 
 	@GetMapping("/")
 	public String list(Model model) {
@@ -91,6 +99,85 @@ public class DatatableTestController {
 	    model.addAttribute("theLoai", theLoai);
 	    model.addAttribute("content", "view/client/truyen/ListXemTheLoaiUser");
 	    return "layout/cilent_base";
+	}
+	
+	@GetMapping("/truyen/them")
+	public String formThemTruyenUser(Model model) {
+
+	    model.addAttribute("truyenUser", new Truyen());
+	    model.addAttribute("dsTheLoai",
+	            theLoaiRepository.findByStatusTheLoai(StatusTheLoai.ON));
+	    model.addAttribute("content",
+	            "view/client/truyen/ThemTruyenUser");
+
+	    return "layout/cilent_base";
+	}
+
+
+	@PostMapping("/truyen/them")
+	public String themTruyenUser(
+	        @ModelAttribute("truyenUser") Truyen truyen,
+	        @RequestParam(value = "theLoaiIds", required = false) List<Long> theLoaiIds,
+	        @RequestParam(value = "file", required = false) MultipartFile file,
+	        Model model
+	) throws IOException {
+
+	    CustomUserDetails cud =
+	            (CustomUserDetails) SecurityContextHolder
+	                    .getContext()
+	                    .getAuthentication()
+	                    .getPrincipal();
+
+	    NguoiDung user = cud.getUser();
+	    truyen.setNguoiDang(user);
+
+	    // ===============================
+	    // UPLOAD ẢNH FILE
+	    // ===============================
+	    if (file != null && !file.isEmpty()) {
+
+	        String fileName =
+	                System.currentTimeMillis()
+	                        + "_" + file.getOriginalFilename();
+
+	        String uploadDir =
+	                System.getProperty("user.dir")
+	                        + "/src/main/resources/static/uploads/truyen/";
+
+	        File dir = new File(uploadDir);
+	        if (!dir.exists()) dir.mkdirs();
+
+	        file.transferTo(new File(uploadDir + fileName));
+
+	        truyen.setAnhBia("/uploads/truyen/" + fileName);
+	    }
+
+	    // Nếu không upload file và không nhập URL
+	    if (truyen.getAnhBia() == null
+	            || truyen.getAnhBia().isBlank()) {
+
+	        truyen.setAnhBia("/images/default.jpg");
+	    }
+
+	    // ===============================
+	    // CHECK THỂ LOẠI
+	    // ===============================
+	    if (theLoaiIds == null || theLoaiIds.isEmpty()) {
+
+	        model.addAttribute("error",
+	                "Vui lòng chọn ít nhất một thể loại!");
+	        model.addAttribute("dsTheLoai",
+	        		theLoaiRepository.findByStatusTheLoai(StatusTheLoai.ON));
+	        model.addAttribute("truyenUser", truyen);
+	        model.addAttribute("content",
+	                "view/client/truyen/ThemTruyenUser");
+
+	        return "layout/cilent_base";
+	    }
+
+	    truyenService.save(truyen, theLoaiIds);
+
+	    return "redirect:/DustNovel/home";
 	}
 
 }

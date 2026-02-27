@@ -8,16 +8,20 @@
        <form th:action="@{/DustNovel/truyen/sua/{id}(id=${truyen.id})}"
       th:object="${truyen}"
       method="post">
+		<label>Tên truyện</label>
+            <input th:field="*{tenTruyen}"
+       class="form-control"
+       th:classappend="${#fields.hasErrors('tenTruyen')} ? 'is-invalid'">
+<div class="invalid-feedback"
+     th:errors="*{tenTruyen}"></div>
+     
+     	<label>Mô tả</label>
+           <textarea th:field="*{moTa}"
+          class="form-control"
+          th:classappend="${#fields.hasErrors('moTa')} ? 'is-invalid'"></textarea>
 
-            <div class="mb-3">
-                <label>Tên truyện</label>
-                <input type="text" th:field="*{tenTruyen}" class="form-control" required>
-            </div>
-
-            <div class="mb-3">
-                <label>Mô tả</label>
-                <textarea th:field="*{moTa}" class="form-control"></textarea>
-            </div>
+<div class="invalid-feedback"
+     th:errors="*{moTa}"></div>
 
             <div class="mb-3">
                 <label>Tên tác giả</label>

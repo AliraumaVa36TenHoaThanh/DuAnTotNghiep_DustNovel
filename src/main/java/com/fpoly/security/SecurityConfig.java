@@ -25,22 +25,24 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
-
+    
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-    	http.csrf(csrf -> {})
-
+    	
+    	http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/webhook/**"))
+    	
             // ✅ GẮN USERDETAILSSERVICE Ở ĐÂY
             .userDetailsService(userDetailsService)
 
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(	
+                		"/api/webhook/**",
                         "/DustNovel/home",
                         "/css/**",
                         "/js/**",
                         "/images/**",
+                        "/uploads/**" ,
 
                         // auth
                         "/DustNovel/login",
@@ -68,6 +70,7 @@ public class SecurityConfig {
 
             	    // PUBLIC
             		.requestMatchers(
+            				
             			    "/images/**",
             			    "/css/**",
             			    "/js/**",
@@ -75,7 +78,7 @@ public class SecurityConfig {
             			    "/DustNovel/home",
             			    "/DustNovel/login",
             			    "/DustNovel/register",
-
+            			    
             			    "/DustNovel/truyen/**",     // xem, đọc, tìm truyện
             			    "/DustNovel/chuong/**",     // đọc chương
             			    "/DustNovel/the-loai/**",    // xem theo thể loại
@@ -86,6 +89,7 @@ public class SecurityConfig {
             	    .requestMatchers(
             	        "/DustNovel/themtruyen",
             	        "/DustNovel/nap-tien",
+            	        "/DustNovel/nap-tien-tu-dong/**",
             	        "/DustNovel/guild",
             	        "/DustNovel/user/**"
             	    ).hasAnyRole("USER", "ADMIN")
@@ -101,7 +105,15 @@ public class SecurityConfig {
                 .loginPage("/DustNovel/login")
                 .loginProcessingUrl("/DustNovel/login")
                 .defaultSuccessUrl("/DustNovel/home", true)
-                .failureUrl("/DustNovel/login?error")
+                
+                .failureHandler((request, response, exception) -> {
+                    if (exception instanceof org.springframework.security.authentication.LockedException) {
+                        response.sendRedirect("/DustNovel/login?lockedLogin");
+                    } else {
+                        response.sendRedirect("/DustNovel/login?error");
+                    }
+                })
+//                .failureUrl("/DustNovel/login?error")
                 .permitAll()
             )
 

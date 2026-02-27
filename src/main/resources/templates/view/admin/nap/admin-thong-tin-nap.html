@@ -1,0 +1,120 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+<div id="main">
+
+    <div class="page-heading">
+    <section class="row">
+
+        <!-- Doanh thu theo ngày -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Doanh thu theo ngày</h4>
+                </div>
+                <div class="card-body">
+
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Ngày</th>
+                                <th>Tổng tiền (VNĐ)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr th:each="item : ${doanhThuNgay}">
+                                <td th:text="${item[0]}"></td>
+                                <td th:text="${#numbers.formatDecimal(item[1],0,'COMMA',0,'POINT')}"></td>
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(doanhThuNgay)}">
+                                <td colspan="2" class="text-center text-muted">
+                                    Chưa có dữ liệu
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Top người nạp nhiều -->
+        <div class="col-12 mt-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Top người nạp nhiều tiền</h4>
+                </div>
+                <div class="card-body">
+
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tên đăng nhập</th>
+                                <th>Tổng tiền (VNĐ)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr th:each="item : ${topNap}">
+                                <td th:text="${item[0]}"></td>
+                                <td th:text="${#numbers.formatDecimal(item[1],0,'COMMA',0,'POINT')}"></td>
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(topNap)}">
+                                <td colspan="2" class="text-center text-muted">
+                                    Chưa có dữ liệu
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Top token -->
+        <div class="col-12 mt-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Top người có nhiều token</h4>
+                </div>
+                <div class="card-body">
+
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tên đăng nhập</th>
+                                <th>Token</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr th:each="user : ${topToken}">
+                                <td th:text="${user.tenDangNhap}"></td>
+                                <td class="fw-bold text-warning"
+                                    th:text="${user.token}">
+                                </td>
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(topToken)}">
+                                <td colspan="2" class="text-center text-muted">
+                                    Chưa có dữ liệu
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </section>
+	</div>
+</div>
+</div>

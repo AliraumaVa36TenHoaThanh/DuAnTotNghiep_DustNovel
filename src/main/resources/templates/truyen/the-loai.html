@@ -8,6 +8,13 @@
         📚 Thể loại:
         <span th:text="${theLoai.tenTheLoai}"></span>
     </h4>
+    
+    <div th:if="${warningMessage}"
+         class="text-danger fw-bold mb-4" 
+         style="font-size: 18px;
+          font-family: 'Segoe UI', Arial, sans-serif;">
+        <span th:text="${warningMessage}"></span>
+    </div>
 
     <!-- ✅ THÔNG BÁO KHI KHÔNG CÓ TRUYỆN -->
     <div th:if="${#lists.isEmpty(truyens)}"

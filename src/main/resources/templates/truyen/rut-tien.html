@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="content" class="container mt-4">
+
+    <h3>Rút tiền</h3>
+
+    <p><b>Tên người dùng:</b> 
+        <span th:text="${user.tenDangNhap}"></span>
+    </p>
+
+    <p><b>Số token hiện có:</b> 
+        <span th:text="${user.token}"></span>
+    </p>
+
+    <hr>
+
+    <!-- ===== THÔNG BÁO ===== -->
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <!-- ===================================================== -->
+    <!-- =================== RÚT TIỀN ======================== -->
+    <!-- ===================================================== -->
+
+    <h5>Thông tin rút tiền</h5>
+
+    <form th:action="@{/DustNovel/rut-tien}" method="post">
+
+        <input type="text"
+               name="nganHang"
+               class="form-control mb-2"
+               placeholder="Tên ngân hàng (VD: Vietcombank)"
+               required>
+
+        <input type="text"
+               name="soTaiKhoan"
+               class="form-control mb-2"
+               placeholder="Số tài khoản"
+               required>
+
+        <input type="text"
+               name="tenChuTaiKhoan"
+               class="form-control mb-2"
+               placeholder="Tên chủ tài khoản"
+               required>
+
+        <input type="number"
+               name="soToken"
+               class="form-control mb-2"
+               placeholder="Số token muốn rút"
+               required>
+
+        <input type="password"
+               name="matKhau"
+               class="form-control mb-2"
+               placeholder="Mật khẩu xác nhận"
+               required>
+
+        <button class="btn btn-danger">Gửi yêu cầu rút tiền</button>
+    </form>
+
+</div>
+
+</body>
+</html>

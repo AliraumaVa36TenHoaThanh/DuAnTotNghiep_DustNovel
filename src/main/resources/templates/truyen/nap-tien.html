@@ -4,7 +4,7 @@
 
 <div th:fragment="content" class="container mt-4">
 
-    <h3>Nạp / Tặng Token</h3>
+    <h3>Nạp Token Thủ Công:</h3>
 
     <p><b>Tên người dùng:</b> 
         <span th:text="${user.tenDangNhap}"></span>
@@ -89,47 +89,6 @@
     </div>
 
     <hr>
-
-    <!-- ===================================================== -->
-    <!-- =================== TẶNG TOKEN ====================== -->
-    <!-- ===================================================== -->
-
-    <h5>Tặng token</h5>
-
-    <div class="mb-2">
-        <b>Gợi ý:</b>
-        <span th:each="u : ${randomUsers}"
-              th:text="${u.tenDangNhap}"
-              onclick="chonNguoiNhan(this)"
-              style="cursor:pointer"
-              class="badge bg-secondary me-1">
-        </span>
-    </div>
-
-    <form th:action="@{/DustNovel/nap-tien/tang}" method="post">
-
-        <input type="text"
-               id="nguoiNhan"
-               name="nguoiNhan"
-               class="form-control mb-2"
-               placeholder="Tên người nhận"
-               required>
-
-        <input type="number"
-               name="soToken"
-               class="form-control mb-2"
-               placeholder="Số token"
-               required>
-
-        <input type="password"
-               name="matKhau"
-               class="form-control mb-2"
-               placeholder="Mật khẩu xác nhận"
-               required>
-
-        <button class="btn btn-warning">Tặng</button>
-    </form>
-
 </div>
 
 <script>

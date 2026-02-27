@@ -1,0 +1,73 @@
+<div xmlns:th="http://www.thymeleaf.org"
+     th:fragment="content"
+     class="container mt-4">
+	 <style>
+	 .btn-cute {
+	     display: inline-block;
+	     margin-top: 20px;
+	     padding: 12px 28px;
+	     background: linear-gradient(135deg, #ff4da6, #ff9966);
+	     color: white;
+	     font-weight: 700;
+	     font-size: 16px;
+	     border-radius: 40px;
+	     text-align: center;
+	     text-decoration: none;
+	     box-shadow: 0 6px 18px rgba(255, 77, 166, 0.5);
+	     transition: all 0.3s ease;
+	 }
+
+	 .btn-cute:hover {
+	     transform: translateY(-4px);
+	     box-shadow: 0 10px 25px rgba(255, 77, 166, 0.7);
+	     background: linear-gradient(135deg, #ff3385, #ff8533);
+	     color: white;
+	 }
+
+	 .btn-cute:active {
+	     transform: scale(0.96);
+	 }
+	 </style>	
+    <h2 class="mb-4">Danh sách nhóm dịch</h2>
+
+    <div class="row">
+        <div class="col-md-4 mb-3"
+             th:each="nhom : ${danhSachNhom}">
+
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+					<h5 class="card-title">
+					    <a th:href="@{/DustNovel/nhom-dich/{id}(id=${nhom.id})}"
+					       th:text="${nhom.tenNhom}"
+					       class="text-decoration-none">
+					    </a>
+					</h5>
+
+                    <p class="mb-1">
+                        <strong>Trưởng nhóm:</strong>
+                        <span th:text="${nhom.truongNhom.tenDangNhap}">
+                        </span>
+                    </p>
+
+                    <p class="card-text"
+                       th:text="${nhom.moTa}">
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(danhSachNhom)}"
+         class="alert alert-warning">
+        Không có nhóm nào đang hoạt động.
+    </div>
+	<div class="text-center">
+	    <a th:href="@{/DustNovel/dang-ky-nhom}"
+	       class="btn-cute">
+	        ✨ Bạn muốn trở thành trưởng nhóm dịch mới :3?
+	    </a>
+	</div>
+
+</div>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<div th:fragment="content" class="container mt-4">
+
+    <h4>Tạo Mã Thưởng</h4>
+
+    <form th:action="@{/admin/ma-thuong/add}" method="post" class="row g-2">
+        <div class="col-md-3">
+            <input name="code" class="form-control" placeholder="CODE" required>
+        </div>
+
+        <div class="col-md-2">
+            <input name="soPhieuThuong" type="number" class="form-control" placeholder="Phiếu">
+        </div>
+
+        <div class="col-md-2">
+            <input name="soLuongNhap" type="number" class="form-control" placeholder="Lượt">
+        </div>
+
+        <div class="col-md-3">
+            <input name="ngayHetHan" type="datetime-local" class="form-control">
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100">Tạo</button>
+        </div>
+    </form>
+
+    <hr>
+
+    <h5>Danh sách mã</h5>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>Code</th>
+            <th>Phiếu</th>
+            <th>Đã dùng</th>
+            <th>Hạn</th>
+        </tr>
+
+        <tr th:each="m : ${list}">
+            <td th:text="${m.code}"></td>
+            <td th:text="${m.soPhieuThuong}"></td>
+            <td th:text="${m.daNhap}"></td>
+            <td th:text="${#temporals.format(m.ngayHetHan, 'dd/MM/yyyy HH:mm')}"></td>
+        </tr>
+    </table>
+
+</div>
+</body>
+</html>

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
         @UniqueConstraint(columnNames = {"nguoi_dung_id", "ma_thuong_id"})
     }
 )
+@Data
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 public class LichSuNhapMa {

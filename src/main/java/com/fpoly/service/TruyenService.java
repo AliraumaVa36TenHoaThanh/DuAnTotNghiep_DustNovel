@@ -1,7 +1,15 @@
 package com.fpoly.service;
 
+import com.fpoly.repository.ChuongRepository;
+import com.fpoly.repository.LichSuDocRepository;
 import com.fpoly.repository.TheLoaiRepository;
 import com.fpoly.repository.TruyenRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +19,13 @@ import com.fpoly.model.enums.LoaiTruyen;
 import com.fpoly.model.enums.TrangThaiTruyen;
 import com.fpoly.model.TheLoai;
 import com.fpoly.model.NguoiDung;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.ui.Model;
 
 
@@ -23,7 +35,10 @@ public class TruyenService {
 	TheLoaiRepository theLoaiRepo;
 	@Autowired
 	TruyenRepository truyenRepo;
-
+	@Autowired
+    private LichSuDocRepository lichSuDocRepo;
+	@Autowired
+    private ChuongRepository chuongRepo;
 	public List<Truyen> findAll() {
 		return truyenRepo.findAll();
 	}
@@ -39,6 +54,9 @@ public class TruyenService {
 	public Truyen findById(Long id) {
 		return truyenRepo.findById(id).orElse(null);
 	}
+	public void save(Truyen t) {
+	    truyenRepo.save(t);
+	}
 
 	public List<Truyen> getTruyenSangTac() {
 		return truyenRepo.findByLoaiTruyen(LoaiTruyen.SÁNG_TÁC);
@@ -47,9 +65,11 @@ public class TruyenService {
 	public List<Truyen> getTruyenDich() {
 		return truyenRepo.findByLoaiTruyen(LoaiTruyen.DỊCH);
 	}
-
+	
 	public void xoaTruyen(Long id) {
-		truyenRepo.deleteById(id);
+		lichSuDocRepo.deleteByTruyenId(id);
+        chuongRepo.deleteByTruyenId(id);
+        truyenRepo.deleteById(id);
 	}
 
 	public Truyen suaTruyen(Long id, Truyen truyen) {
@@ -126,12 +146,12 @@ public class TruyenService {
 	    );
 	}
 
-	// ===== TRUYỆN DỊCH THEO USER =====
 	public List<Truyen> getTruyenDichByUser(Long userId) {
 	    return truyenRepo.findByUserAndLoai(
 	            userId,
 	            LoaiTruyen.DỊCH
 	    );
 	}
+	
 	
 }
