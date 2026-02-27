@@ -462,6 +462,18 @@
 							        <span>💰 Nạp tiền thủ công</span>
 							    </a>
 							</li>
+							<li>
+							    <a class="dropdown-item custom-item"
+							       th:href="@{/DustNovel/nap-tien/tang-tien}">
+							        <span>💰 Tặng tiền</span>
+							    </a>
+							</li>
+							<li>
+							    <a class="dropdown-item custom-item"
+							       th:href="@{/DustNovel/rut-tien}">
+							        <span>💰 Rút tiền</span>
+							    </a>
+							</li>
 							<li sec:authorize="hasRole('USER')">
 							    <a class="dropdown-item custom-item"
 							       th:href="@{/dbu/}">
