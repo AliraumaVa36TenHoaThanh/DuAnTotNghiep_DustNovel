@@ -33,7 +33,7 @@ public class Truyen {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "trang_thai")
-    private String trangThai;
+    private TrangThaiTruyen trangThai;
 
     @Column(name = "tag_18")
     private Boolean tag18;
