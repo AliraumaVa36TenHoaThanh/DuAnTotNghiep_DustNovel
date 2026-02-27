@@ -9,6 +9,43 @@
 	<!-- THEME CSS -->
 	<link rel="stylesheet" th:href="@{/css/theme.css}">
 	<style>
+	.phieu-box {
+    background: linear-gradient(135deg, #fff7d6, #ffe08a);
+    border-radius: 10px;
+    padding: 6px 10px;
+    border: 1px dashed #f1c40f;
+}
+
+.phieu-box .token-label {
+    font-weight: 600;
+    color: #b8860b;
+}
+
+.phieu-box .token-value {
+    font-size: 1rem;
+}
+		.custom-item {
+		    display: flex;
+		    align-items: center;
+		    gap: -1px;
+		    padding: 8px 12px;   /* giảm padding trái */
+		    margin-left: -4px;   /* kéo nhẹ về trái */
+		    border-radius: 8px;
+		    transition: all 0.2s ease;
+		    font-weight: 500;
+		}
+
+		.custom-item i {
+		    font-size: 18px;
+		    width: 20px;         /* giảm width icon */
+		    text-align: center;
+		    color: #4a4a4a;
+		}
+
+		.custom-item:hover {
+		    background-color: #f2f4f7;
+		    transform: translateX(3px);
+		}
 		/* ===== THEME TOGGLE SWITCH ===== */
 		.theme-switch {
 			display: flex;
@@ -198,7 +235,7 @@
 					<li class="nav-item dropdown position-static"><a class="nav-link dropdown-toggle" href="#"
 							data-bs-toggle="dropdown">📚 Thể loại</a>
 						<ul class="dropdown-menu theloai-dropdown">
-							<li th:each="tl : ${theLoais}"><a class="dropdown-item"
+							<li th:each="tl : ${theLoais}" th:if="${tl.statusTheLoai.name() == 'ON'}"><a class="dropdown-item"
 									th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}" th:text="${tl.tenTheLoai}"></a>
 							</li>
 						</ul>
@@ -211,11 +248,6 @@
 							📊 Dashboard
 						</a>
 					</li>
-					<li class="nav-item" sec:authorize="hasRole('USER')">
-						<a class="nav-link" th:href="@{/dbu/}">
-							📊 Dashboard
-						</a>
-					</li>
 				</ul>
 				<form class="d-flex ms-auto me-3" th:action="@{/DustNovel/truyen/tim-kiem}" method="get"> <input
 						class="form-control search-input me-2" type="search" name="keyword" placeholder="Tìm truyện...">
@@ -225,20 +257,50 @@
 					<div sec:authorize="isAnonymous()"> <a th:href="@{/DustNovel/login}"
 							class="ms-1 text-decoration-none">Đăng nhập</a> </div>
 					<div class="dropdown d-flex align-items-center gap-2" sec:authorize="isAuthenticated()"> <span
-							class="hello-user"> Xin chào, <span sec:authentication="name"></span> </span> <button
-							class="btn btn-secondary rounded-circle fw-bold text-white" type="button"
-							data-bs-toggle="dropdown" style="width: 42px; height: 42px"> <span
-								th:text="${#strings.toUpperCase(#strings.substring(#authentication.name,0,1))}"></span>
-						</button>
+							class="hello-user"> Xin chào, <span sec:authentication="name"></span> </span> <button class="btn p-0 border-0 rounded-circle overflow-hidden"
+                            type="button" data-bs-toggle="dropdown"
+                            style="width:42px;height:42px">
+
+                        <img th:if="${user != null and user.avatar != null}"
+                             th:src="@{${user.avatar}}"
+                             style="width:100%;height:100%;object-fit:cover">
+
+                        <span th:if="${user == null or user.avatar == null}"
+                              class="d-flex align-items-center justify-content-center
+                                     bg-secondary text-white fw-bold"
+                              style="width:100%;height:100%;">
+                            <span th:text="${#strings.toUpperCase(
+                                    #strings.substring(#authentication.name,0,1))}">
+                            </span>
+                        </span>
+                    </button>
 						<ul class="dropdown-menu dropdown-menu-end shadow-sm">
 							<li><a class="dropdown-item" th:href="@{/DustNovel/user/profile}"> Thông tin tài khoản </a>
 							</li>
 							<li class="px-3 py-2">
 								<div class="token-box"> <span class="token-label">🪙 Token</span> <span
 										class="token-value" th:text="${userToken}">0</span> </div>
+										<div class="token-box phieu-box mb-2">
+        <span class="token-label">🎟️ Phiếu thưởng</span>
+        <span class="token-value text-warning fw-bold"
+              th:text="${userPhieuThuong}">0</span>
+    </div>
 								<div class="theme-switch"> <span class="theme-label">Giao diện</span> <label
 										class="switch"> <input type="checkbox" id="themeToggle"> <span
 											class="slider"></span> </label> </div>
+							</li>
+							<li>
+							    <a class="dropdown-item custom-item"
+							       th:href="@{/DustNovel/lich-su-doc}">
+							        <span>📖 Lịch sử đọc</span>
+							    </a>
+							</li>
+
+							<li sec:authorize="hasRole('USER')">
+							    <a class="dropdown-item custom-item"
+							       th:href="@{/dbu/}">
+							        <span>📊 Hệ Thống 36</span>
+							    </a>
 							</li>
 							<li>
 								<hr class="dropdown-divider">
@@ -254,7 +316,7 @@
 		</div>
 	</nav>
 	<div class="container my-4">
-		<div th:replace="${content} :: content"></div>
+		<div th:replace="~{${content} :: content}"></div>
 	</div>
 	<footer class="text-center py-2 border-top"> <small>© 2025 - DustNovel</small> </footer>
 	<script> const toggle = document.getElementById("themeToggle"); function applyTheme(theme) {document.body.setAttribute("data-theme", theme); localStorage.setItem("theme", theme); toggle.checked = theme === "dark";} toggle.addEventListener("change", () => {applyTheme(toggle.checked ? "dark" : "light");}); (function () {const saved = localStorage.getItem("theme") || "light"; applyTheme(saved);})(); </script>

@@ -41,6 +41,7 @@ public class SecurityConfig {
                         "/css/**",
                         "/js/**",
                         "/images/**",
+                        "/uploads/**" ,
 
                         // auth
                         "/DustNovel/login",
@@ -101,7 +102,15 @@ public class SecurityConfig {
                 .loginPage("/DustNovel/login")
                 .loginProcessingUrl("/DustNovel/login")
                 .defaultSuccessUrl("/DustNovel/home", true)
-                .failureUrl("/DustNovel/login?error")
+                
+                .failureHandler((request, response, exception) -> {
+                    if (exception instanceof org.springframework.security.authentication.LockedException) {
+                        response.sendRedirect("/DustNovel/login?lockedLogin");
+                    } else {
+                        response.sendRedirect("/DustNovel/login?error");
+                    }
+                })
+//                .failureUrl("/DustNovel/login?error")
                 .permitAll()
             )
 

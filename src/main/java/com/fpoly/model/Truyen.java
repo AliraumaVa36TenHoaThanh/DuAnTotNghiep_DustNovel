@@ -1,9 +1,12 @@
 package com.fpoly.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import lombok.Getter;
 import lombok.Setter;
 import com.fpoly.model.enums.LoaiTruyen;
+import com.fpoly.model.enums.TrangThaiTruyen;
+
 import java.time.LocalDateTime;
 import java.util.List;
 @Entity
@@ -28,6 +31,7 @@ public class Truyen {
     @Column(name = "loai_truyen")
     private LoaiTruyen loaiTruyen;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "trang_thai")
     private String trangThai;
 
@@ -59,7 +63,7 @@ public class Truyen {
     )
     private List<TheLoai> theLoais;
 
-    /* ===== FIX NULL ===== */
+  
     @Column(name = "tong_like", nullable = false)
     private Long tongLike = 0L;
 

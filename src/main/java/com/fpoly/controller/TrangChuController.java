@@ -24,30 +24,8 @@ public class TrangChuController {
 
         model.addAttribute("title", "Trang chủ");
         model.addAttribute("content", "home/index.html");
-
-        // CHƯA ĐĂNG NHẬP
-        if (authentication == null || !authentication.isAuthenticated()) {
-            model.addAttribute("truyenSangTac", Collections.emptyList());
-            model.addAttribute("truyenDich", Collections.emptyList());
-            return "layout/main";
-        }
-
-        // ĐÃ ĐĂNG NHẬP
-        CustomUserDetails userDetails =
-                (CustomUserDetails) authentication.getPrincipal();
-
-        Long userId = userDetails.getNguoiDung().getId();
-
-        model.addAttribute(
-                "truyenSangTac",
-                truyenService.getTruyenSangTacByUser(userId)
-        );
-
-        model.addAttribute(
-                "truyenDich",
-                truyenService.getTruyenDichByUser(userId)
-        );
-
+        model.addAttribute("truyenSangTac", truyenService.getTruyenSangTac());
+        model.addAttribute("truyenDich", truyenService.getTruyenDich());
         return "layout/main";
     }
 }

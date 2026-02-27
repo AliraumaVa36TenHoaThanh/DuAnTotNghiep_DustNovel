@@ -3,6 +3,7 @@ package com.fpoly.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -115,4 +116,15 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     	    @Param("userId") Long userId,
     	    @Param("loai") LoaiTruyen loai
     	);
+    
+    @Query("""
+            SELECT t FROM Truyen t
+            JOIN t.theLoais tl
+            WHERE tl.id = :theLoaiId
+        """)
+        List<Truyen> findTruyenByTheLoaiId(Long theLoaiId);
+    
+    @Modifying
+    @Query("UPDATE Truyen t SET t.luotXem = t.luotXem + 1 WHERE t.id = :id")
+    void tangLuotXem(@Param("id") Long id);
 }

@@ -1,5 +1,7 @@
 package com.fpoly.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -13,14 +15,19 @@ import org.springframework.web.bind.annotation.*;
 import com.fpoly.model.Chuong;
 import com.fpoly.model.MoKhoaChuong;
 import com.fpoly.model.NguoiDung;
+import com.fpoly.model.PhieuThuong;
 import com.fpoly.model.Tap;
 import com.fpoly.repository.ChuongRepository;
+import com.fpoly.repository.LichSuDocRepository;
 import com.fpoly.repository.MoKhoaChuongRepository;
 import com.fpoly.repository.NguoiDungRepository;
+import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.CustomUserDetails;
 import com.fpoly.security.SecurityUtil;
 import com.fpoly.service.ChuongService;
+import com.fpoly.service.LichSuDocService;
 import com.fpoly.service.PermissionService;
+import com.fpoly.service.PhieuThuongService;
 import com.fpoly.service.TapService;
 import com.fpoly.service.TruyenService;
 
@@ -39,6 +46,8 @@ public class ChuongController {
 	@Autowired
 	ChuongRepository chuongRepo;
 	@Autowired
+	TruyenRepository truyenRepo;
+	@Autowired
 	MoKhoaChuongRepository moKhoaChuongRepo;
 	@Autowired
 	SecurityUtil securityUtil;
@@ -46,86 +55,16 @@ public class ChuongController {
 	PermissionService permissionService;
 	@Autowired
 	TapService tapService;
-	
-//	@GetMapping("/{id}")
-//	public String read(@PathVariable Long id, Model model) {
-//
-//	    Chuong chuong = chuongService.findById(id);
-//	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//	    NguoiDung currentUser = null;
-//	    if (auth != null && auth.isAuthenticated()
-//	        && !(auth instanceof AnonymousAuthenticationToken)) {
-//
-//	        CustomUserDetails cud = (CustomUserDetails) auth.getPrincipal();
-//	        currentUser = nguoiDungRepo.findById(cud.getId()).orElse(null);
-//	    }
-//	    boolean canRead = permissionService.canReadChuong(chuong, currentUser);
-//	    
-//	    model.addAttribute("chuong", chuong);
-//	    model.addAttribute("chuongTruoc", chuongService.chuongTruoc(chuong));
-//	    model.addAttribute("chuongSau", chuongService.chuongSau(chuong));
-//	    model.addAttribute("canRead", canRead);
-//	    model.addAttribute("currentUser", currentUser);
-//	    model.addAttribute("content", "truyen/chapter");
-//	    model.addAttribute("title", chuong.getTieuDe());
-//
-//	    return "layout/main";
-	// }
-	
-//	@GetMapping("/{id}")
-//	public String read(@PathVariable Long id, Model model) {
-//	    Chuong chuong = chuongService.findById(id);
-//	    if (chuong == null) return "redirect:/DustNovel/home";
-//	    NguoiDung currentUser = securityUtil.getCurrentUserFromDB();	  
-//	    boolean canRead = permissionService.canReadChuong(chuong, currentUser);
-//	    if (!canRead) {
-//	        return "redirect:/DustNovel/truyen/" + chuong.getTruyen().getId() + "?error=not_purchased&chapId=" + id;
-//	    }
-//
-//
-//	    model.addAttribute("chuong", chuong);
-//	    model.addAttribute("chuongTruoc", chuongService.chuongTruoc(chuong));
-//	    model.addAttribute("chuongSau", chuongService.chuongSau(chuong));
-//	    model.addAttribute("canRead", canRead);
-//	    model.addAttribute("currentUser", currentUser);
-//	    model.addAttribute("content", "truyen/chapter");
-//	    model.addAttribute("title", chuong.getTieuDe());
-//
-//	    return "layout/main";
-//	}
-	
-//	@GetMapping("/{id}")
-//	public String read(@PathVariable Long id, Model model) {
-//	    Chuong chuong = chuongService.findById(id);
-//	    if (chuong == null) return "redirect:/DustNovel/home";
-//
-//	    NguoiDung currentUser = securityUtil.getCurrentUserFromDB();
-//	    boolean canRead = permissionService.canReadChuong(chuong, currentUser);
-//
-//	    if (!canRead) {
-//            return "redirect:/DustNovel/truyen/"
-//                    + chuong.getTap().getTruyen().getId()
-//                    + "?error=not_purchased&chapId=" + id;
-//        }
-//
-//	    Chuong chuongSau = chuongService.chuongSau(chuong);
-//	    if (chuongSau != null) {
-//	        boolean canReadNext = permissionService.canReadChuong(chuongSau, currentUser);
-//	        model.addAttribute("chuongSau", chuongSau);
-//	        model.addAttribute("canReadNext", canReadNext);
-//	    }
-//
-//	    model.addAttribute("chuong", chuong);
-//	    model.addAttribute("chuongTruoc", chuongService.chuongTruoc(chuong));
-//	    model.addAttribute("canRead", canRead);
-//	    model.addAttribute("currentUser", currentUser);
-//	    model.addAttribute("content", "truyen/chapter");
-//	    return "layout/main";
-//	}
-	
+	@Autowired
+	LichSuDocService lichSuDocService;
+    @Autowired
+    LichSuDocRepository lichSuDocRepo;
+    @Autowired
+    PhieuThuongService phieuThuongService;
+    
 	@GetMapping("/{id}")
 	public String read(@PathVariable Long id, Model model) {
-
+		boolean canEditChuong = false;
 	    Chuong chuong = chuongService.findById(id);
 	    if (chuong == null) {
 	        return "redirect:/DustNovel/home";
@@ -140,7 +79,9 @@ public class ChuongController {
 	                + "/tap/" + chuong.getTap().getId()
 	                + "?error=not_purchased&chapId=" + id;
 	    }
-
+	    
+	    lichSuDocService.luuLichSuVaTangView(currentUser, chuong);
+	    
 	    Chuong chuongTruoc = chuongService.chuongTruoc(chuong);
 	    Chuong chuongSau = chuongService.chuongSau(chuong);
 
@@ -148,65 +89,20 @@ public class ChuongController {
 	        boolean canReadNext = permissionService.canReadChuong(chuongSau, currentUser);
 	        model.addAttribute("canReadNext", canReadNext);
 	    }
-
+	    
+	    
+	    List<Chuong> danhSachChuong = chuongService.findByTap(chuong.getTap().getId());
 	    model.addAttribute("chuong", chuong);
+	    model.addAttribute("dsChuong", danhSachChuong);
 	    model.addAttribute("chuongTruoc", chuongTruoc);
 	    model.addAttribute("chuongSau", chuongSau);
 	    model.addAttribute("canRead", canRead);
 	    model.addAttribute("currentUser", currentUser);
 	    model.addAttribute("content", "truyen/chapter");
-
+	    model.addAttribute("canEditChuong", canEditChuong);
 	    return "layout/main";
 	}
 
-
-
-//	    if (!permissionService.canReadChuong(chuong, currentUser)) {
-//        model.addAttribute("chuong", chuong);
-//        model.addAttribute("currentUser", currentUser);
-//        model.addAttribute("content", "chuong/bi-khoa");
-//        model.addAttribute("title", "Chương bị khóa");
-//        return "layout/main";
-//    }
-//
-//    
-//
-//    model.addAttribute("chuong", chuong);
-//    model.addAttribute("chuongTruoc", chuongService.chuongTruoc(chuong));
-//    model.addAttribute("chuongSau", chuongService.chuongSau(chuong));
-//    model.addAttribute("content", "truyen/chapter");
-//    model.addAttribute("title", chuong.getTieuDe());
-//
-//    return "layout/main";
-	    
-	
-
-	
-//	@PreAuthorize("@permissionService.canAddChuongByTap(#tapId)")
-//	@GetMapping("/them/{truyenId}/{tapId}")
-//	public String showAddForm(
-//	        @PathVariable Long truyenId,
-//	        @PathVariable Long tapId,
-//	        Model model
-//	) {
-//	    Tap tap = tapService.findById(tapId);
-//	    if (tap == null) return "redirect:/DustNovel/home";
-//	    if (!tap.getTruyen().getId().equals(truyenId)) {
-//            return "redirect:/DustNovel/home";
-//        }
-//
-//	    Chuong chuong = new Chuong();
-//	    chuong.setTap(tap);
-//
-//	    model.addAttribute("chuong", chuong);
-//	    model.addAttribute("tap", tap);
-//	    model.addAttribute("truyen", tap.getTruyen());
-//
-//	    model.addAttribute("content", "chuong/add");
-//	    model.addAttribute("title", "Thêm chương");
-//
-//	    return "layout/main";
-//	}
 
 	@PreAuthorize("@permissionService.canAddChuongByTap(#tapId)")
 	@GetMapping("/them/{truyenId}/{tapId}")
@@ -220,10 +116,8 @@ public class ChuongController {
 	    
 	    Chuong chuong = new Chuong();
 	    chuong.setTap(tap);
-
-	    // Tự động tính số chương tiếp theo dựa trên tập ID
 	    int nextSo = chuongService.getNextSoChuongByTap(tapId); //
-	    chuong.setSoChuong(nextSo); // Gán vào model để Thymeleaf tự điền vào input
+	    chuong.setSoChuong(nextSo); 
 
 	    model.addAttribute("chuong", chuong);
 	    model.addAttribute("tap", tap);
@@ -263,11 +157,9 @@ public class ChuongController {
 
 	    chuong.setNguoiDang(user);
 
-	    // ✅ SET TAP (đã có từ form)
 	    Tap tap = tapService.findById(chuong.getTap().getId());
 	    chuong.setTap(tap);
 
-	    // ✅ BẮT BUỘC: SET TRUYỆN
 	    chuong.setTruyen(tap.getTruyen());
 
 	    int nextSo = chuongService.getNextSoChuongByTap(tap.getId());
@@ -375,43 +267,168 @@ public class ChuongController {
 //    }
     
     // ĐỊT MẸ THẰNG NÀO MÀ XÓA CÁI NÀY CỦA T LÀ T GIẾT SẠCH !
-    @PostMapping("/{id}/mua")
+//    @PostMapping("/{id}/mua")
+//    @Transactional
+//    public String mua(@PathVariable Long id) {
+//
+//        NguoiDung user = securityUtil.getCurrentUserFromDB();
+//        if (user == null) return "redirect:/DustNovel/login";
+//
+//        Chuong c = chuongRepo.findById(id).orElseThrow();
+//
+//        if (moKhoaChuongRepo.existsByNguoiDung_IdAndChuong_Id(
+//                user.getId(), id)) {
+//            return "redirect:/DustNovel/chuong/" + id;
+//        }
+//
+//        long gia = com.fpoly.config.GiaChuongKhoa.gia_chuong;
+//        if (user.getToken() < gia)
+//            return "redirect:/DustNovel/nap-tien";
+//
+//        user.setToken(user.getToken() - gia);
+//        nguoiDungRepo.save(user);
+//        
+//        NguoiDung nguoiDang = c.getNguoiDang();
+//        if (nguoiDang != null) {
+//            long tokenHienTai = (nguoiDang.getToken() != null) ? nguoiDang.getToken() : 0L;
+//            nguoiDang.setToken(tokenHienTai + gia);
+//            nguoiDungRepo.save(nguoiDang);
+//        }
+//        
+//        MoKhoaChuong mk = new MoKhoaChuong();
+//        mk.setNguoiDung(user);
+//        mk.setChuong(c);
+//        mk.setGiaToken(gia);
+//        moKhoaChuongRepo.save(mk);
+//
+//        return "redirect:/DustNovel/chuong/" + id;
+//    }
+    
+    
+    @PreAuthorize("@permissionService.canEditChuong(#id)")
+    @PostMapping("/xoa/{id}")
     @Transactional
-    public String mua(@PathVariable Long id) {
+    public String xoaChuong(@PathVariable Long id) {
+
+        Chuong c = chuongService.findById(id);
+        if (c == null) return "redirect:/DustNovel/home";
+        
+        lichSuDocRepo.deleteByChuongId(id);
+        Long truyenId = c.getTruyen().getId();
+
+        chuongRepo.delete(c);
+
+        return "redirect:/DustNovel/truyen/" + truyenId;
+    }
+    
+    @PreAuthorize("@permissionService.canEditChuong(#id)")
+    @GetMapping("/sua/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+
+        Chuong chuong = chuongService.findById(id);
+        if (chuong == null) return "redirect:/DustNovel/home";
+
+        model.addAttribute("chuong", chuong);
+        model.addAttribute("tap", chuong.getTap());
+        model.addAttribute("truyen", chuong.getTruyen());
+        model.addAttribute("content", "chuong/edit");
+
+        return "layout/main";
+    }
+//    @PreAuthorize("@permissionService.canEditChuong(#chuong.id)")
+//    @PostMapping("/sua")
+//    public String update(@ModelAttribute Chuong chuong) {
+//
+//        Chuong old = chuongService.findById(chuong.getId());
+//        if (old == null) return "redirect:/DustNovel/home";
+//
+//        old.setTieuDe(chuong.getTieuDe());
+//        old.setNoiDung(chuong.getNoiDung());
+//        old.setSoChuong(chuong.getSoChuong());
+//
+//        chuongService.save(old);
+//
+//        return "redirect:/DustNovel/truyen/";
+//    }
+    @PreAuthorize("@permissionService.canEditChuong(#id)")
+    @PostMapping("/sua/{id}") 
+    public String suaChuong(
+         @PathVariable Long id, 
+         @ModelAttribute Chuong chuongForm
+    ) {
+         Chuong chuongDB = chuongService.findById(id);
+         if (chuongDB == null) {
+             return "redirect:/DustNovel/home";
+         }
+         chuongDB.setTieuDe(chuongForm.getTieuDe());
+         chuongDB.setNoiDung(chuongForm.getNoiDung());
+         chuongService.save(chuongDB);
+         return "redirect:/DustNovel/truyen/" + chuongDB.getTruyen().getId();
+    }
+    @PostMapping("/{id}/mua")
+    public String muaChuong(@PathVariable Long id, Model model) {
 
         NguoiDung user = securityUtil.getCurrentUserFromDB();
         if (user == null) return "redirect:/DustNovel/login";
 
-        Chuong c = chuongRepo.findById(id).orElseThrow();
+        Chuong chuong = chuongRepo.findById(id).orElseThrow();
 
-        if (moKhoaChuongRepo.existsByNguoiDung_IdAndChuong_Id(
-                user.getId(), id)) {
-            return "redirect:/DustNovel/chuong/" + id;
+        PhieuThuong phieu = user.getPhieuThuong();
+        if (phieu != null && phieu.getSoLuong() > 0) {
+            model.addAttribute("chuong", chuong);
+            model.addAttribute("soPhieu", phieu.getSoLuong());
+            model.addAttribute("content", "chuong/hoi-dung-phieu");
+            return "layout/main";
         }
+        return "redirect:/DustNovel/chuong/" + id + "/mua-token";
+    }
+    
+    @PostMapping("/{id}/mua-phieu")
+    @Transactional
+    public String muaBangPhieu(@PathVariable Long id) {
 
-        long gia = com.fpoly.config.GiaChuongKhoa.gia_chuong;
-        if (user.getToken() < gia)
-            return "redirect:/DustNovel/nap-tien";
+        NguoiDung user = securityUtil.getCurrentUserFromDB();
+        Chuong chuong = chuongRepo.findById(id).orElseThrow();
 
-        user.setToken(user.getToken() - gia);
-        nguoiDungRepo.save(user);
         
-        NguoiDung nguoiDang = c.getNguoiDang();
-        if (nguoiDang != null) {
-            long tokenHienTai = (nguoiDang.getToken() != null) ? nguoiDang.getToken() : 0L;
-            nguoiDang.setToken(tokenHienTai + gia);
-            nguoiDungRepo.save(nguoiDang);
-        }
-        
-        MoKhoaChuong mk = new MoKhoaChuong();
-        mk.setNguoiDung(user);
-        mk.setChuong(c);
-        mk.setGiaToken(gia);
-        moKhoaChuongRepo.save(mk);
+		phieuThuongService.muaChuongBangPhieu(user, chuong);
 
         return "redirect:/DustNovel/chuong/" + id;
     }
     
+    @PostMapping("/{id}/mua-token")
+    @Transactional
+    public String muaBangToken(@PathVariable Long id) {
+    	NguoiDung user = securityUtil.getCurrentUserFromDB();
+      if (user == null) return "redirect:/DustNovel/login";
 
-    
+      Chuong c = chuongRepo.findById(id).orElseThrow();
+
+      if (moKhoaChuongRepo.existsByNguoiDung_IdAndChuong_Id(
+              user.getId(), id)) {
+          return "redirect:/DustNovel/chuong/" + id;
+      }
+
+      long gia = com.fpoly.config.GiaChuongKhoa.gia_chuong;
+      if (user.getToken() < gia)
+          return "redirect:/DustNovel/nap-tien";
+
+      user.setToken(user.getToken() - gia);
+      nguoiDungRepo.save(user);
+      
+      NguoiDung nguoiDang = c.getNguoiDang();
+      if (nguoiDang != null) {
+          long tokenHienTai = (nguoiDang.getToken() != null) ? nguoiDang.getToken() : 0L;
+          nguoiDang.setToken(tokenHienTai + gia);
+          nguoiDungRepo.save(nguoiDang);
+      }
+      
+      MoKhoaChuong mk = new MoKhoaChuong();
+      mk.setNguoiDung(user);
+      mk.setChuong(c);
+      mk.setGiaToken(gia);
+      moKhoaChuongRepo.save(mk);
+
+      return "redirect:/DustNovel/chuong/" + id;
+    }
 }

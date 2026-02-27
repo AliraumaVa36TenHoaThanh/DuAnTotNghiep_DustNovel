@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Nhập mã thưởng</title>
+<style>
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	min-height: 100vh;
+	background: url("/images/bglogin.jpg") no-repeat center center fixed;
+	background-size: cover;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.35);
+	z-index: 0;
+}
+
+.box {
+	position: relative;
+	z-index: 1;
+	width: 420px;
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(6px);
+	padding: 32px;
+	border-radius: 16px;
+	box-shadow: 0 20px 50px rgba(0, 0, 0, .25);
+	animation: fadeUp .5s ease;
+}
+
+h2 {
+	text-align: center;
+	margin-top: 0;
+	margin-bottom: 20px;
+}
+
+input {
+	width: 100%;
+	padding: 14px;
+	margin-top: 12px;
+	border-radius: 10px;
+	border: 1px solid #ccc;
+	font-size: 15px;
+	transition: .2s;
+}
+
+input:focus {
+	border-color: #198754;
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(25, 135, 84, .15);
+}
+
+button {
+	width: 100%;
+	padding: 14px;
+	margin-top: 16px;
+	border-radius: 10px;
+	border: none;
+	background: #198754;
+	color: white;
+	font-weight: 700;
+	font-size: 15px;
+	cursor: pointer;
+	transition: .25s;
+}
+
+button:hover {
+	background: #0f5132;
+	transform: translateY(-1px);
+}
+
+a {
+	display: block;
+	margin-top: 18px;
+	text-align: center;
+	color: #198754;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 15px;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+@keyframes fadeUp {from { opacity:0;
+	transform: translateY(20px);
+}
+
+to {
+	opacity: 1;
+	transform: translateY(0);
+}
+}
+</style>
+
+</head>
+<body>
+	<div class="box">
+		<h2>🎫 Đổi mã nhận thưởng 🎁</h2>
+
+		<form method="post" th:action="@{/DustNovel/ma-thuong}">
+			<input type="text" name="maThuong" placeholder="Nhập mã thưởng">
+			<button type="submit">Xác nhận</button>
+		</form>
+
+		<a href="/DustNovel/user/profile">← Quay lại hồ sơ</a>
+	</div>
+</body>
+</html>

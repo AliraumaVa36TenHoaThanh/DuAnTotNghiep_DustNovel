@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import com.fpoly.model.TheLoai;
 import com.fpoly.repository.TheLoaiRepository;
 import com.fpoly.service.NapTienService;
+import com.fpoly.service.NguoiDungService;
+import com.fpoly.service.PhieuThuongService;
 import com.fpoly.service.TheLoaiService;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.model.Truyen;
@@ -25,7 +27,10 @@ public class GlobalController {
     
     @Autowired
     private NapTienService napTienService;
-
+    @Autowired
+    private PhieuThuongService phieuThuongService;
+    @Autowired
+    private NguoiDungService nguoiDungService;
     @ModelAttribute("theLoais")
     public List<TheLoai> loadTheLoai1() {
         return theLoaiService.getAllTheLoai();
