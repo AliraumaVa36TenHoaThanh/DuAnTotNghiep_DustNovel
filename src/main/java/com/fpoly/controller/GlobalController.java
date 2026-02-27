@@ -13,7 +13,12 @@ import com.fpoly.service.NapTienService;
 import com.fpoly.service.NguoiDungService;
 import com.fpoly.service.PhieuThuongService;
 import com.fpoly.service.TheLoaiService;
+import com.fpoly.model.NguoiDung;
+import com.fpoly.model.Truyen;
+import com.fpoly.service.LikeTruyenService;
+import jakarta.servlet.http.HttpSession;
 
+import java.util.List;
 @ControllerAdvice
 public class GlobalController {
 
@@ -44,15 +49,19 @@ public class GlobalController {
         if (auth == null) return 0L;
 
         var user = napTienService.getByTenDangNhap(auth.getName());
+      
         return user != null ? user.getToken() : 0L;
     }
-    @ModelAttribute("userPhieuThuong")
-    public Long userPhieuThuong(Authentication auth) {
-        if (auth == null) return 0L;
+    @Autowired
+    LikeTruyenService likeService;
 
-        var user = nguoiDungService.findByTenDangNhap(auth.getName());
+    @ModelAttribute("truyenDaLike")
+    public List<Truyen> getTruyenDaLike(Authentication auth) {
+        if (auth == null) return List.of();
 
-        Long phieu = phieuThuongService.getSoLuong(user.getId());
-        return phieu == null ? 0L : phieu;
+        NguoiDung user = napTienService.getByTenDangNhap(auth.getName());
+        if (user == null) return List.of();
+
+        return likeService.getTruyenDaLike(user);
     }
 }

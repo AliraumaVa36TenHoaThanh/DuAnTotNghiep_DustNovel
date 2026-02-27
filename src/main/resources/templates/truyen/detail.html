@@ -149,7 +149,6 @@
         </div>
     </div>
 </div>  -->
-
 <head>
     <meta charset="UTF-8">
     <title th:text="${title}">DustNovel</title>
@@ -184,31 +183,51 @@
                 <hr th:if="${@permissionService.canAddChuong(truyen.id) or @permissionService.canEditTruyen(truyen.id)}" 
                     class="my-1 text-muted">
 
-                <a class="btn btn-success shadow-sm"
-                   th:href="@{/DustNovel/tap/them/{truyenId}(truyenId=${truyen.id})}"
-                   th:if="${@permissionService.canAddChuong(truyen.id)}">
-                    ➕ Thêm tập
-                </a>
+			<!-- LIKE + VIEW -->
+			<div class="text-center mt-3">
 
-                <a class="btn btn-warning shadow-sm"
-                   th:href="@{/DustNovel/truyen/sua/{id}(id=${truyen.id})}"
-                   th:if="${@permissionService.canEditTruyen(truyen.id)}">
-                    ✏️ Sửa truyện
-                </a>
+				<div class="d-flex justify-content-center gap-4 text-muted mb-2">
+					<div>
+						👍 <b id="likeCount" th:text="${truyen.tongLike}">0</b>
+					</div>
+					<div>
+						👀 <b th:text="${truyen.luotXem}">0</b>
+					</div>
+				</div>
 
-                <form th:action="@{/DustNovel/truyen/{ten}/xoa/{id}(ten=${truyen.tenTruyen}, id=${truyen.id})}"
-                      method="post"
-                      th:if="${@permissionService.canDeleteTruyen(truyen.id)}"
-                      onsubmit="return confirm('Bạn có chắc muốn xoá truyện này không?')">
+				<!-- NÚT LIKE -->
+				<button class="btn btn-outline-primary btn-sm w-100"
+					th:attr="data-id=${truyen.id}" onclick="likeTruyen(this)">
+					👍 Thích truyện</button>
 
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <button type="submit" class="btn btn-danger w-100 shadow-sm">
-                        ❌ Xoá truyện
-                    </button>
-                </form>
+			</div>
 
-            </div>
-        </div>
+			<!-- ACTION -->
+			<div class="mt-3 d-grid gap-2">
+
+				<a class="btn btn-success"
+					th:href="@{/DustNovel/tap/them/{truyenId}(truyenId=${truyen.id})}"
+					th:if="${@permissionService.canAddChuong(truyen.id)}"> ➕ Thêm
+					tập </a> <a class="btn btn-warning"
+					th:href="@{/DustNovel/truyen/{ten}/{id}/sua(ten=${truyen.tenTruyen}, id=${truyen.id})}"
+					th:if="${@permissionService.canEditTruyen(truyen.id)}"> ✏️ Sửa
+					truyện </a>
+
+				<form
+					th:action="@{/DustNovel/truyen/{ten}/xoa/{id}(ten=${truyen.tenTruyen}, id=${truyen.id})}"
+					method="post"
+					th:if="${@permissionService.canDeleteTruyen(truyen.id)}"
+					onsubmit="return confirm('Bạn có chắc muốn xoá truyện này không?')">
+
+					<input type="hidden" th:name="${_csrf.parameterName}"
+						th:value="${_csrf.token}" />
+					<button type="submit" class="btn btn-danger w-100">❌ Xoá
+						truyện</button>
+
+				</form>
+
+			</div>
+		</div>
 
         <div class="col-md-9">
 
@@ -222,7 +241,8 @@
 
                 <p class="mb-1">
                     <b>Người đăng:</b>
-                    <span class="text-primary" th:text="${truyen.nguoiDang.tenDangNhap}"></span>
+                    <span class="text-primary"
+                          th:text="${truyen.nguoiDang.tenDangNhap}"></span>
                 </p>
 
                 <p class="mb-1">
@@ -305,24 +325,26 @@
 
         </div>
     </div>
-    
-    <script th:inline="javascript">
-        function showAllChapters(tapId) {
-            // Tìm tất cả các chương có class ẩn của tập đó
-            const chapters = document.querySelectorAll('.extra-chuong-' + tapId);
-            
-            chapters.forEach(el => {
-                el.classList.remove('d-none'); // Bỏ class ẩn của Bootstrap
-                el.style.animation = "fadeIn 0.5s forwards";
-            });
 
-            // Ẩn nút "Xem thêm"
-            const btnMore = document.getElementById('btn-show-more-' + tapId);
-            if (btnMore) {
-                btnMore.style.display = 'none';
-            }
+  <script>
+function likeTruyen(btn) {
+    const truyenId = btn.dataset.id;
+
+    fetch('/DustNovel/like/' + truyenId, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('input[name=_csrf]').value
         }
-    </script>
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("likeCount").innerText = data.tongLike;
+    })
+    .catch(err => console.error(err));
+}
+</script>
+
+
 
     <style>
         @keyframes fadeIn {

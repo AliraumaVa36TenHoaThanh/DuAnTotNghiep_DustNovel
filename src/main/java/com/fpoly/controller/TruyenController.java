@@ -35,7 +35,9 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/DustNovel")
 public class TruyenController {
-		@Autowired
+
+
+   		@Autowired
 	     TruyenService truyenService;
 	    @Autowired
 	     ChuongService chuongService;
@@ -51,8 +53,6 @@ public class TruyenController {
 	    TheLoaiService tlSer;
 	    @Autowired
 	    TapService tapService;
-	    @Autowired
-	    BinhLuanService binhLuanService;
 	    
 //	    @GetMapping("/truyen/{id:\\d+}")
 //	    public String detail(@PathVariable Long id, Model model) {
@@ -68,30 +68,31 @@ public class TruyenController {
 //	    }
 	    @GetMapping("/truyen/{id:\\d+}")
 	    public String detail(@PathVariable Long id, Model model) {
-	    	
+
 	        Truyen truyen = truyenService.findById(id);
-	        LocalDateTime ngayCapNhat = chuongService.layNgayCapNhatTruyen(id);
-	        long tongSoTu = chuongService.laySoTuTruyen(id);
-	        if (truyen == null) return "redirect:/DustNovel/home";
-	        Chuong chuongDau = chuongService.layChuongDau(id);
-	        Chuong chuongMoi = chuongService.layChuongMoiNhat(id);
-	        model.addAttribute("chuongDau", chuongDau);
-	        model.addAttribute("chuongMoi", chuongMoi);
+	        if (truyen == null) {
+	            return "redirect:/DustNovel/home";
+	        }
+
+	        
+	        truyen.setLuotXem(truyen.getLuotXem() + 1);
+	        truyenRepo.save(truyen);
+
+	        NguoiDung user = securityUtil.getCurrentUserFromDB();
+
+	        model.addAttribute("currentUser", user);
 	        model.addAttribute("truyen", truyen);
 	        model.addAttribute("dsTap", tapService.findByTruyen(id));
-	        model.addAttribute("comments", binhLuanService.getByTruyen(id));
-	        model.addAttribute("luotXem", truyen.getLuotXem());
-	        model.addAttribute("tongSoTu", tongSoTu);
-	        model.addAttribute("ngayCapNhat", ngayCapNhat);
-	        
 	        model.addAttribute("content", "truyen/detail");
+
 	        return "layout/main";
 	    }
+
 	    @GetMapping("/themtruyen")
 	    public String showAddForm(Model model) {
 
 	        model.addAttribute("truyen", new Truyen());
-	        model.addAttribute("dsTheLoai", theLoaiRepo.findByStatusTheLoai(StatusTheLoai.ON));
+	        model.addAttribute("dsTheLoai", theLoaiRepo.findAll());
 	        model.addAttribute("content", "truyen/add");
 	        model.addAttribute("title", "Thêm truyện");
 
@@ -100,51 +101,19 @@ public class TruyenController {
 	    @PostMapping("/themtruyen")
 	    public String addTruyen(
 	            @ModelAttribute Truyen truyen,
-	            @RequestParam (value = "theLoaiIds", required = false) List<Long> theLoaiIds,
-	            @RequestParam(value = "file", required = false) MultipartFile file,
-	            Model model
-	    )  throws IOException {
-	    	    	
+	            @RequestParam List<Long> theLoaiIds
+	    ) {
 	        CustomUserDetails cud =
 	        	    (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 	        Long UserId = cud.getId();          
 	        NguoiDung user = cud.getUser();     
 
-	        
+
 	        truyen.setNguoiDang(user);
-	     // =========================
-	        //  THÊM PHẦN UPLOAD ẢNH
-	        // =========================
-	        if (file != null && !file.isEmpty()) {
-
-	            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-
-	            String uploadDir = System.getProperty("user.dir")
-	                    + "/src/main/resources/static/uploads/truyen/";
-
-	            File dir = new File(uploadDir);
-	            if (!dir.exists()) dir.mkdirs();
-
-	            file.transferTo(new File(uploadDir + fileName));
-
-	            truyen.setAnhBia("/uploads/truyen/" + fileName);
-	        }
 
 	        if (truyen.getAnhBia() == null || truyen.getAnhBia().isBlank()) {
 	            truyen.setAnhBia("/images/aria.jpg");
-	        }
-	        
-	    //  Nếu chưa chọn thể loại
-	    	if (theLoaiIds == null || theLoaiIds.isEmpty()) {
-
-	            model.addAttribute("error", "Vui lòng chọn ít nhất một thể loại!");
-	            model.addAttribute("dsTheLoai", theLoaiRepo.findByStatusTheLoai(StatusTheLoai.ON));
-	            model.addAttribute("truyen", truyen);
-	            model.addAttribute("content", "truyen/add");
-	            model.addAttribute("title", "Thêm truyện");
-
-	            return "layout/main"; // không redirect để giữ dữ liệu
 	        }
 
 	        truyenService.save(truyen, theLoaiIds);
@@ -179,95 +148,31 @@ public class TruyenController {
 	    }
 	    
 	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
-	    @GetMapping("/truyen/sua/{id}")
-	    public String formSua(@PathVariable Long id, Model model) {
+	    @GetMapping("/truyen/{tenTruyen}/sua/{id}")
+	    public String formSua(
+	            @PathVariable String tenTruyen,
+	            @PathVariable Long id,
+	            Model model) {
 
-	        Truyen truyen = truyenService.findById(id);
-	        if (truyen == null) {
-	            return "redirect:/DustNovel/home";
-	        }
-
-	        model.addAttribute("truyen", truyen);
-	        model.addAttribute("dsTheLoai", theLoaiRepo.findAll());
+	        model.addAttribute("truyen", truyenService.findById(id));
 	        model.addAttribute("content", "truyen/edit");
 	        model.addAttribute("title", "Sửa truyện");
-
 	        return "layout/main";
 	    }
 	    
-//	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
-//	    @PostMapping("/truyen/{tenTruyen}/sua/{id}")
-//	    public String sua(
-//	            @PathVariable String tenTruyen,
-//	            @PathVariable Long id,
-//	            @ModelAttribute Truyen truyen) {
-//
-//	        truyen.setId(id);
-//	        truyenService.suaTruyen(id, truyen);
-//
-//	        return "redirect:/DustNovel/truyen/" + tenTruyen + "/" + id;
-//	    }
-	    
-	    
-//	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
-//	    @PostMapping("/truyen/sua/{id}")
-//	    public String sua(
-//	            @PathVariable Long id,
-//	            @ModelAttribute Truyen truyen,
-//	            @RequestParam(required = false) List<Long> theLoaiIds
-//	    ) {
-//	        truyen.setId(id);
-//
-//	        Truyen old = truyenService.findById(id);
-//	        truyen.setNguoiDang(old.getNguoiDang());
-//
-//	        if (theLoaiIds != null) {
-//	            truyenService.save(truyen, theLoaiIds);
-//	        } else {
-//	            truyenRepo.save(truyen);
-//	        }
-//
-//	        return "redirect:/DustNovel/truyen/" + id;
-//	    }
 	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
-	    @PostMapping("/truyen/sua/{id}")
+	    @PostMapping("/truyen/{tenTruyen}/sua/{id}")
 	    public String sua(
+	            @PathVariable String tenTruyen,
 	            @PathVariable Long id,
-	            @ModelAttribute Truyen truyenForm, // Đây là data từ form gửi lên
-	            @RequestParam(required = false) List<Long> theLoaiIds
-	    ) {
-	        // 1. Lấy truyện CŨ từ database lên (để giữ nguyên lượt xem, ngày tạo, ds chương...)
-	        Truyen truyenDB = truyenService.findById(id);
-	        if (truyenDB == null) {
-	            return "redirect:/DustNovel/home";
-	        }
+	            @ModelAttribute Truyen truyen) {
 
-	        // 2. Chỉ cập nhật những trường được phép sửa từ form
-	        truyenDB.setTenTruyen(truyenForm.getTenTruyen());
-	        truyenDB.setMoTa(truyenForm.getMoTa());
-	        truyenDB.setTenTacGia(truyenForm.getTenTacGia());
-	        truyenDB.setLoaiTruyen(truyenForm.getLoaiTruyen());
-	        truyenDB.setTag18(truyenForm.getTag18());
-	        
-	        // Nếu có upload ảnh bìa mới thì mới cập nhật, không thì giữ ảnh cũ
-	        if (truyenForm.getAnhBia() != null && !truyenForm.getAnhBia().isBlank()) {
-	            truyenDB.setAnhBia(truyenForm.getAnhBia());
-	        }
+	        truyen.setId(id);
+	        truyenService.suaTruyen(id, truyen);
 
-	        // 3. Cập nhật danh sách thể loại
-	        if (theLoaiIds != null) {
-	            List<TheLoai> dsTheLoai = theLoaiRepo.findAllById(theLoaiIds);
-	            truyenDB.setTheLoais(dsTheLoai);
-	        }
-
-	        // 4. Lưu lại vào DB
-	        truyenRepo.save(truyenDB);
-
-	        return "redirect:/DustNovel/truyen/" + id;
+	        return "redirect:/DustNovel/truyen/" + tenTruyen + "/" + id;
 	    }
-	    
 	    @GetMapping("/truyen/tim-kiem-nang-cao")
-	    
 	    public String timKiemNangCao(
 	            @RequestParam(required = false) String tenTruyen,
 	            @RequestParam(required = false) String tenTacGia,
@@ -296,54 +201,12 @@ public class TruyenController {
 	        }
 
 	        model.addAttribute("searched", isSearch);
-//	        model.addAttribute("theLoais", tlSer.getAllTheLoai());
-	        model.addAttribute("theLoais", theLoaiRepo.findByStatusTheLoai(StatusTheLoai.ON));
+	        model.addAttribute("theLoais", tlSer.getAllTheLoai());
 	        model.addAttribute("title", "DustNovel | Tìm kiếm nâng cao");
 	        model.addAttribute("content", "truyen/tim-kiem-nang-cao");
 
 	        return "layout/main";
 	    }
 
-	    
-	   
-
-	    @PostMapping("/truyen/{id}/doi-trang-thai")
-	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
-	    public String doiTrangThai(@PathVariable Long id) {
-	        Truyen truyen = truyenService.findById(id);
-
-	        if (truyen.getTrangThai() == TrangThaiTruyen.ĐANG_RA) {
-	            truyen.setTrangThai(TrangThaiTruyen.HOÀN_THÀNH);
-	        } else {
-	            truyen.setTrangThai(TrangThaiTruyen.ĐANG_RA);
-	        }
-
-	        truyenService.save2(truyen);
-	        return "redirect:/DustNovel/truyen/" + id;
-	    }  
-	    @GetMapping("/the-loai/{id}")
-	    public String xemTheoTheLoai(@PathVariable Long id, Model model) {
-
-	        TheLoai theLoai = theLoaiRepo.findById(id).orElse(null);
-
-	        if (theLoai == null) {
-	            return "redirect:/DustNovel/home";
-	        }
-
-	        // Nếu OFF → log và chặn
-	        if (theLoai.getStatusTheLoai() == StatusTheLoai.OFF) {
-	            System.out.println("⚠ Thể loại này đang OFF: " + theLoai.getTenTheLoai());
-	            return "redirect:/DustNovel/home";
-	        }
-
-	        List<Truyen> dsTruyen = truyenRepo.findByTheLoai(id);																
-
-	        model.addAttribute("theLoai", theLoai);
-	        model.addAttribute("truyens", dsTruyen);
-	        model.addAttribute("content", "truyen/the-loai");
-	        model.addAttribute("error", "Thể loại này hiện đang tạm khóa");
-
-	        return "layout/main";
-	    }
 
 }

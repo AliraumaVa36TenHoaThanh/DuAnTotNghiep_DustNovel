@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Truyện Đã Thích</title>
+
+    <style>
+        /* ===== BACKGROUND WRAPPER ===== */
+        .main-wrapper {
+            background-color: #f4f6f9;
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        /* Khung chính lùi vào bên phải */
+        .content-box {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 25px;
+            margin-left: 300px; /* Lùi sang phải */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .page-heading h3 {
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            font-weight: 600;
+            background: #f8f9fa;
+        }
+
+        .table {
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .table th,
+        .table td {
+            padding: 8px 12px;
+            vertical-align: middle;
+        }
+
+        .table th {
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f9fafb;
+        }
+
+        .btn-primary {
+            padding: 4px 10px;
+            font-size: 13px;
+            border-radius: 6px;
+        }
+
+        .text-muted {
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="main-wrapper">
+    <div class="content-box">
+
+        <div class="page-heading">
+            <h3>Truyện Đã Thích</h3>
+        </div>
+
+        <div class="page-content">
+            <section class="section">
+                <div class="card">
+                    <div class="card-header">
+                        Danh sách truyện bạn đã thích
+                    </div>
+
+                    <div class="card-body">
+                        <table class="table table-striped" id="table1">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Tên Truyện</th>
+                                    <th>Tác Giả</th>
+                                    <th>Tổng Like</th>
+                                    <th>Hành Động</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr th:each="t, stat : ${list}">
+                                    <td th:text="${stat.count}"></td>
+                                    <td th:text="${t.tenTruyen}"></td>
+                                    <td th:text="${t.tenTacGia}"></td>
+                                    <td th:text="${t.tongLike}"></td>
+                                    <td>
+                                        <a th:href="@{'/DustNovel/truyen/' + ${t.id}}"
+                                           class="btn btn-sm btn-primary">
+                                            Xem
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(list)}">
+                                    <td colspan="5" class="text-center text-muted">
+                                        Bạn chưa thích truyện nào
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

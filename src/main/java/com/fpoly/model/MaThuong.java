@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "ma_thuong")
 @Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class MaThuong {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,8 +33,8 @@ public class MaThuong {
     private LocalDateTime ngayTao;
 
     @PrePersist
-    protected void onCreate() {
-        this.ngayTao = LocalDateTime.now();
-        if (this.daNhap == null) this.daNhap = 0;
+        public void prePersist() {
+            if (daNhap == null) daNhap = 0;
+            if (ngayTao == null) ngayTao = LocalDateTime.now();
+        }
     }
-}
