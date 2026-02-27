@@ -16,12 +16,16 @@ public class BinhLuan {
 
     @ManyToOne
     @JoinColumn(name = "nguoi_dung_id", nullable = false)
-    private NguoiDung nguoiDung;
+    private NguoiDung nguoiDung;	
 
     @ManyToOne
-    @JoinColumn(name = "truyen_id", nullable = false)
+    @JoinColumn(name = "truyen_id", nullable = true)
     private Truyen truyen;
 
+    @ManyToOne
+    @JoinColumn(name = "chuong_id", nullable = true)
+    private Chuong chuong;
+    
     @Column(name = "noi_dung", columnDefinition = "NVARCHAR(MAX)", nullable = false)
     private String noiDung;
 
@@ -32,7 +36,8 @@ public class BinhLuan {
     @JoinColumn(name = "parent_id")
     private BinhLuan parent;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("ngayBinhLuan ASC")
     private List<BinhLuan> replies;
 
     @PrePersist

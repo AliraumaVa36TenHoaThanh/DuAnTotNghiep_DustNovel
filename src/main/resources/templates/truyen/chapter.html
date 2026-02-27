@@ -136,6 +136,7 @@
             </div>
         </div>
     </div>
+    <div th:replace="chuong/comment :: commentSection"></div>
 
     <div th:if="${chuongSau != null && !@permissionService.canReadChuong(chuongSau, currentUser)}">
         <div class="modal fade" th:id="'muaChuongModal__' + ${chuongSau.id}" tabindex="-1" aria-hidden="true">
