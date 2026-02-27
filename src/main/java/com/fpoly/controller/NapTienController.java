@@ -104,6 +104,20 @@ public class NapTienController {
     }
     
     /* ========= TẶNG TOKEN ========= */
+    
+    @GetMapping("/tang-tien")
+    public String tangTien(Model model, Authentication auth) {
+
+        var user = napTienService.getByTenDangNhap(auth.getName());
+
+        model.addAttribute("title", "DustNovel | Nạp token");
+        model.addAttribute("content", "truyen/tang-tien"); // fragment path
+
+        model.addAttribute("user", user);
+        model.addAttribute("randomUsers", napTienService.getRandomUsers());
+
+        return "layout/main";
+    }
     @PostMapping("/tang")
     public String tangToken(
             @RequestParam("nguoiNhan") String nguoiNhan,

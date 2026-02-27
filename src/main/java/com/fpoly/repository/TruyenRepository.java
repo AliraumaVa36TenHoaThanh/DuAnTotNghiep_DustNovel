@@ -127,4 +127,6 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     @Modifying
     @Query("UPDATE Truyen t SET t.luotXem = t.luotXem + 1 WHERE t.id = :id")
     void tangLuotXem(@Param("id") Long id);
+    
+    
 }
