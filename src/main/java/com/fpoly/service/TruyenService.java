@@ -153,25 +153,5 @@ public class TruyenService {
 	    );
 	}
 	
-	public Page<Truyen> getTruyenOrderByChuongMoiNhat(
-	        LoaiTruyen loaiTruyen,
-	        Pageable pageable
-	) {
-	    Page<Long> idPage =
-	        truyenRepo.findIdsByLoaiTruyenOrderByChuongMoiNhat(loaiTruyen, pageable);
-
-	    List<Truyen> truyenList =
-	        truyenRepo.findByIdIn(idPage.getContent());
-
-	    Map<Long, Truyen> map = truyenList.stream()
-	        .collect(Collectors.toMap(Truyen::getId, t -> t));
-
-	    List<Truyen> ordered =
-	        idPage.getContent().stream()
-	            .map(map::get)
-	            .toList();
-
-	    return new PageImpl<>(ordered, pageable, idPage.getTotalElements());
-	}
 	
 }
