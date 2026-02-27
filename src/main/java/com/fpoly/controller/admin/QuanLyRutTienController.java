@@ -23,13 +23,40 @@ public class QuanLyRutTienController {
 
     // ===== DANH SÁCH =====
     @GetMapping("/rut-tien")
-    public String listRutTien(Model model) {
+    public String listRutTien(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String trangThai,
+            Model model) {
 
-        List<RutTien> listRutTien = rutTienRepo.findAll();
+        List<RutTien> listRutTien;
+
+        if ((username != null && !username.isEmpty()) &&
+            (trangThai != null && !trangThai.isEmpty())) {
+
+            listRutTien = rutTienRepo
+                    .findByNguoiDung_TenDangNhapContainingIgnoreCaseAndTrangThai(
+                            username, trangThai);
+
+        } else if (username != null && !username.isEmpty()) {
+
+            listRutTien = rutTienRepo
+                    .findByNguoiDung_TenDangNhapContainingIgnoreCase(username);
+
+        } else if (trangThai != null && !trangThai.isEmpty()) {
+
+            listRutTien = rutTienRepo.findByTrangThai(trangThai);
+
+        } else {
+
+            listRutTien = rutTienRepo.findAll();
+        }
 
         model.addAttribute("listRutTien", listRutTien);
         model.addAttribute("content", "view/admin/nap/admin-rut-tien");
         model.addAttribute("title", "Quản Lý Rút Tiền");
+
+        model.addAttribute("username", username);
+        model.addAttribute("trangThai", trangThai);
 
         return "layout/admin_base";
     }
