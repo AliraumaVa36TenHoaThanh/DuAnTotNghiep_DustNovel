@@ -321,29 +321,29 @@ public class TruyenController {
 	        truyenService.save2(truyen);
 	        return "redirect:/DustNovel/truyen/" + id;
 	    }  
-	    @GetMapping("/the-loai/{id}")
-	    public String xemTheoTheLoai(@PathVariable Long id, Model model) {
-
-	        TheLoai theLoai = theLoaiRepo.findById(id).orElse(null);
-
-	        if (theLoai == null) {
-	            return "redirect:/DustNovel/home";
-	        }
-
-	        // Nếu OFF → log và chặn
-	        if (theLoai.getStatusTheLoai() == StatusTheLoai.OFF) {
-	            System.out.println("⚠ Thể loại này đang OFF: " + theLoai.getTenTheLoai());
-	            return "redirect:/DustNovel/home";
-	        }
-
-	        List<Truyen> dsTruyen = truyenRepo.findByTheLoai(id);																
-
-	        model.addAttribute("theLoai", theLoai);
-	        model.addAttribute("truyens", dsTruyen);
-	        model.addAttribute("content", "truyen/the-loai");
-	        model.addAttribute("error", "Thể loại này hiện đang tạm khóa");
-
-	        return "layout/main";
-	    }
+//	    @GetMapping("/the-loai/{id}")
+//	    public String xemTheoTheLoai(@PathVariable Long id, Model model) {
+//
+//	        TheLoai theLoai = theLoaiRepo.findById(id).orElse(null);
+//
+//	        if (theLoai == null) {
+//	            return "redirect:/DustNovel/home";
+//	        }
+//
+//	        // Nếu OFF → log và chặn
+//	        if (theLoai.getStatusTheLoai() == StatusTheLoai.OFF) {
+//	            System.out.println("⚠ Thể loại này đang OFF: " + theLoai.getTenTheLoai());
+//	            return "redirect:/DustNovel/home";
+//	        }
+//
+//	        List<Truyen> dsTruyen = truyenRepo.findByTheLoai(id);																
+//
+//	        model.addAttribute("theLoai", theLoai);
+//	        model.addAttribute("truyens", dsTruyen);
+//	        model.addAttribute("content", "truyen/the-loai");
+//	        model.addAttribute("error", "Thể loại này hiện đang tạm khóa");
+//
+//	        return "layout/main";
+//	    }
 
 }
