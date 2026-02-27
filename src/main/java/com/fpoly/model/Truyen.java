@@ -9,6 +9,7 @@ import com.fpoly.model.enums.TrangThaiTruyen;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Entity
 @Table(name = "truyen")
 @Getter @Setter
@@ -47,6 +48,27 @@ public class Truyen {
 
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
+    
+    @ManyToMany
+    @JoinTable(
+        name = "truyen_the_loai",
+        joinColumns = @JoinColumn(name = "truyen_id"),
+        inverseJoinColumns = @JoinColumn(name = "the_loai_id")
+    )
+    private List<TheLoai> theLoais = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tap> danhSachTap;
+    @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LikeTruyen> danhSachLike = new ArrayList<>();
+    @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BinhLuan> danhSachBinhLuan = new ArrayList<>();
+  
+    @Column(name = "tong_like", columnDefinition = "bigint default 0")
+    private Long tongLike = 0L;
+
+    @Column(name = "luot_xem", nullable = false)
+    private Long luotXem = 0L;
 
     @PrePersist
     protected void onCreate() {
@@ -54,21 +76,6 @@ public class Truyen {
         if (this.tongLike == null) this.tongLike = 0L;
         if (this.luotXem == null) this.luotXem = 0L;
     }
-
-    @ManyToMany
-    @JoinTable(
-        name = "truyen_the_loai",
-        joinColumns = @JoinColumn(name = "truyen_id"),
-        inverseJoinColumns = @JoinColumn(name = "the_loai_id")
-    )
-    private List<TheLoai> theLoais;
-
-  
-    @Column(name = "tong_like", nullable = false)
-    private Long tongLike = 0L;
-
-    @Column(name = "luot_xem", nullable = false)
-    private Long luotXem = 0L;
 
     public Long getTongLike() {
         return tongLike == null ? 0 : tongLike;

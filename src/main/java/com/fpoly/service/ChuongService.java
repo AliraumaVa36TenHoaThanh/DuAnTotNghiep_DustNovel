@@ -243,4 +243,27 @@ public class ChuongService {
         return chuongRepo.findFirstByTapTruyenIdOrderByTapSoTapDescSoChuongDesc(truyenId).orElse(null);
     }
     
+    public Chuong layChuongDauCoTheDoc(Long truyenId, NguoiDung user) {
+
+        List<Chuong> ds = chuongRepo.findTatCaChuongTheoThuTuAsc(truyenId);
+
+        for (Chuong c : ds) {
+            if (permissionService.canReadChuong(c, user)) {
+                return c;
+            }
+        }
+        return null;
+    }
+    public Chuong layChuongMoiCoTheDoc(Long truyenId, NguoiDung user) {
+
+        List<Chuong> ds = chuongRepo.findTatCaChuongTheoThuTuDesc(truyenId);
+
+        for (Chuong c : ds) {
+            if (permissionService.canReadChuong(c, user)) {
+                return c;
+            }
+        }
+        return null;
+    }
+    
 }
