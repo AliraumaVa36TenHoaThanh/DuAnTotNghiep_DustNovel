@@ -28,4 +28,22 @@ public class TrangChuController {
         model.addAttribute("truyenDich", truyenService.getTruyenDich());
         return "layout/main";
     }
+    
+    @GetMapping("/truyensangtac")
+    public String sangtac(Model model, Authentication authentication) {
+
+        model.addAttribute("title", "Trang chủ");
+        model.addAttribute("content", "home/home-sang-tac.html");
+        model.addAttribute("truyenSangTac", truyenService.getTruyenSangTac());
+        return "layout/main";
+    }
+    
+    @GetMapping("/truyendich")
+    public String dich(Model model, Authentication authentication) {
+
+        model.addAttribute("title", "Trang chủ");
+        model.addAttribute("content", "home/home-dich.html");
+        model.addAttribute("truyenDich", truyenService.getTruyenDich());
+        return "layout/main";
+    }
 }
