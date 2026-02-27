@@ -22,4 +22,11 @@ public interface RutTienRepository extends JpaRepository<RutTien, Long> {
 
     // Lấy tất cả mới nhất
     List<RutTien> findAllByOrderByNgayTaoDesc();
+    
+    List<RutTien> findByNguoiDung_TenDangNhapContainingIgnoreCase(String username);
+
+    List<RutTien> findByTrangThai(String trangThai);
+
+    List<RutTien> findByNguoiDung_TenDangNhapContainingIgnoreCaseAndTrangThai(
+            String username, String trangThai);
 }
