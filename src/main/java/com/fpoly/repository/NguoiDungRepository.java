@@ -37,4 +37,7 @@ public interface NguoiDungRepository extends JpaRepository<NguoiDung, Long> {
     @Query("UPDATE NguoiDung u SET u.trangThai = :status WHERE u.id = :id")
     void updateTrangThai(@Param("id") Long id,
                          @Param("status") String status);
+           
+    List<NguoiDung> findTop5ByOrderByTokenDesc();
+    
 }

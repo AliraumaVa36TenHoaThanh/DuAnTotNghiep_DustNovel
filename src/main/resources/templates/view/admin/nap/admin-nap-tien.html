@@ -57,7 +57,13 @@ body {
 	padding: 8px 12px;
 	border-radius: 6px;
 	border: 1px solid #ccc;
-	width: 320px;
+	width: 220px;
+}
+
+.filter-select {
+	padding: 8px 12px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
 }
 
 table {
@@ -148,9 +154,21 @@ th {
 
 		<div class="toolbar">
 			<span>Danh sách yêu cầu từ người dùng</span>
-			<div class="search-box">
-				<input type="text" id="searchInput"
-					placeholder="Tìm tên người nạp...">
+
+			<div style="display:flex; gap:10px; align-items:center;">
+
+				<select id="statusFilter" class="filter-select">
+					<option value="ALL">Xem tất cả</option>
+					<option value="PENDING">Chưa duyệt</option>
+					<option value="DA_DUYET">Đã duyệt</option>
+					<option value="TU_CHOI">Đã từ chối</option>
+				</select>
+
+				<div class="search-box">
+					<input type="text" id="searchInput"
+						placeholder="Tìm tên người nạp...">
+				</div>
+
 			</div>
 		</div>
 
@@ -169,23 +187,18 @@ th {
 
 			<tbody id="napTable">
 
-				<tr th:each="nap : ${listNapTien}">
+				<tr th:each="nap : ${listNapTien}"
+				    th:attr="data-status=${nap.trangThai}">
 
-					<td th:text="${nap.nguoiDung.tenDangNhap}">
-						username
-					</td>
+					<td th:text="${nap.nguoiDung.tenDangNhap}">username</td>
 
 					<td th:text="${#numbers.formatDecimal(nap.soTienThuc,0,'COMMA',0,'POINT')} + ' VNĐ'">
 						100.000 VNĐ
 					</td>
 
-					<td th:text="${nap.soTokenNhan}">
-						100
-					</td>
+					<td th:text="${nap.soTokenNhan}">100</td>
 
-					<td th:text="${nap.phuongThuc}">
-						Banking
-					</td>
+					<td th:text="${nap.phuongThuc}">Banking</td>
 
 					<td>
 						<span th:if="${nap.trangThai == 'PENDING'}"
@@ -203,17 +216,28 @@ th {
 					</td>
 
 					<td class="text-center">
-						<a href="#"
-						   class="action-btn btn-approve"
-						   th:data-url="@{/dba/nap-tien/duyet/{id}(id=${nap.id})}"
-						   onclick="return duyetNap(this)">✔</a>
 
-						<a href="#"
-						   class="action-btn btn-reject"
-						   th:data-url="@{/dba/nap-tien/tu-choi/{id}(id=${nap.id})}"
-						   onclick="return tuChoiNap(this)">✖</a>
+						<!-- Chỉ hiện khi đang PENDING -->
+						<div th:if="${nap.trangThai == 'PENDING'}">
+
+							<a href="#"
+							   class="action-btn btn-approve"
+							   th:data-url="@{/dba/nap-tien/duyet/{id}(id=${nap.id})}"
+							   onclick="return duyetNap(this)">✔</a>
+
+							<a href="#"
+							   class="action-btn btn-reject"
+							   th:data-url="@{/dba/nap-tien/tu-choi/{id}(id=${nap.id})}"
+							   onclick="return tuChoiNap(this)">✖</a>
+
+						</div>
+
+						<!-- Nếu đã xử lý thì hiện dấu gạch -->
+						<div th:if="${nap.trangThai != 'PENDING'}">
+							<span style="color:#999;">—</span>
+						</div>
+
 					</td>
-
 				</tr>
 
 				<tr th:if="${#lists.isEmpty(listNapTien)}">
@@ -230,32 +254,42 @@ th {
 
 <script>
 const searchInput = document.getElementById("searchInput");
+const statusFilter = document.getElementById("statusFilter");
 const rows = document.querySelectorAll("#napTable tr");
 
-searchInput.addEventListener("keyup", function () {
-	const keyword = this.value.toLowerCase();
+function filterTable() {
+	const keyword = searchInput.value.toLowerCase();
+	const selectedStatus = statusFilter.value;
 
 	rows.forEach(row => {
-		const user = row.cells[0]?.textContent.toLowerCase() || "";
 
-		row.style.display =
-			user.includes(keyword)
-				? ""
-				: "none";
+		if (!row.dataset.status) return;
+
+		const user = row.cells[0]?.textContent.toLowerCase() || "";
+		const rowStatus = row.dataset.status;
+
+		const matchName = user.includes(keyword);
+		const matchStatus = (selectedStatus === "ALL" || rowStatus === selectedStatus);
+
+		row.style.display = (matchName && matchStatus) ? "" : "none";
 	});
-});
+}
+
+searchInput.addEventListener("keyup", filterTable);
+statusFilter.addEventListener("change", filterTable);
+
 function duyetNap(el) {
-    if (confirm("Xác nhận duyệt yêu cầu nạp tiền này?")) {
-        window.location.href = el.dataset.url;
-    }
-    return false;
+	if (confirm("Xác nhận duyệt yêu cầu nạp tiền này?")) {
+		window.location.href = el.dataset.url;
+	}
+	return false;
 }
 
 function tuChoiNap(el) {
-    if (confirm("Xác nhận từ chối yêu cầu này?")) {
-        window.location.href = el.dataset.url;
-    }
-    return false;
+	if (confirm("Xác nhận từ chối yêu cầu này?")) {
+		window.location.href = el.dataset.url;
+	}
+	return false;
 }
 </script>
 
