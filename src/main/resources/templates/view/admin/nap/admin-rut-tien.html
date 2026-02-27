@@ -1,0 +1,164 @@
+<!DOCTYPE html> 
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Quản lý rút tiền</title>
+
+<style>
+/* GIỮ NGUYÊN CSS CỦA BẠN */
+* {
+	box-sizing: border-box;
+	font-family: "Segoe UI", Arial, sans-serif;
+}
+body { margin: 0; background: #f4f6f9; color: #111; }
+.sidebar {
+	width: 260px; height: 100vh; position: fixed;
+	top: 0; left: 0; background: #ffffff;
+	border-right: 1px solid #e0e0e0; padding: 20px;
+}
+.main-content { margin-left: 260px; padding: 30px; }
+.card {
+	background: #ffffff;
+	border-radius: 12px;
+	box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+	padding: 20px; margin-left: 40px;
+}
+.page-title { font-size: 22px; font-weight: 600; margin-bottom: 15px; }
+.toolbar {
+	display: flex; justify-content: space-between;
+	align-items: center; margin-bottom: 15px;
+}
+.search-box input {
+	padding: 8px 12px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+	width: 220px;
+}
+.filter-select {
+	padding: 8px 12px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+}
+table { width: 100%; border-collapse: collapse; background: #fff; }
+thead { background: #f1f3f5; }
+th, td { padding: 14px; border-bottom: 1px solid #e0e0e0; }
+th { text-align: left; }
+.badge { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+.badge-pending { background: #ffe08a; color: #856404; }
+.badge-approved { background: #2ecc71; color: #fff; }
+.badge-reject { background: #dc3545; color: #fff; }
+.action-btn {
+	display: inline-flex; align-items: center;
+	justify-content: center; width: 34px;
+	height: 34px; border-radius: 8px;
+	color: #fff; text-decoration: none;
+	margin: 0 4px; font-size: 16px;
+}
+.btn-approve { background: #28a745; }
+.btn-reject { background: #dc3545; }
+.text-center { text-align: center; }
+.empty { text-align: center; color: #777; font-style: italic; }
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+	<h3>ADMIN</h3>
+</div>
+
+<div class="main-content">
+<div class="card">
+
+<div class="page-title">Quản lý yêu cầu rút tiền</div>
+
+<table>
+<thead>
+<tr>
+	<th>Username</th>
+	<th>Số tiền (VNĐ)</th>
+	<th>Ngân hàng</th>
+	<th>STK</th>
+	<th>Chủ tài khoản</th>
+	<th>Thời gian</th>
+	<th>Trạng thái</th>
+	<th class="text-center">Duyệt</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr th:each="rut : ${listRutTien}"
+    th:attr="data-status=${rut.trangThai}">
+
+	<td th:text="${rut.nguoiDung.tenDangNhap}"></td>
+
+	<!-- tokenThucNhan * 20 -->
+	<td th:text="${#numbers.formatDecimal(rut.tokenThucNhan * 20,0,'COMMA',0,'POINT')} + ' VNĐ'"></td>
+
+	<td th:text="${rut.nganHang}"></td>
+	<td th:text="${rut.soTaiKhoan}"></td>
+	<td th:text="${rut.tenChuTaiKhoan}"></td>
+
+	<td th:text="${#temporals.format(rut.ngayTao,'dd/MM/yyyy HH:mm')}"></td>
+
+	<td>
+		<span th:if="${rut.trangThai == 'CHO_DUYET'}"
+			class="badge badge-pending">Chờ duyệt</span>
+
+		<span th:if="${rut.trangThai == 'DA_TRA'}"
+			class="badge badge-approved">Đã trả</span>
+
+		<span th:if="${rut.trangThai == 'TU_CHOI'}"
+			class="badge badge-reject">Từ chối</span>
+	</td>
+
+	<td class="text-center">
+
+		<div th:if="${rut.trangThai == 'CHO_DUYET'}">
+
+			<a href="#"
+			   class="action-btn btn-approve"
+			   th:data-url="@{/dba/rut-tien/duyet/{id}(id=${rut.id})}"
+			   onclick="return duyet(this)">✔</a>
+
+			<a href="#"
+			   class="action-btn btn-reject"
+			   th:data-url="@{/dba/rut-tien/tu-choi/{id}(id=${rut.id})}"
+			   onclick="return tuChoi(this)">✖</a>
+
+		</div>
+
+		<div th:if="${rut.trangThai != 'CHO_DUYET'}">
+			<span style="color:#999;">—</span>
+		</div>
+
+	</td>
+</tr>
+
+<tr th:if="${#lists.isEmpty(listRutTien)}">
+	<td colspan="8" class="empty">
+		Chưa có yêu cầu rút tiền nào
+	</td>
+</tr>
+
+</tbody>
+</table>
+
+</div>
+</div>
+
+<script>
+function duyet(el) {
+	if (confirm("Xác nhận duyệt yêu cầu rút tiền này?")) {
+		window.location.href = el.dataset.url;
+	}
+	return false;
+}
+function tuChoi(el) {
+	if (confirm("Xác nhận từ chối yêu cầu này?")) {
+		window.location.href = el.dataset.url;
+	}
+	return false;
+}
+</script>
