@@ -248,6 +248,9 @@
 							📊 Dashboard
 						</a>
 					</li>
+					<li>
+						<li class="nav-item"><a class="nav-link" th:href="@{/DustNovel/nhom-dich}">📖 Nhóm dịch</a></li>
+					</li>
 				</ul>
 				<form class="d-flex ms-auto me-3" th:action="@{/DustNovel/truyen/tim-kiem}" method="get"> <input
 						class="form-control search-input me-2" type="search" name="keyword" placeholder="Tìm truyện...">
@@ -295,7 +298,6 @@
 							        <span>📖 Lịch sử đọc</span>
 							    </a>
 							</li>
-
 							<li sec:authorize="hasRole('USER')">
 							    <a class="dropdown-item custom-item"
 							       th:href="@{/dbu/}">

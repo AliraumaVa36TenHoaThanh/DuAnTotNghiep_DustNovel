@@ -1,0 +1,36 @@
+<div xmlns:th="http://www.thymeleaf.org"
+     th:fragment="content"
+     class="container mt-4">
+
+    <h2 class="mb-4">✨ Tạo nhóm dịch mới</h2>
+
+    <form th:action="@{/DustNovel/dang-ky-nhom}" method="post">
+
+        <div class="mb-3">
+            <label class="form-label">Tên nhóm</label>
+            <input type="text"
+                   name="tenNhom"
+                   class="form-control"
+                   required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Mô tả</label>
+            <textarea name="moTa"
+                      class="form-control"
+                      rows="4"
+                      required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            🚀 Tạo nhóm ngay
+        </button>
+
+        <a th:href="@{/DustNovel/nhom-dich}"
+           class="btn btn-secondary ms-2">
+            Huỷ
+        </a>
+
+    </form>
+
+</div>
