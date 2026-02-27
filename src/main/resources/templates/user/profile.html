@@ -50,6 +50,7 @@ body {
 	border-radius: 12px;
 	width: 108%;
     margin-left: -4%;
+    z-index: 1;
 }
 
 .bg-dark.text-white.text-center.py-5::before {
@@ -183,7 +184,7 @@ body {
 
 .avatar-wrapper {
     position: relative;
-    top: -55px;   /* chỉnh số này để lên cao hơn */
+    top: -50px;   /* chỉnh số này để lên cao hơn */
 }
 
 .avatar-overlay .btn:hover,
@@ -204,7 +205,7 @@ body {
 }
 
 .container.py-5 {
-	margin-top: -110px;  
+	margin-top: -128px;  
     position: relative;
     z-index: 5;
 }
@@ -225,7 +226,7 @@ body {
 
 /* Làm card cao hơn */
 .col-lg-4 .card, .col-lg-8 .card {
-	min-height: 719px;
+	min-height: 740px;
 }
 
 
@@ -279,6 +280,7 @@ body {
   padding: 6px 12px;
   border-radius: 8px;
   transition: all .2s ease;
+  font-size: 17px;
 }
 
 .d-flex.justify-content-between {
@@ -290,7 +292,7 @@ body {
 }
 
 .col-lg-8 .card-body {
-    margin-top: 10px;   
+    margin-top: 50px;   
 }
 
 
@@ -395,6 +397,90 @@ body {
     padding: 10px 28px;
     border-radius: 10px;
     transition: 0.3s ease;
+}
+
+.account-header h4 {
+    margin-bottom: 40px;
+}
+
+.account-header {
+    margin-bottom: 40px;
+}
+
+/* ===== RESET modal ===== */
+#avatarModal .modal-content,
+#bannerModal .modal-content{
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* dialog căn giữa */
+#avatarModal .modal-dialog,
+#bannerModal .modal-dialog{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: fit-content;
+    margin: auto;
+}
+
+/* KHUNG TRẮNG BAO TOÀN BỘ ẢNH + NÚT */
+#avatarModal .modal-content,
+#bannerModal .modal-content{
+    background: #fff !important;
+    padding: 10px;
+    border-radius: 10px;
+
+    width: auto;
+}
+
+/* bỏ chia tách body/footer */
+#avatarModal .modal-body,
+#bannerModal .modal-body{
+    padding: 0;
+    background: transparent;
+}
+
+#avatarModal .modal-footer,
+#bannerModal .modal-footer{
+    border: none;
+    background: transparent;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* ẢNH TO VÀ Ở GIỮA */
+#previewAvatar{
+    max-width: 550px;
+    width: 100%;
+    display: block;
+    margin: auto;
+}
+
+#previewBanner{
+    max-width: 1100px;
+    width: 100%;
+    display: block;
+    margin: auto;
+}
+
+/* nền tối phía sau */
+.modal-backdrop.show{
+    opacity: 0.85;
+}
+
+.pt-5 {
+    padding-top: 15rem !important;
+}
+
+.dropdown-menu{
+    border-radius: 12px;
+    padding: 10px 0;
+}
+
+.dropdown-item{
+    padding: 10px 20px;
 }
 </style>
 
@@ -606,18 +692,35 @@ body {
 								</div>
 							</div>
 
-							<div class="mt-4 d-grid gap-2">
-								<form th:action="@{/DustNovel/user/delete}" method="post"
-									onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản?')">
-									<button class="btn btn-outline-primary w-100"><i class="bi bi-trash-fill me-2"></i>
-									Xóa tài khoản</button>
-								</form>
+							<div class="dropdown pt-3 mt-4">
+								<button class="btn btn-outline-dark w-100 dropdown-toggle"
+									type="button" data-bs-toggle="dropdown" aria-expanded="false">
+									<i class="bi bi-gear me-2"></i> Tài khoản
+								</button>
 
-								<form th:action="@{/DustNovel/logout}" method="post"
-									onsubmit="return confirmLogout()">
-									<button class="btn btn-outline-danger w-100"><i class="bi bi-box-arrow-right me-2"></i>
-									Đăng xuất</button>
-								</form>
+								<ul class="dropdown-menu w-100 shadow">
+
+									<li>
+										<form th:action="@{/DustNovel/user/delete}" method="post"
+											onsubmit="return confirm('Bạn có chắc chắn muốn tạm dừng tài khoản?')">
+											<button class="dropdown-item text-warning">
+												<i class="bi bi-pause-circle me-2"></i> Khóa tài khoản
+											</button>
+										</form>
+									</li>
+
+									<li><hr class="dropdown-divider"></li>
+
+									<li>
+										<form th:action="@{/DustNovel/logout}" method="post"
+											onsubmit="return confirmLogout()">
+											<button class="dropdown-item text-danger">
+												<i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+											</button>
+										</form>
+									</li>
+
+								</ul>
 							</div>
 
 						</div>
@@ -629,16 +732,21 @@ body {
 					<div class="card shadow-sm">
 						<div class="card-body">
 
-							<div
-								class="d-flex justify-content-between align-items-center mb-4">
-								<h4 class="mb-0">Thông tin tài khoản</h4>
-								<button type="button" class="btn btn-success btn-big"   
-									onclick="enableEdit()"><i class="bi bi-pencil-square me-2"></i>Thay đổi Email & Password</button>
-							</div>
+							<div class="account-header">
+								<h4>Thông tin tài khoản</h4>
 
-							<a href="/DustNovel/ma-thuong"
-								class="d-block mb-3 text-decoration-none btn-gold  btn-ma-thuong text-center"> → Nhập mã thưởng
-								← </a>
+								<div class="d-flex gap-3">
+									<a href="/DustNovel/ma-thuong"
+										class="text-decoration-none btn-gold"> → Nhập mã thưởng ←
+									</a>
+
+									<button type="button" class="btn btn-success btn-big"
+										onclick="enableEdit()">
+										<i class="bi bi-pencil-square me-2"></i> Thay đổi Email &
+										Password
+									</button>
+								</div>
+							</div>
 
 							<div th:if="${success != null and success == true}"
 								class="alert alert-success">Cập nhật mật khẩu thành công</div>
@@ -683,8 +791,9 @@ body {
 									<button id="btnUpdate" type="submit"
 										class="btn btn-success d-none btn-big"><i class="bi bi-person-check-fill"></i>
 										Cập nhật Email & Password</button>
-									<a href="/DustNovel/home" class="back-home-btn"> ← Quay về
-										trang chủ </a>
+									<a href="/DustNovel/home" class="back-home-btn">
+									<i class="bi bi-house-door-fill me-2"></i>  
+									Quay về trang chủ </a>
 								</div>
 
 							</form>
@@ -707,11 +816,19 @@ body {
 						</div>
 					</div>
 
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary"
-							data-bs-dismiss="modal">Đóng</button>
-						<button type="button" class="btn btn-primary"
-							onclick="submitAvatar()">Đổi ảnh</button>
+					<div
+						class="modal-footer d-flex justify-content-center gap-3 border-0">
+
+						<button type="button" class="btn btn-outline-secondary rounded-3"
+							data-bs-dismiss="modal">
+							<i class="bi bi-x-lg text-danger"></i>
+						</button>
+
+						<button type="button" class="btn btn-outline-secondary rounded-3"
+							onclick="submitAvatar()">
+							<i class="bi bi-check-lg text-success"></i>
+						</button>
+
 					</div>
 
 				</div>
@@ -730,11 +847,21 @@ body {
 						</div>
 					</div>
 
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary"
-							data-bs-dismiss="modal">Đóng</button>
-						<button type="button" class="btn btn-primary"
-							onclick="submitBanner()">Đổi banner</button>
+					<div
+						class="modal-footer d-flex justify-content-center gap-3 border-0">
+
+						<!-- Đóng -->
+						<button type="button" class="btn btn-outline-danger rounded-3"
+							data-bs-dismiss="modal">
+							<i class="bi bi-x-lg"></i>
+						</button>
+
+						<!-- Xác nhận -->
+						<button type="button" class="btn btn-outline-secondary rounded-3"
+							onclick="submitBanner()">
+							<i class="bi bi-check-lg text-success"></i>
+						</button>
+
 					</div>
 
 				</div>

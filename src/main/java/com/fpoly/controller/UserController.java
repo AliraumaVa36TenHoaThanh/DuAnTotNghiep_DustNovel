@@ -17,6 +17,9 @@ import com.fpoly.repository.NguoiDungRepository;
 import com.fpoly.security.CustomUserDetails;
 import com.fpoly.service.NguoiDungService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 @Controller
 @RequestMapping("/DustNovel/user")
 public class UserController {
@@ -58,7 +61,10 @@ public class UserController {
 
 		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-		NguoiDung user = userDetails.getUser();
+//		NguoiDung user = userDetails.getUser();
+		NguoiDung user = nguoiDungRepo
+		        .findById(userDetails.getUser().getId())
+		        .orElseThrow();
 
 		boolean hasError = false;
 		boolean updated = false;
@@ -192,12 +198,25 @@ public class UserController {
 		nguoiDungService.xoaBanner(userId);
 		return "redirect:/DustNovel/user/profile";
 	}
-
-	// ================= Xóa tài khoản =================
+	
+		// ================= Tạm dừng tài khoản =================
 	@PostMapping("/delete")
-	public String deleteAccount(Authentication authentication) {
-		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-		nguoiDungRepo.deleteById(userDetails.getUser().getId());
-		return "redirect:/DustNovel/logout";
+	public String pauseAccount(Authentication authentication,
+	                           HttpServletRequest request,
+	                           HttpServletResponse response) throws Exception {
+
+	    CustomUserDetails userDetails =
+	            (CustomUserDetails) authentication.getPrincipal();
+
+	    NguoiDung user = nguoiDungRepo
+	            .findById(userDetails.getUser().getId())
+	            .orElseThrow();
+
+	    nguoiDungRepo.updateTrangThai(user.getId(), "KHOA");
+
+	    request.logout(); 
+
+	    return "redirect:/DustNovel/login?lockedByAdmin";
 	}
+	
 }

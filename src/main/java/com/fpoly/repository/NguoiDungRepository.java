@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.fpoly.model.NguoiDung;
 @Repository
 public interface NguoiDungRepository extends JpaRepository<NguoiDung, Long> {
@@ -27,4 +31,10 @@ public interface NguoiDungRepository extends JpaRepository<NguoiDung, Long> {
             ORDER BY NEWID()
         """, nativeQuery = true)
         List<NguoiDung> findRandom5Users();
+    
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    @Query("UPDATE NguoiDung u SET u.trangThai = :status WHERE u.id = :id")
+    void updateTrangThai(@Param("id") Long id,
+                         @Param("status") String status);
 }

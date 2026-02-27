@@ -58,6 +58,8 @@ public class QuanLyNguoiDungController {
 	TruyenService truyenService;
 	@Autowired
 	TheLoaiRepository theLoaiRepo;
+	@Autowired
+	private NguoiDungRepository nguoiDungRepo;
 
 
 //	@GetMapping("/user")
@@ -320,10 +322,37 @@ public class QuanLyNguoiDungController {
     // =============================
     // UPDATE USER
     // =============================
+//    @PostMapping("/user/update")
+//    public String updateUser(@ModelAttribute NguoiDung user) {
+//
+//        adminUserService.saveUser(user);
+//
+//        return "redirect:/dba/user";
+//    }
     @PostMapping("/user/update")
-    public String updateUser(@ModelAttribute NguoiDung user) {
+    public String updateUser(@ModelAttribute NguoiDung formUser,
+                             Model model) {
 
-        adminUserService.saveUser(user);
+        NguoiDung user = repo.findById(formUser.getId())
+                .orElseThrow();
+
+        // Nếu email thay đổi thì mới check trùng
+        if (!user.getEmail().equals(formUser.getEmail())) {
+
+            if (repo.existsByEmail(formUser.getEmail())) {
+                model.addAttribute("errorEmail", "Email đã tồn tại");
+                model.addAttribute("user", formUser);
+                model.addAttribute("content", "/view/admin/user/editUser");
+                return "/layout/admin_base";
+            }
+
+            user.setEmail(formUser.getEmail());
+        }
+
+        user.setVaiTro(formUser.getVaiTro());
+        user.setTrangThai(formUser.getTrangThai());
+
+        repo.save(user);
 
         return "redirect:/dba/user";
     }
