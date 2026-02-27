@@ -1,6 +1,9 @@
 package com.fpoly.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.util.ArrayList;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,10 +21,13 @@ public class Truyen {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
+    @NotBlank(message = "Tên truyện không được để trống")
     @Column(name = "ten_truyen", nullable = false)
     private String tenTruyen;
-
+    
+    @NotBlank(message = "Mô tả không được để trống")
+    @Size(min = 3, message = "Mô tả phải từ 3 ký tự trở lên")
     @Column(name = "mo_ta", columnDefinition = "NVARCHAR(MAX)")
     private String moTa;
 

@@ -197,5 +197,6 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     	    @Param("loaiTruyen") LoaiTruyen loaiTruyen,
     	    Pageable pageable
     	);
-   
+	boolean existsByTenTruyenIgnoreCase(String tenTruyen);
+	boolean existsByTenTruyenIgnoreCaseAndIdNot(String tenTruyen, Long id);
 }

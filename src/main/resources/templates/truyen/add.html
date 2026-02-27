@@ -8,14 +8,35 @@
         <form th:action="@{/DustNovel/themtruyen}" th:object="${truyen}" method="post" enctype="multipart/form-data">
 
             <div class="mb-3">
-                <label>Tên truyện</label>
-                <input type="text" th:field="*{tenTruyen}" class="form-control" required>
-            </div>
+    <label class="form-label fw-bold">
+        Tên truyện <span class="text-danger">*</span>
+    </label>
+
+    <input type="text"
+           th:field="*{tenTruyen}"
+           class="form-control"
+           th:classappend="${#fields.hasErrors('tenTruyen')} ? 'is-invalid'">
+
+    <div class="invalid-feedback"
+         th:if="${#fields.hasErrors('tenTruyen')}"
+         th:errors="*{tenTruyen}">
+        Lỗi tên truyện
+    </div>
+</div>
 
             <div class="mb-3">
-                <label>Mô tả</label>
-                <textarea th:field="*{moTa}" class="form-control"></textarea>
-            </div>
+    <label class="form-label">Mô tả</label>
+
+    <textarea class="form-control"
+              rows="5"
+              th:field="*{moTa}"
+              placeholder="Nhập mô tả truyện..."></textarea>
+
+    <div class="text-danger mt-1"
+         th:if="${#fields.hasErrors('moTa')}"
+         th:errors="*{moTa}">
+    </div>
+</div>
 
             <div class="mb-3">
                 <label>Tên tác giả</label>

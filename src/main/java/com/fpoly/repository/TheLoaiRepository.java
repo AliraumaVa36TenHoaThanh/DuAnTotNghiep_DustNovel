@@ -12,5 +12,5 @@ public interface TheLoaiRepository extends JpaRepository<TheLoai, Long>{
 	boolean existsByTenTheLoaiAndIdNot(String tenTheLoai, Long id);
 	
 	List<TheLoai> findByStatusTheLoai(StatusTheLoai statusTheLoai);
-	
+
 }

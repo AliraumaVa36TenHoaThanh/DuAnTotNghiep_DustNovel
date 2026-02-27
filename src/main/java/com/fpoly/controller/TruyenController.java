@@ -8,6 +8,9 @@ import com.fpoly.model.Chuong;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.model.TheLoai;
 import com.fpoly.service.TruyenService;
+
+import jakarta.validation.Valid;
+
 import com.fpoly.service.BinhLuanService;
 import com.fpoly.service.ChuongService;
 import com.fpoly.service.TapService;
@@ -27,6 +30,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
@@ -103,7 +107,9 @@ public class TruyenController {
 	    }
 	    @PostMapping("/themtruyen")
 	    public String addTruyen(
+	    		@Valid
 	            @ModelAttribute Truyen truyen,
+	            BindingResult result,
 	            @RequestParam (value = "theLoaiIds", required = false) List<Long> theLoaiIds,
 	            @RequestParam(value = "file", required = false) MultipartFile file,
 	            Model model
@@ -117,6 +123,27 @@ public class TruyenController {
 
 	        
 	        truyen.setNguoiDang(user);
+	        	
+	        if (truyenRepo.existsByTenTruyenIgnoreCase(truyen.getTenTruyen().trim())) {
+	            result.rejectValue(
+	                "tenTruyen",
+	                "error.tenTruyen",
+	                "Tên truyện đã tồn tại"
+	            );
+
+	            model.addAttribute("dsTheLoai", theLoaiRepo.findByStatusTheLoai(StatusTheLoai.ON));
+	            model.addAttribute("content", "truyen/add");
+	            model.addAttribute("title", "Thêm truyện");
+	            return "layout/main";
+	        }
+	        
+	        if (result.hasErrors()) {
+	            model.addAttribute("dsTheLoai", theLoaiRepo.findByStatusTheLoai(StatusTheLoai.ON));
+	            model.addAttribute("content", "truyen/add");
+	            model.addAttribute("title", "Thêm truyện");
+	            return "layout/main";
+	        }
+	        
 	     // =========================
 	        //  THÊM PHẦN UPLOAD ẢNH
 	        // =========================
@@ -236,16 +263,33 @@ public class TruyenController {
 	    @PreAuthorize("@permissionService.canEditTruyen(#id)")
 	    @PostMapping("/truyen/sua/{id}")
 	    public String sua(
-	            @PathVariable Long id,
-	            @ModelAttribute Truyen truyenForm, // Đây là data từ form gửi lên
-	            @RequestParam(required = false) List<Long> theLoaiIds
+	    		@PathVariable Long id,
+	            @Valid @ModelAttribute("truyen") Truyen truyenForm,
+	            BindingResult result,
+	            @RequestParam(required = false) List<Long> theLoaiIds,
+	            Model model
 	    ) {
 	        // 1. Lấy truyện CŨ từ database lên (để giữ nguyên lượt xem, ngày tạo, ds chương...)
 	        Truyen truyenDB = truyenService.findById(id);
 	        if (truyenDB == null) {
 	            return "redirect:/DustNovel/home";
 	        }
+	        if (truyenRepo.existsByTenTruyenIgnoreCaseAndIdNot(
+	                truyenForm.getTenTruyen().trim(), id)) {
 
+	            result.rejectValue(
+	                    "tenTruyen",
+	                    "error.tenTruyen",
+	                    "Tên truyện đã tồn tại"
+	            );
+	        }
+	        if (result.hasErrors()) {
+	            model.addAttribute("truyen", truyenForm);
+	            model.addAttribute("dsTheLoai", theLoaiRepo.findAll());
+	            model.addAttribute("content", "truyen/edit");
+	            model.addAttribute("title", "Sửa truyện");
+	            return "layout/main";
+	        }
 	        // 2. Chỉ cập nhật những trường được phép sửa từ form
 	        truyenDB.setTenTruyen(truyenForm.getTenTruyen());
 	        truyenDB.setMoTa(truyenForm.getMoTa());
