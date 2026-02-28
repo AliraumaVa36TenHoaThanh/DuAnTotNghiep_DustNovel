@@ -1,6 +1,67 @@
 <div th:fragment="content">
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
+<style>
+.filter-box {
+    position: relative;
+    max-width: 600px;
+}
+
+.filter-header {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    width: 200px;
+    min-height: 38px;
+    padding: 6px 12px;
+    font-size: 14px;
+}
+
+.filter-list {
+    display: none;
+    position: absolute;
+    top: 45px;
+    left: 0;
+    width: 600px;
+    max-height: 260px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 15px;
+    z-index: 999;
+    overflow-y: auto;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+
+.filter-list.show {
+    display: grid;
+}
+
+.filter-item {
+    padding: 8px 10px;
+    font-size: 13px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.filter-item.active {
+    background: #4f6ef7;
+    color: #fff;
+}
+</style>
+
+
 <div style="background:#f2f2f2; padding:40px 40px 40px 10px;">
 <div class="card" style="margin-left: 330px;">
 <div class="card-body" style="padding-left: 30px;">
@@ -32,7 +93,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                 </select>
             </div>
 			
-			
+			<!-- 
 			<div class="mb-3">
     <label class="form-label">Thể loại</label>
     
@@ -49,10 +110,42 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         </label>
     </div>
 </div>
-			
-			
-			
-            <div class="mb-3">
+-->
+
+
+					<div class="mb-3">
+						<label class="form-label">Thể loại</label>
+
+						<div th:if="${error}" class="alert alert-danger">
+							<span th:text="${error}"></span>
+						</div>
+
+						<div class="filter-box">
+							<div class="filter-header" onclick="toggleFilter()">
+								<span id="filterText">Thể loại</span> <i
+									class="fa-solid fa-chevron-down" id="arrowIcon"></i>
+							</div>
+
+							<div class="filter-list" id="filterList">
+
+								<!-- Tất cả -->
+								<div class="filter-item" onclick="locTatCa(this)">Tất cả</div>
+
+								<!-- Danh sách thể loại -->
+								<div th:each="tl : ${dsTheLoai}" class="filter-item"
+									onclick="chonTheLoai(this)">
+
+									<input type="checkbox" name="theLoaiIds" th:value="${tl.id}"
+										hidden> <span th:text="${tl.tenTheLoai}"></span>
+								</div>
+
+							</div>
+						</div>
+					</div>
+
+
+
+					<div class="mb-3">
                 <label>Trạng thái</label>
                 <select th:field="*{trangThai}" class="form-select">
                     <option value="ĐANG_RA">Đang ra</option>
@@ -132,4 +225,88 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
             reader.readAsDataURL(file);
         }
     }
+ 
+ 
+ 
+ 
+    document.addEventListener("DOMContentLoaded", function () {
+        updateFilterText();
+    });
+
+    function toggleFilter() {
+        const list = document.getElementById("filterList");
+        const arrow = document.getElementById("arrowIcon");
+
+        list.classList.toggle("show");
+        arrow.classList.toggle("fa-chevron-up");
+        arrow.classList.toggle("fa-chevron-down");
+    }
+
+    function chonTheLoai(element) {
+        const checkbox = element.querySelector("input");
+        checkbox.checked = !checkbox.checked;
+
+        element.classList.toggle("active");
+
+        updateFilterText();
+    }
+
+    function locTatCa(element) {
+
+        const allItems = document.querySelectorAll(
+            "#filterList .filter-item:not(:first-child)"
+        );
+
+        const allCheckboxes = document.querySelectorAll(
+            "input[name='theLoaiIds']"
+        );
+
+        const isActive = element.classList.contains("active");
+
+        if (isActive) {
+            allItems.forEach(i => i.classList.remove("active"));
+            allCheckboxes.forEach(cb => cb.checked = false);
+            element.classList.remove("active");
+        } else {
+            allItems.forEach(i => i.classList.add("active"));
+            allCheckboxes.forEach(cb => cb.checked = true);
+            element.classList.add("active");
+        }
+
+        updateFilterText();
+    }
+
+    function updateFilterText() {
+
+        const checked = document.querySelectorAll(
+            "input[name='theLoaiIds']:checked"
+        );
+
+        const total = document.querySelectorAll(
+            "input[name='theLoaiIds']"
+        ).length;
+
+        const text = document.getElementById("filterText");
+
+        if (checked.length === 0) {
+            text.innerText = "Thể loại";
+            return;
+        }
+
+        if (checked.length === total) {
+            text.innerText = "Tất cả";
+            return;
+        }
+
+        text.innerText = checked.length + " thể loại";
+    }
+
+    document.addEventListener("click", function (e) {
+        const box = document.querySelector(".filter-box");
+        const list = document.getElementById("filterList");
+
+        if (!box.contains(e.target)) {
+            list.classList.remove("show");
+        }
+    });
 </script>

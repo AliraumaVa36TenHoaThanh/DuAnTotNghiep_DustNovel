@@ -1,5 +1,8 @@
 <div th:fragment="content">
 
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <!-- ================= STYLE ================= -->
 <style>
 /* ===== TIÊU ĐỀ CHÍNH ===== */
@@ -92,6 +95,102 @@
 	color: #6b7280;
 	margin-top: 12px;
 }
+
+/* ===== FILTER BOX ===== */
+.filter-box {
+    position: relative;
+    width: 100%;              /* cho cha giãn theo form */
+    max-width: 600px;         /* không quá rộng */
+}
+/* ===== HEADER ===== */
+.filter-header {
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    width: 122px;   
+    min-height: 36px;      /* thấp hơn */
+    padding: 4px 10px;     /* giảm padding */
+    font-size: 14px;  
+}
+
+.filter-header span {
+    color: #9ca3af;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* ===== DROPDOWN ===== */
+.filter-list {
+    display: none;       /* mặc định ẩn */
+    position: absolute;
+    top: 45px;
+    left: 0;
+
+    width: 600px;        /* sửa lại cho hợp form */
+    max-height: 260px;
+
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 15px;
+    z-index: 999;
+
+    overflow-y: auto;
+
+    /* QUAN TRỌNG */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+/* ===== ITEM ===== */
+.filter-item {
+    padding: 8px 10px;
+    font-size: 13px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+
+    white-space: nowrap;      /* không xuống dòng */
+    overflow: hidden;
+    text-overflow: ellipsis;  /* quá dài thì ... */
+}
+
+.filter-item.active {
+    background: #4f6ef7;
+    color: #fff;
+}
+
+/* ===== SCROLLBAR ===== */
+.filter-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.filter-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.filter-list::-webkit-scrollbar-thumb {
+    background: #999;
+    border-radius: 10px;
+}
+
+.filter-list::-webkit-scrollbar-button {
+    display: none;
+}
+/* Firefox */
+.filter-list {
+    scrollbar-width: thin;
+    scrollbar-color: #999 transparent;
+}
 </style>
 
 <!-- ================= FORM TÌM KIẾM ================= -->
@@ -111,7 +210,8 @@
 				<label class="form-label">Tên tác giả</label>
 				<input type="text" name="tenTacGia" class="form-control">
 			</div>
-
+            
+            <!--  
 			<div class="mb-3">
 				<label class="form-label">Thể loại</label>
 
@@ -130,8 +230,39 @@
 				</div>
 
 			</div>
+			-->
 
-			<div class="mb-3">
+				<div class="mb-3">
+					<label class="form-label">Thể loại</label>
+
+					<div class="filter-box">
+						<div class="filter-header" onclick="toggleFilter()">
+							<span id="filterText">Thể loại</span> <span class="arrow-icon">
+								<i class="fa-solid fa-chevron-down"></i>
+							</span>
+						</div>
+
+						<div class="filter-list" id="filterList">
+
+							<!-- Tất cả -->
+							<div class="filter-item" onclick="locTatCa(this)">Tất cả</div>
+
+							<!-- Danh sách thể loại -->
+							<div th:each="tl : ${theLoais}" class="filter-item"
+								th:classappend="${theLoaiIds != null and theLoaiIds.contains(tl.id)} ? ' active'"
+								onclick="chonTheLoai(this)">
+
+								<input type="checkbox" name="theLoaiIds" th:value="${tl.id}"
+									th:checked="${theLoaiIds != null and theLoaiIds.contains(tl.id)}"
+									hidden> <span th:text="${tl.tenTheLoai}"></span>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+
+				<div class="mb-3">
 				<label class="form-label">Loại truyện</label>
 				<select name="loaiTruyen" class="form-select">
 					<option value="">Tất cả</option>
@@ -241,6 +372,99 @@ function toggleGenre(el) {
 	}
 	hidden.value = state;
 }
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("filterList").style.display = "none";
+    updateFilterText();
+});
+
+function toggleFilter() {
+    const list = document.getElementById("filterList");
+    list.style.display =
+        (list.style.display === "grid") ? "none" : "grid";
+}
+
+function chonTheLoai(element) {
+    const checkbox = element.querySelector("input[type='checkbox']");
+    checkbox.checked = !checkbox.checked;
+
+    element.classList.toggle("active");
+
+    updateFilterText();
+}
+
+function locTatCa(element) {
+
+    const allItems = document.querySelectorAll(
+        "#filterList .filter-item:not(:first-child)"
+    );
+
+    const allCheckboxes = document.querySelectorAll(
+        "input[name='theLoaiIds']"
+    );
+
+    const isActive = element.classList.contains("active");
+
+    if (isActive) {
+        allItems.forEach(item => item.classList.remove("active"));
+        allCheckboxes.forEach(cb => cb.checked = false);
+        element.classList.remove("active");
+    } else {
+        allItems.forEach(item => item.classList.add("active"));
+        allCheckboxes.forEach(cb => cb.checked = true);
+        element.classList.add("active");
+    }
+
+    updateFilterText();
+}
+
+function updateFilterText() {
+
+    const checked = document.querySelectorAll(
+        "input[name='theLoaiIds']:checked"
+    );
+
+    const total = document.querySelectorAll(
+        "input[name='theLoaiIds']"
+    ).length;
+
+    const text = document.getElementById("filterText");
+    const tatCaBtn = document.querySelector("#filterList .filter-item:first-child");
+
+    if (checked.length === 0) {
+        text.innerText = "Thể loại";
+        text.style.color = "#9ca3af";
+        tatCaBtn.classList.remove("active");
+        return;
+    }
+
+    if (checked.length === total) {
+        text.innerText = "Tất cả";
+        text.style.color = "#111";
+        tatCaBtn.classList.add("active");
+        return;
+    }
+
+    text.innerText = checked.length + " thể loại";
+    text.style.color = "#111";
+    tatCaBtn.classList.remove("active");
+}
+
+
+
+
+document.addEventListener("click", function (e) {
+    const box = document.querySelector(".filter-box");
+    const list = document.getElementById("filterList");
+
+    if (!box.contains(e.target)) {
+        list.style.display = "none";
+    }
+});
 </script>
 
 </div>
