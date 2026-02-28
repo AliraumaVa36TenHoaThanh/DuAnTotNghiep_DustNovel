@@ -1,30 +1,141 @@
-<div th:fragment="content" class="container mt-5">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold">BẢNG GIÁ NẠP TOKEN</h2>
-        <p class="text-muted">Tỉ giá quy đổi: 20 VNĐ = 1 Token</p>
-    </div>
+<div th:fragment="content">
+    <!-- FONT DỄ THƯƠNG -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <div class="row justify-content-center">
-        <th:block th:each="gia : ${ {10000, 20000, 50000, 100000, 200000, 500000} }">
-            <div class="col-md-4 col-lg-2 mb-4">
-                <div class="card h-100 shadow-sm border-primary text-center">
-                    <div class="card-header bg-primary text-white fw-bold fs-5">
-                        <span th:text="${#numbers.formatDecimal(gia, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffe4ec, #fff7ed);
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .token-wrapper {
+            margin-top: 60px;
+        }
+
+        /* GRID */
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        /* CARD */
+        .vp-card {
+            background: #ffffff;
+            border-radius: 25px;
+            padding: 35px 20px;
+            text-align: center;
+            border: 3px solid #ffd1dc;
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .vp-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(255, 105, 180, 0.25);
+            border-color: #ff9ecb;
+        }
+
+        /* TOKEN NUMBER */
+        .vp-token {
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff7a18, #ff4ecd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .vp-label {
+            font-size: 15px;
+            color: #ff6fa5;
+            margin-bottom: 20px;
+        }
+
+        /* PRICE */
+        .vp-price {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ff7a18;
+            margin-bottom: 25px;
+        }
+
+        /* BUTTON */
+        .vp-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(45deg, #ff7a18, #ff4ecd);
+            color: white;
+            font-size: 26px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+        }
+
+        .vp-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .token-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .token-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* DARK MODE */
+        body.dark {
+            background: linear-gradient(135deg, #1f1b2e, #111827);
+        }
+
+        body.dark .vp-card {
+            background: #2a2438;
+            border-color: #ff4ecd;
+        }
+
+        body.dark .vp-label {
+            color: #ff9ecb;
+        }
+    </style>
+
+    <div class="container token-wrapper">
+        <div class="text-center mb-5">
+            <p class="fw-bold">💖 BẢNG GIÁ NẠP TOKEN 💖</p>
+            <p class="text-muted">Tỉ giá quy đổi: 20 VNĐ = 1 Token</p>
+			<p class="text-muted">Hãy nạp để ủng hộ các author và admin nhó :3</p>
+        </div>
+
+        <div class="token-grid">
+            <th:block th:each="gia : ${ {10000, 20000, 50000, 100000, 200000, 500000} }">
+
+                <div class="vp-card">
+
+                    <div class="vp-token" th:text="${gia / 20}"></div>
+                    <div class="vp-label">✨ Token ✨</div>
+
+                    <div class="vp-price"
+                         th:text="${#numbers.formatDecimal(gia, 0, 'COMMA', 0, 'POINT')} + ' VND'">
                     </div>
-                    <div class="card-body d-flex flex-column justify-content-center">
-                        <h3 class="card-title text-warning fw-bold mb-3">
-                            <i class="bi bi-coin"></i> <span th:text="${gia / 20}"></span>
-                        </h3>
-                        <p class="text-muted small">Token</p>
-                    </div>
-                    <div class="card-footer bg-white border-0 pb-3">
-                        <form th:action="@{/DustNovel/nap-tien-tu-dong/tao-don}" method="post">
-                            <input type="hidden" name="soTienVnd" th:value="${gia}">
-                            <button type="submit" class="btn btn-outline-primary w-100 fw-bold">Mua Ngay</button>
-                        </form>
-                    </div>
+
+                    <form th:action="@{/DustNovel/nap-tien-tu-dong/tao-don}" method="post">
+                        <input type="hidden" name="soTienVnd" th:value="${gia}">
+                        <button type="submit" class="vp-btn">+</button>
+                    </form>
+
                 </div>
-            </div>
-        </th:block>
+
+            </th:block>
+        </div>
     </div>
 </div>

@@ -1,3 +1,21 @@
+
+
+body {
+    font-family: 'Quicksand', sans-serif !important;
+    letter-spacing: 0.2px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+}
+
+.navbar-brand span {
+    font-weight: 700;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 600;
+}
 /* ===== THEME VARIABLES ===== */
 :root {
     --bg-color: #ffffff;
@@ -93,4 +111,67 @@ a {
 .theme-toggle {
     cursor: pointer;
     font-size: 14px;
+}
+/* ================= DARK MODE FIX DETAIL PAGE ================= */
+
+[data-theme="dark"] .stats-bar {
+    background-color: #1e1e1e;
+    border-color: #2a2a2a !important;
+}
+
+[data-theme="dark"] .stat-title {
+    color: #bbbbbb !important;
+}
+
+[data-theme="dark"] .stat-value {
+    color: #ffffff !important;
+}
+
+/* Fix border bootstrap */
+[data-theme="dark"] .border-top,
+[data-theme="dark"] .border-bottom,
+[data-theme="dark"] .border-end {
+    border-color: #2a2a2a !important;
+}
+
+/* Card nền sáng -> tối */
+[data-theme="dark"] .card {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+}
+
+[data-theme="dark"] .bg-light {
+    background-color: #1e1e1e !important;
+    color: #f1f1f1 !important;
+}
+
+/* text-muted bị xám quá tối */
+[data-theme="dark"] .text-muted {
+    color: #aaaaaa !important;
+}
+
+/* badge secondary */
+[data-theme="dark"] .badge.bg-secondary {
+    background-color: #2a2a2a !important;
+    color: #ffffff;
+}
+
+/* ===== FIX DANH SÁCH TẬP DARK MODE ===== */
+
+[data-theme="dark"] .list-group-item,
+[data-theme="dark"] .list-group-item a {
+    background-color: #1e1e1e !important;
+    color: #f1f1f1 !important;
+}
+
+[data-theme="dark"] .list-group-item:hover {
+    background-color: #2a2a2a !important;
+}
+
+[data-theme="dark"] .list-group-item .text-dark {
+    color: #f1f1f1 !important;
+}
+
+[data-theme="dark"] .list-group-item .text-muted {
+    color: #aaaaaa !important;
 }
