@@ -131,9 +131,6 @@ public class DatatableTestController {
 	    NguoiDung user = cud.getUser();
 	    truyen.setNguoiDang(user);
 
-	    // ===============================
-	    // UPLOAD ẢNH FILE
-	    // ===============================
 	    if (file != null && !file.isEmpty()) {
 
 	        String fileName =
@@ -152,16 +149,11 @@ public class DatatableTestController {
 	        truyen.setAnhBia("/uploads/truyen/" + fileName);
 	    }
 
-	    // Nếu không upload file và không nhập URL
 	    if (truyen.getAnhBia() == null
 	            || truyen.getAnhBia().isBlank()) {
 
 	        truyen.setAnhBia("/images/default.jpg");
 	    }
-
-	    // ===============================
-	    // CHECK THỂ LOẠI
-	    // ===============================
 	    if (theLoaiIds == null || theLoaiIds.isEmpty()) {
 
 	        model.addAttribute("error",

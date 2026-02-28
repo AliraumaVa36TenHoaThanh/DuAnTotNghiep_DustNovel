@@ -76,14 +76,9 @@ public class NhomDichService {
         LoiMoiNhomDich loiMoi;
 
         if (optional.isPresent()) {
-
-            // Đã từng tồn tại → dùng lại record cũ
             loiMoi = optional.get();
             loiMoi.setTrangThai("CHO_DUYET");
-
         } else {
-
-            // Chưa từng tồn tại → tạo mới
             loiMoi = new LoiMoiNhomDich();
             loiMoi.setNhomDich(nhom);
             loiMoi.setNguoiMoi(user);
@@ -103,7 +98,6 @@ public class NhomDichService {
         LoiMoiNhomDich loiMoi = loiMoiRepo.findById(loiMoiId).orElse(null);
         if (loiMoi == null) return;
 
-        // Tạo thành viên mới
         ThanhVienNhomDich tv = new ThanhVienNhomDich();
         tv.setNhomDich(loiMoi.getNhomDich());
         tv.setNguoiDung(loiMoi.getNguoiMoi());

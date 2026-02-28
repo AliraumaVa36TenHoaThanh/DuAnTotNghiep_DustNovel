@@ -1,4 +1,4 @@
-package com.fpoly.controller	;
+package com.fpoly.controller;
 
 import com.fpoly.model.MaThuong;
 import com.fpoly.service.MaThuongService;
@@ -14,101 +14,70 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @PreAuthorize("hasRole('ADMIN')")
 public class MaThuongController {
 
-    @Autowired
-    private MaThuongService maThuongService;
+	@Autowired
+	private MaThuongService maThuongService;
+	@GetMapping
+	public String danhSach(Model model) {
 
-    // ================================
-    // DANH SÁCH
-    // ================================
-    @GetMapping
-    public String danhSach(Model model) {
+		model.addAttribute("dsMaThuong", maThuongService.layDanhSachMaThuong());
 
-        model.addAttribute("dsMaThuong",
-                maThuongService.layDanhSachMaThuong());
+		model.addAttribute("content", "/view/admin/ma-thuong/index");
 
-        model.addAttribute("content",
-                "/view/admin/ma-thuong/index");
+		model.addAttribute("title", "Quản Lý Mã Thưởng");
 
-        model.addAttribute("title",
-                "Quản Lý Mã Thưởng");
+		return "/layout/admin_base";
+	}
 
-        return "/layout/admin_base";
-    }
+	@GetMapping("/them")
+	public String formThem(Model model) {
 
-    // ================================
-    // FORM THÊM
-    // ================================
-    @GetMapping("/them")
-    public String formThem(Model model) {
+		model.addAttribute("maThuong", new MaThuong());
+		model.addAttribute("content", "/view/admin/ma-thuong/add");
 
-        model.addAttribute("maThuong", new MaThuong());
-        model.addAttribute("content",
-                "/view/admin/ma-thuong/add");
+		model.addAttribute("title", "Thêm Mã Thưởng");
 
-        model.addAttribute("title",
-                "Thêm Mã Thưởng");
+		return "/layout/admin_base";
+	}
 
-        return "/layout/admin_base";
-    }
+	@PostMapping("/them")
+	public String them(@ModelAttribute MaThuong maThuong, RedirectAttributes ra) {
 
-    // ================================
-    // LƯU THÊM
-    // ================================
-    @PostMapping("/them")
-    public String them(@ModelAttribute MaThuong maThuong,
-                       RedirectAttributes ra) {
+		try {
+			maThuongService.themMaThuong(maThuong);
+			ra.addFlashAttribute("successMsg", "Thêm mã thưởng thành công!");
+		} catch (Exception e) {
+			ra.addFlashAttribute("errorMsg", e.getMessage());
+			return "redirect:/dba/ma-thuong/them";
+		}
 
-        try {
-            maThuongService.themMaThuong(maThuong);
-            ra.addFlashAttribute("successMsg",
-                    "Thêm mã thưởng thành công!");
-        } catch (Exception e) {
-            ra.addFlashAttribute("errorMsg",
-                    e.getMessage());
-            return "redirect:/dba/ma-thuong/them";
-        }
+		return "redirect:/admin/ma-thuong";
+	}
 
-        return "redirect:/admin/ma-thuong";
-    }
+	@GetMapping("/sua/{id}")
+	public String formSua(@PathVariable Long id, Model model, RedirectAttributes ra) {
 
-    // ================================
-    // FORM SỬA
-    // ================================
-    @GetMapping("/sua/{id}")
-    public String formSua(@PathVariable Long id,
-                          Model model,
-                          RedirectAttributes ra) {
+		MaThuong mt = maThuongService.layMaThuongTheoId(id);
 
-        MaThuong mt = maThuongService.layMaThuongTheoId(id);
+		if (mt == null) {
+			ra.addFlashAttribute("errorMsg", "Không tìm thấy mã thưởng!");
+			return "redirect:/dba/ma-thuong";
+		}
 
-        if (mt == null) {
-            ra.addFlashAttribute("errorMsg",
-                    "Không tìm thấy mã thưởng!");
-            return "redirect:/dba/ma-thuong";
-        }
+		model.addAttribute("maThuong", mt);
+		model.addAttribute("content", "/view/admin/ma-thuong/add");
 
-        model.addAttribute("maThuong", mt);
-        model.addAttribute("content",
-                "/view/admin/ma-thuong/add");
+		model.addAttribute("title", "Sửa Mã Thưởng");
 
-        model.addAttribute("title",
-                "Sửa Mã Thưởng");
+		return "/layout/admin_base";
+	}
 
-        return "/layout/admin_base";
-    }
+	@PostMapping("/doi-trang-thai/{id}")
+	public String doiTrangThai(@PathVariable Long id, RedirectAttributes ra) {
 
-    // ================================
-    // ĐỔI TRẠNG THÁI
-    // ================================
-    @PostMapping("/doi-trang-thai/{id}")
-    public String doiTrangThai(@PathVariable Long id,
-                               RedirectAttributes ra) {
+		maThuongService.doiTrangThai(id);
 
-        maThuongService.doiTrangThai(id);
+		ra.addFlashAttribute("successMsg", "Đã thay đổi trạng thái!");
 
-        ra.addFlashAttribute("successMsg",
-                "Đã thay đổi trạng thái!");
-
-        return "redirect:/admin/ma-thuong";
-    }
+		return "redirect:/admin/ma-thuong";
+	}
 }

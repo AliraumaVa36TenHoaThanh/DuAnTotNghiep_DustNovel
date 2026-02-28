@@ -24,11 +24,6 @@ public class TheLoaiController {
 
 	@RequestMapping("/{id}")
 	public String xemTheoTheLoai(@PathVariable("id") Long id, Model model) {
-
-		// 1. Lấy thể loại
-		// 2. Lấy danh sách truyện theo thể loại
-		// 3. Đẩy dữ liệu cho view
-		// 4. Chỉ định content
 		TheLoai theLoai = theLoaiRepository.findById(id).orElse(null);
 		if (theLoai == null) {
 			return "redirect:/DustNovel/home";
@@ -36,8 +31,6 @@ public class TheLoaiController {
 		List<Truyen> truyens = truyenRepository.findByTheLoais_Id(id);
 		model.addAttribute("theLoai", theLoai);
 		model.addAttribute("truyens", truyens);
-		
-		//  Nếu OFF thì thêm thông báo (nhưng vẫn hiển thị truyện)
         if (theLoai.getStatusTheLoai() != null &&
             theLoai.getStatusTheLoai().name().equals("OFF")) {
 

@@ -34,7 +34,6 @@ public class QuanLyNapTienController {
         return "layout/admin_base";
     }
 
-    // ===== DUYỆT =====
     @GetMapping("/nap-tien/duyet/{id}")
     public String duyetNap(@PathVariable Long id) {
 
@@ -56,7 +55,6 @@ public class QuanLyNapTienController {
         return "redirect:/dba/nap-tien";
     }
 
-    // ===== TỪ CHỐI =====
     @GetMapping("/nap-tien/tu-choi/{id}")
     public String tuChoiNap(@PathVariable Long id) {
 

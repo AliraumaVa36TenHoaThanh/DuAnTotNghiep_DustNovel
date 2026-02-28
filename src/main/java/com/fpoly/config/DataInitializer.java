@@ -21,7 +21,6 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        // ❌ Nếu đã có admin rồi thì không tạo nữa
         if (repo.findByTenDangNhap("admin").isPresent()) {
             return;
         }

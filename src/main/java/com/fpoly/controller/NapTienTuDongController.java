@@ -19,7 +19,6 @@ public class NapTienTuDongController {
     private final NapTienTuDongRepository napTienRepo;
     private final SecurityUtil securityUtil;
 
-    // 1. Hiển thị bảng giá các gói nạp
     @GetMapping
     public String hienThiBaoGia(Model model) {
         NguoiDung user = securityUtil.getCurrentUserFromDB();
@@ -30,22 +29,17 @@ public class NapTienTuDongController {
         return "layout/main";
     }
 
-    // 2. Nhận yêu cầu mua gói và tạo đơn
- // Thay thế đoạn @PostMapping("/tao-don") cũ bằng đoạn này:
 
     @PostMapping("/tao-don")
     public String taoDonNap(@RequestParam("soTienVnd") long soTienVnd) {
         NguoiDung user = securityUtil.getCurrentUserFromDB();
         if (user == null) return "redirect:/DustNovel/login";
 
-        // Tạo đơn với số tiền VNĐ
+
         NapTienTuDong don = napTienService.taoDonNap(user, soTienVnd);
-        
-        // Chuyển hướng sang trang quét QR
         return "redirect:/DustNovel/nap-tien-tu-dong/qr/" + don.getId();
     }
 
-    // 3. Hiển thị mã QR và chờ thanh toán
     @GetMapping("/qr/{id}")
     public String hienThiQR(@PathVariable Long id, Model model) {
         NapTienTuDong don = napTienRepo.findById(id).orElse(null);
@@ -57,8 +51,6 @@ public class NapTienTuDongController {
         model.addAttribute("content", "naptien/qr-thanh-toan");
         return "layout/main";
     }
-
-    // 4. API cho JavaScript gọi lên kiểm tra xem đơn đã SUCCESS chưa
     @GetMapping("/api/check-status/{id}")
     @ResponseBody
     public String checkStatus(@PathVariable Long id) {

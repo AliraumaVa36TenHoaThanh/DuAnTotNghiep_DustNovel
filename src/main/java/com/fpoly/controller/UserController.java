@@ -38,30 +38,23 @@ public class UserController {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	// ================= GLOBAL USER =================
 	@ModelAttribute("user")
 	public NguoiDung getUser(Authentication auth) {
 		if (auth == null)
 			return null;
 		return nguoiDungRepo.findByTenDangNhap(auth.getName()).orElse(null);
 	}
-
-	// ================= PROFILE PAGE =================
 	@GetMapping("/profile")
 	public String profile(Model model) {
 		model.addAttribute("content", "user/profile");
 		return "layout/main";
 	}
-
-	// ================= Cập nhật PROFILE =================
 	@PostMapping("/profile/update")
 	public String updateProfile(Authentication authentication, @RequestParam String tenDangNhap,
 			@RequestParam String email, @RequestParam(required = false) String matKhauMoi,
 			@RequestParam(required = false) String xacNhanMatKhau, Model model, RedirectAttributes redirectAttributes) {
 
 		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-
-//		NguoiDung user = userDetails.getUser();
 		NguoiDung user = nguoiDungRepo
 		        .findById(userDetails.getUser().getId())
 		        .orElseThrow();
@@ -131,7 +124,6 @@ public class UserController {
 		return "redirect:/DustNovel/user/profile";
 	}
 
-	// ================= AVATAR =================
 	@PostMapping("/avatar")
 	public String uploadAvatar(Authentication authentication, @RequestParam("file") MultipartFile file)
 			throws IOException {
@@ -163,7 +155,6 @@ public class UserController {
 		return "redirect:/DustNovel/user/profile";
 	}
 
-	// ================= Thêm và đổi banner =================
 	@PostMapping("/banner")
 	public String uploadBanner(Authentication authentication, @RequestParam("file") MultipartFile file)
 			throws IOException {
@@ -171,27 +162,23 @@ public class UserController {
 			return "redirect:/DustNovel/user/profile";
 		}
 		Long userId = ((CustomUserDetails) authentication.getPrincipal()).getUser().getId();
-		// ===== Làm sạch tên file
 		String originalName = file.getOriginalFilename();
 		
-		String safeName = originalName.replaceAll("\\s+", "_") // bỏ dấu cách
-				.replaceAll("[^a-zA-Z0-9._-]", ""); // bỏ ký tự lạ
+		String safeName = originalName.replaceAll("\\s+", "_") 
+				.replaceAll("[^a-zA-Z0-9._-]", ""); 
 		
 		String fileName = System.currentTimeMillis() + "_" + safeName;
 		
-		// ===== Lưu File
 		String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/uploads/banner/";
 		File dir = new File(uploadDir);
 		if (!dir.exists())
 			dir.mkdirs();
 		file.transferTo(new File(uploadDir + fileName));
-		
-		// ===== Lưu DB
+
 		nguoiDungService.luuBanner(userId, "/uploads/banner/" + fileName);
 		return "redirect:/DustNovel/user/profile";
 	}
 
-	// ================= Xóa banner =================
 	@PostMapping("/banner/delete")
 	public String deleteBanner(Authentication authentication) {
 		Long userId = ((CustomUserDetails) authentication.getPrincipal()).getUser().getId();
@@ -199,7 +186,6 @@ public class UserController {
 		return "redirect:/DustNovel/user/profile";
 	}
 	
-		// ================= Tạm dừng tài khoản =================
 	@PostMapping("/delete")
 	public String pauseAccount(Authentication authentication,
 	                           HttpServletRequest request,

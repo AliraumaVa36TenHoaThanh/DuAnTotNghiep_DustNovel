@@ -16,18 +16,15 @@ public class NapTienService {
     private final NguoiDungRepository nguoiDungRepo;
     private final PasswordEncoder passwordEncoder;
 
-    /* ===== LẤY USER ĐANG LOGIN ===== */
     public NguoiDung getByTenDangNhap(String tenDangNhap) {
         return nguoiDungRepo.findByTenDangNhap(tenDangNhap)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
     }
 
-    /* ===== RANDOM 5 USER ===== */
     public List<NguoiDung> getRandomUsers() {
         return nguoiDungRepo.findRandom5Users();
     }
 
-    /* ===== NẠP TOKEN ===== */
     @Transactional
     public void napToken(String tenDangNhap, Long soToken, String matKhau) {
 
@@ -43,7 +40,6 @@ public class NapTienService {
         nguoiDungRepo.save(user);
     }
 
-    /* ===== TẶNG TOKEN ===== */
     @Transactional
     public void tangToken(String nguoiGui, String nguoiNhan, Long soToken, String matKhau) {
 

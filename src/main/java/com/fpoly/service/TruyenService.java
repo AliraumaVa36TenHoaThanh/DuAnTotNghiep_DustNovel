@@ -79,7 +79,7 @@ public class TruyenService {
 	public List<Truyen> timKiemNangCao(
 	        String tenTruyen,
 	        String tenTacGia,
-	        LoaiTruyen loaiTruyen,   // 👈 THÊM
+	        LoaiTruyen loaiTruyen,
 	        Map<String, String> params,
 	        Boolean showTag18        // null = tất cả
 	) {
@@ -105,7 +105,6 @@ public class TruyenService {
 
 	    boolean hasTheLoaiFilter = !includeIds.isEmpty() || !excludeIds.isEmpty();
 
-	    // ✅ KHÔNG CHỌN THỂ LOẠI
 	    if (!hasTheLoaiFilter) {
 	        return truyenRepo.timKiemKhongTheLoai(
 	            tenTruyen,
@@ -114,8 +113,6 @@ public class TruyenService {
 	            showTag18
 	        );
 	    }
-
-	    // ✅ CÓ CHỌN THỂ LOẠI
 	    return truyenRepo.timKiemCoTheLoai(
 	        tenTruyen,
 	        tenTacGia,
@@ -138,7 +135,6 @@ public class TruyenService {
         truyenRepo.save(truyen);
     }
 	
-	// ===== TRUYỆN SÁNG TÁC THEO USER =====
 	public List<Truyen> getTruyenSangTacByUser(Long userId) {
 	    return truyenRepo.findByUserAndLoai(
 	            userId,

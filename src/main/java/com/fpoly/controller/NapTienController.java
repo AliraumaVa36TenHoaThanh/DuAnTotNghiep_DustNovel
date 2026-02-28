@@ -29,14 +29,13 @@ public class NapTienController {
     @Autowired
     NapTienRepository napTienRepository;
 
-    /* ========= TRANG NẠP / TẶNG ========= */
     @GetMapping
     public String napTien(Model model, Authentication auth) {
 
         var user = napTienService.getByTenDangNhap(auth.getName());
 
         model.addAttribute("title", "DustNovel | Nạp token");
-        model.addAttribute("content", "truyen/nap-tien"); // fragment path
+        model.addAttribute("content", "truyen/nap-tien");
 
         model.addAttribute("user", user);
         model.addAttribute("randomUsers", napTienService.getRandomUsers());
@@ -44,7 +43,6 @@ public class NapTienController {
         return "layout/main";
     }
 
-    /* ========= NẠP TOKEN ========= */
     @PostMapping("/nap")
     public String hienQR(
             @RequestParam("soToken") Long soToken,
@@ -82,16 +80,12 @@ public class NapTienController {
         CustomUserDetails userDetails =
                 (CustomUserDetails) authentication.getPrincipal();
 
-        NguoiDung nguoiDung = userDetails.getUser(); // dùng NguoiDung
+        NguoiDung nguoiDung = userDetails.getUser();
 
         NapTien nap = new NapTien();
 
         nap.setNguoiDung(nguoiDung);
-
-        // set số tiền thực
         nap.setSoTienThuc(BigDecimal.valueOf(soTien));
-
-        // ví dụ 1000đ = 1 token
         nap.setSoTokenNhan(soTien / 20);
 
         nap.setPhuongThuc("CHUYEN_KHOAN");
@@ -103,7 +97,6 @@ public class NapTienController {
         return "redirect:/DustNovel/nap-tien?success=Da gui yeu cau cho admin duyet";
     }
     
-    /* ========= TẶNG TOKEN ========= */
     
     @GetMapping("/tang-tien")
     public String tangTien(Model model, Authentication auth) {
@@ -111,7 +104,7 @@ public class NapTienController {
         var user = napTienService.getByTenDangNhap(auth.getName());
 
         model.addAttribute("title", "DustNovel | Nạp token");
-        model.addAttribute("content", "truyen/tang-tien"); // fragment path
+        model.addAttribute("content", "truyen/tang-tien");
 
         model.addAttribute("user", user);
         model.addAttribute("randomUsers", napTienService.getRandomUsers());

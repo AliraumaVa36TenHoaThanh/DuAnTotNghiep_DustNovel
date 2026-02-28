@@ -143,10 +143,7 @@ public class TruyenController {
 	            model.addAttribute("title", "Thêm truyện");
 	            return "layout/main";
 	        }
-	        
-	     // =========================
-	        //  THÊM PHẦN UPLOAD ẢNH
-	        // =========================
+	       
 	        if (file != null && !file.isEmpty()) {
 
 	            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -166,7 +163,6 @@ public class TruyenController {
 	            truyen.setAnhBia("/images/aria.jpg");
 	        }
 	        
-	    //  Nếu chưa chọn thể loại
 	    	if (theLoaiIds == null || theLoaiIds.isEmpty()) {
 
 	            model.addAttribute("error", "Vui lòng chọn ít nhất một thể loại!");
@@ -175,7 +171,7 @@ public class TruyenController {
 	            model.addAttribute("content", "truyen/add");
 	            model.addAttribute("title", "Thêm truyện");
 
-	            return "layout/main"; // không redirect để giữ dữ liệu
+	            return "layout/main"; 
 	        }
 
 	        truyenService.save(truyen, theLoaiIds);

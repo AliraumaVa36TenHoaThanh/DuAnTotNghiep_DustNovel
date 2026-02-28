@@ -19,17 +19,14 @@ public class TheLoaiService {
     @Autowired
     private TruyenRepository truyenRepo;
 
-    // Lấy tất cả thể loại
     public List<TheLoai> getAllTheLoai() {
         return theLoaiRepo.findAll();
     }
 
-    // Lấy danh sách truyện theo thể loại
     public List<Truyen> getTruyenByTheLoai(Long theLoaiId) {
-        return truyenRepo.findByTheLoais_Id(theLoaiId); // sửa đúng method
+        return truyenRepo.findByTheLoais_Id(theLoaiId); 
     }
 
-    // Tìm thể loại theo ID
     public TheLoai findById(Long id) {
         return theLoaiRepo.findById(id).orElse(null);
     }

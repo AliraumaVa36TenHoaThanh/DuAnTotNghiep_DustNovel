@@ -22,8 +22,6 @@ public class UserLikeController {
 
         NguoiDung user = securityUtil.getCurrentUserFromDB();
         if (user == null) return "redirect:/login";
-
-        // ✅ FIX Ở ĐÂY
         model.addAttribute("list", likeService.getTruyenDaLike(user));
 
         model.addAttribute("content", "view/client/truyen/truyen_da_like");
