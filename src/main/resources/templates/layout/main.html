@@ -501,6 +501,61 @@
 	</div>
 	<footer class="text-center py-2 border-top"> <small>© 2025 - DustNovel</small> </footer>
 	<script> const toggle = document.getElementById("themeToggle"); function applyTheme(theme) {document.body.setAttribute("data-theme", theme); localStorage.setItem("theme", theme); toggle.checked = theme === "dark";} toggle.addEventListener("change", () => {applyTheme(toggle.checked ? "dark" : "light");}); (function () {const saved = localStorage.getItem("theme") || "light"; applyTheme(saved);})(); </script>
+	
+	<script th:inline="javascript">
+/*<![CDATA[*/
+
+function showToast(message, color) {
+    let toast = document.createElement("div");
+    toast.innerText = message;
+
+    toast.style.position = "fixed";
+    toast.style.top = "20px";          // sát phía trên
+    toast.style.left = "50%";          // giữa ngang
+    toast.style.transform = "translateX(-50%) translateY(-20px)";
+    toast.style.padding = "14px 26px";
+    toast.style.background = color;
+    toast.style.color = "white";
+    toast.style.borderRadius = "10px";
+    toast.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
+    toast.style.zIndex = "9999";
+    toast.style.opacity = "0";
+    toast.style.transition = "all 0.35s ease";
+    toast.style.fontWeight = "600";
+
+    document.body.appendChild(toast);
+
+    // hiệu ứng trượt xuống
+    setTimeout(() => {
+        toast.style.opacity = "1";
+        toast.style.transform = "translateX(-50%) translateY(0)";
+    }, 50);
+
+    // tự ẩn sau 3 giây
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateX(-50%) translateY(-20px)";
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+let successMsg = /*[[${successMessage}]]*/ null;
+let errorMsg   = /*[[${errorMessage}]]*/ null;
+
+if (successMsg) {
+    showToast(successMsg, "#28a745");
+}
+
+if (errorMsg) {
+    showToast(errorMsg, "#dc3545");
+}
+
+if (successMsg || errorMsg) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+}
+
+/*]]>*/
+</script>
 </body>
 
 </html>
