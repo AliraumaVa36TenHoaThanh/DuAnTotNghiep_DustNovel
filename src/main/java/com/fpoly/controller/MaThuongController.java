@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@RequestMapping("/admin/ma-thuong")
+@PreAuthorize("hasRole('ADMIN')")
 public class MaThuongController {
 	@Autowired
     private PhieuThuongRepository phieuThuongRepo;
@@ -26,86 +28,76 @@ public class MaThuongController {
     // @Autowired
     // private SecurityUtil securityUtil; // Bỏ comment dòng này nếu project cậu dùng SecurityUtil để lấy user
 
-    /* ========================================================
-     * 1. PHẦN DÀNH CHO ADMIN (QUẢN LÝ MÃ)
-     * ======================================================== */
+        model.addAttribute("dsMaThuong",
+                maThuongService.layDanhSachMaThuong());
 
-    // HIỂN THỊ DANH SÁCH
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin/ma-thuong")
-    public String danhSachMaThuong(Model model) {
-        model.addAttribute("dsMaThuong", maThuongService.layDanhSachMaThuong());
-        // Trỏ đúng vào file templates/view/admin/ma-thuong/index.html
-        return "view/admin/ma-thuong/index"; 
+        model.addAttribute("content",
+                "/view/admin/ma-thuong/index");
+
+        model.addAttribute("title",
+                "Quản Lý Mã Thưởng");
+
+        return "/layout/admin_base";
     }
 
-    // HIỂN THỊ FORM THÊM
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin/ma-thuong/them")
-    public String hienFormThem(Model model) {
+    // ================================
+    // FORM THÊM
+    // ================================
+    @GetMapping("/them")
+    public String formThem(Model model) {
+
         model.addAttribute("maThuong", new MaThuong());
-        model.addAttribute("title", "Thêm Mã Thưởng");
-        // Trỏ đúng vào file templates/view/admin/ma-thuong/add.html
-        return "view/admin/ma-thuong/add";
+        model.addAttribute("content",
+                "/view/admin/ma-thuong/add");
+
+        model.addAttribute("title",
+                "Thêm Mã Thưởng");
+
+        return "/layout/admin_base";
     }
 
-    // XỬ LÝ LƯU THÊM MỚI
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/admin/ma-thuong/them")
-    public String xuLyThem(@ModelAttribute MaThuong maThuong, RedirectAttributes redirectAttributes) {
+    // ================================
+    // LƯU THÊM
+    // ================================
+    @PostMapping("/them")
+    public String them(@ModelAttribute MaThuong maThuong,
+                       RedirectAttributes ra) {
+
         try {
             maThuongService.themMaThuong(maThuong);
-            redirectAttributes.addFlashAttribute("successMsg", "Thêm mã thưởng thành công!");
+            ra.addFlashAttribute("successMsg",
+                    "Thêm mã thưởng thành công!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMsg", e.getMessage());
-            return "redirect:/admin/ma-thuong/them";
+            ra.addFlashAttribute("errorMsg",
+                    e.getMessage());
+            return "redirect:/dba/ma-thuong/them";
         }
-        // Redirect về URL danh sách (KHÔNG có chữ view)
+
         return "redirect:/admin/ma-thuong";
     }
 
-    // HIỂN THỊ FORM SỬA
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin/ma-thuong/sua/{id}")
-    public String hienFormSua(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        MaThuong maThuong = maThuongService.layMaThuongTheoId(id);
-        if (maThuong == null) {
-            redirectAttributes.addFlashAttribute("errorMsg", "Không tìm thấy mã thưởng!");
-            return "redirect:/admin/ma-thuong";
+    // ================================
+    // FORM SỬA
+    // ================================
+    @GetMapping("/sua/{id}")
+    public String formSua(@PathVariable Long id,
+                          Model model,
+                          RedirectAttributes ra) {
+
+        MaThuong mt = maThuongService.layMaThuongTheoId(id);
+
+        if (mt == null) {
+            ra.addFlashAttribute("errorMsg",
+                    "Không tìm thấy mã thưởng!");
+            return "redirect:/dba/ma-thuong";
         }
-        model.addAttribute("maThuong", maThuong);
-        model.addAttribute("title", "Sửa Mã Thưởng");
-        // Tận dụng luôn file templates/view/admin/ma-thuong/add.html làm form sửa
-        return "view/admin/ma-thuong/add";
-    }
 
-    // XỬ LÝ LƯU SỬA
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/admin/ma-thuong/sua/{id}")
-    public String xuLySua(@PathVariable Long id, @ModelAttribute MaThuong maThuong, RedirectAttributes redirectAttributes) {
-        try {
-            maThuongService.suaMaThuong(id, maThuong);
-            redirectAttributes.addFlashAttribute("successMsg", "Cập nhật mã thưởng thành công!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMsg", e.getMessage());
-            return "redirect:/admin/ma-thuong/sua/" + id;
-        }
-        return "redirect:/admin/ma-thuong";
-    }
+        model.addAttribute("maThuong", mt);
+        model.addAttribute("content",
+                "/view/admin/ma-thuong/add");
 
-    // XỬ LÝ ĐỔI TRẠNG THÁI (KHÓA/MỞ KHÓA)
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/admin/ma-thuong/doi-trang-thai/{id}")
-    public String doiTrangThai(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        maThuongService.doiTrangThai(id);
-        redirectAttributes.addFlashAttribute("successMsg", "Đã thay đổi trạng thái mã thưởng!");
-        return "redirect:/admin/ma-thuong";
-    }
-
-
-    /* ========================================================
-     * 2. PHẦN DÀNH CHO USER (NHẬP MÃ ĐỔI THƯỞNG)
-     * ======================================================== */
+        model.addAttribute("title",
+                "Sửa Mã Thưởng");
 
 //    @GetMapping("/DustNovel/nhap-code")
 //    public String trangNhapCode(Model model) {
@@ -185,13 +177,6 @@ public class MaThuongController {
         
         String ketQua = maThuongService.xuLyNhapCode(code.trim().toUpperCase(), currentUser);
 
-        if (ketQua.startsWith("SUCCESS:")) {
-            String soPhieu = ketQua.split(":")[1];
-            redirectAttributes.addFlashAttribute("successMsg", "Tuyệt vời! Bạn nhận được " + soPhieu + " phiếu thưởng!");
-        } else {
-            redirectAttributes.addFlashAttribute("errorMsg", ketQua);
-        }
-
-        return "redirect:/DustNovel/nhap-code";
+        return "redirect:/admin/ma-thuong";
     }
 }

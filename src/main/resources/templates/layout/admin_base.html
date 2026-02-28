@@ -2,151 +2,152 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - DustNovel</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dashboard Admin - DustNovel</title>
 
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/assets/css/bootstrap.css">
 
-    <link rel="stylesheet" href="/assets/vendors/simple-datatables/style.css">
+	<link rel="stylesheet" href="/assets/vendors/simple-datatables/style.css">
 
-    <link rel="stylesheet" href="/assets/vendors/perfect-scrollbar/perfect-scrollbar.css">
-    <link rel="stylesheet" href="/assets/vendors/bootstrap-icons/bootstrap-icons.css">
-    <link rel="stylesheet" href="/assets/css/app.css">
-    <link rel="shortcut icon" href="/assets/images/favicon.svg" type="image/x-icon">
+	<link rel="stylesheet" href="/assets/vendors/perfect-scrollbar/perfect-scrollbar.css">
+	<link rel="stylesheet" href="/assets/vendors/bootstrap-icons/bootstrap-icons.css">
+	<link rel="stylesheet" href="/assets/css/app.css">
+	<link rel="shortcut icon" href="/assets/images/favicon.svg" type="image/x-icon">
 </head>
 <style>
 	.sidebar-header {
-	    height: 100px !important;   /* tăng chiều cao khung */
+		height: 100px !important;
+		/* tăng chiều cao khung */
 	}
 
 	.sidebar-logo {
-	    height: 90px !important;
-	    width: auto;
+		height: 90px !important;
+		width: auto;
 	}
+
 	.logo-text {
-	    font-size: 22px;
-	    font-weight: bold;
-	    color: #6c5ce7;   /* bạn có thể đổi màu */
-	    white-space: nowrap;
+		font-size: 22px;
+		font-weight: bold;
+		color: #6c5ce7;
+		/* bạn có thể đổi màu */
+		white-space: nowrap;
 	}
 </style>
 
 <body>
-    <div id="app">
-        <div id="sidebar" class="active">
-            <div class="sidebar-wrapper active">
-                <div class="sidebar-header">
-                    <div class="d-flex justify-content-between">
+	<div id="app">
+		<div id="sidebar" class="active">
+			<div class="sidebar-wrapper active">
+				<div class="sidebar-header">
+					<div class="d-flex justify-content-between">
 						<div class="logo">
-						    <a th:href="@{/DustNovel/home}">
-						        <img src="/images/logo.png"
-						             alt="Logo"
-						             class="sidebar-logo">
-									 <span class="logo-text ms-2">DustNovel</span>
-						    </a>
+							<a th:href="@{/DustNovel/home}">
+								<img src="/images/logo.png" alt="Logo" class="sidebar-logo">
+								<span class="logo-text ms-2">DustNovel</span>
+							</a>
 						</div>
-                        <div class="toggler">
-                            <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="sidebar-menu">
-                    <ul class="menu">
-                        <li class="sidebar-title">Menu</li>
+						<div class="toggler">
+							<a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
+						</div>
+					</div>
+				</div>
+				<div class="sidebar-menu">
+					<ul class="menu">
+						<li class="sidebar-title">Menu</li>
 						<li class="sidebar-item">
-						    <a href="/dba/user" class='sidebar-link'>
-						        <i class="bi bi-stack"></i>
-						        <span>Quản Lý Người Dùng</span>
-						    </a>
+							<a href="/dba/user" class='sidebar-link'>
+								<i class="bi bi-stack"></i>
+								<span>Quản Lý Người Dùng</span>
+							</a>
 						</li>
 						<li class="sidebar-item">
-                            <a href="/dba/user/truyen" class='sidebar-link'>
-                                <i class="bi bi-stack"></i>
-                                <span>Quản Lý Truyện</span>
-                            </a>
-                         </li>
-                         
-                         <li class="sidebar-item">
-                             <a href="/dba/truyen-the-loai" class="sidebar-link">
-                                 <i class="bi bi-stack"></i>
-                                 <span>Quản Lý Thể Loại</span>
-                             </a>
-                        </li>
-                        <li class="sidebar-item has-sub">
-    <a href="#" class='sidebar-link'>
-        <i class="fa-solid fa-gift"></i>
-        <span>Mã Thưởng</span>
-    </a>
-    <ul class="submenu">
-        <li class="submenu-item">
-            <a href="/admin/ma-thuong">Danh sách Mã Thưởng</a>
-        </li>
-        <li class="submenu-item">
-            <a href="/admin/ma-thuong/them">Thêm Mã Thưởng</a>
-        </li>
-    </ul>
-</li>
-						<li class="sidebar-item  has-sub">
-						    <a href="#" class='sidebar-link'>
-						        <i class="bi bi-collection-fill"></i>
-						        <span>Nhóm Dịch</span>
-						    </a>
-						    <ul class="submenu ">
-						        <li class="submenu-item ">
-						            <a href="extra-component-avatar.html">List Nhóm Dịch</a>
-						        </li>
-						        <li class="submenu-item ">
-						            <a href="extra-component-sweetalert.html">Quản Lý Nhóm Dịch</a>
-						        </li>
-						    </ul>
+							<a href="/dba/user/truyen" class='sidebar-link'>
+								<i class="bi bi-stack"></i>
+								<span>Quản Lý Truyện</span>
+							</a>
 						</li>
-                        <li class="sidebar-item  has-sub">
-                            <a href="#" class='sidebar-link'>
-                                <i class="bi bi-grid-1x2-fill"></i>
-                                <span>Nạp Tiền</span>
-                            </a>
-                            <ul class="submenu ">
-                                <li class="submenu-item ">
-                                    <a th:href="@{/dba/nap-tien}">Yêu Cầu & Lịch Sử Nạp Tiền</a>
-                                </li>
-								<li class="submenu-item ">
-								    <a th:href="@{/dba/rut-tien}">Yêu Cầu & Lịch Sử Rút Tiền</a>
+
+						<li class="sidebar-item">
+							<a href="/dba/truyen-the-loai" class="sidebar-link">
+								<i class="bi bi-stack"></i>
+								<span>Quản Lý Thể Loại</span>
+							</a>
+						</li>
+						<li class="sidebar-item has-sub">
+							<a href="#" class='sidebar-link'>
+								<i class="bi bi-collection-fill"></i>
+								<span>Mã Thưởng</span>
+							</a>
+							<ul class="submenu">
+								<li class="submenu-item">
+									<a href="/admin/ma-thuong">Danh sách Mã Thưởng</a>
 								</li>
-                                <li class="submenu-item ">
-                                    <a th:href="@{/dba/thong-tin-nap}">Quản Lý Doanh Thu</a>
-                                </li>
-                            </ul>
-                        </li>
+								<li class="submenu-item">
+									<a href="/admin/ma-thuong/them">Thêm Mã Thưởng</a>
+								</li>
+							</ul>
+						</li>
+						<li class="sidebar-item  has-sub">
+							<a href="#" class='sidebar-link'>
+								<i class="bi bi-collection-fill"></i>
+								<span>Nhóm Dịch</span>
+							</a>
+							<ul class="submenu ">
+								<li class="submenu-item ">
+									<a href="extra-component-avatar.html">List Nhóm Dịch</a>
+								</li>
+								<li class="submenu-item ">
+									<a href="extra-component-sweetalert.html">Quản Lý Nhóm Dịch</a>
+								</li>
+							</ul>
+						</li>
+						<li class="sidebar-item  has-sub">
+							<a href="#" class='sidebar-link'>
+								<i class="bi bi-grid-1x2-fill"></i>
+								<span>Nạp Tiền</span>
+							</a>
+							<ul class="submenu ">
+								<li class="submenu-item ">
+									<a th:href="@{/dba/nap-tien}">Yêu Cầu & Lịch Sử Nạp Tiền</a>
+								</li>
+								<li class="submenu-item ">
+									<a th:href="@{/dba/rut-tien}">Yêu Cầu & Lịch Sử Rút Tiền</a>
+								</li>
+								<li class="submenu-item ">
+									<a th:href="@{/dba/thong-tin-nap}">Quản Lý Doanh Thu</a>
+								</li>
+							</ul>
+						</li>
 
-                    </ul>
-                </div>
-                <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
-            </div>
-        </div>
-		
-			<!-- Nội dung chính -->
-			<div class="">
-				<div th:insert="${content}"></div>
+					</ul>
+				</div>
+				<button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
 			</div>
+		</div>
 
-			<footer>
-			            </footer>
-			        </div>
-			    </div>
-			    <script src="/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-			    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+		<!-- Nội dung chính -->
+		<div class="">
+			<div th:insert="${content}"></div>
+		</div>
 
-			    <script src="/assets/vendors/simple-datatables/simple-datatables.js"></script>
-			    <script>
-			        // Simple Datatable
-			        let table1 = document.querySelector('#table1');
-			        let dataTable = new simpleDatatables.DataTable(table1);
-			    </script>
+		<footer>
+		</footer>
+	</div>
+	</div>
+	<script src="/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+	<script src="/assets/js/bootstrap.bundle.min.js"></script>
 
-			    <script src="/assets/js/main.js"></script>
-			</body>
+	<script src="/assets/vendors/simple-datatables/simple-datatables.js"></script>
+	<script>
+		// Simple Datatable
+		let table1 = document.querySelector('#table1');
+		let dataTable = new simpleDatatables.DataTable(table1);
+	</script>
 
-			</html>
+	<script src="/assets/js/main.js"></script>
+</body>
+
+</html>

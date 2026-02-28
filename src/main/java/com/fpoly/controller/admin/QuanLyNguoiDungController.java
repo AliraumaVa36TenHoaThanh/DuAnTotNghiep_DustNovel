@@ -61,21 +61,6 @@ public class QuanLyNguoiDungController {
 	@Autowired
 	private NguoiDungRepository nguoiDungRepo;
 
-
-//	@GetMapping("/user")
-//	public String list(Model model) {
-//		model.addAttribute("content", "/view/admin/user/index.html");
-//		return "/layout/admin_base";
-//	}
-
-//	@GetMapping("/user/truyen")
-//	public String truyenAdmin(Model model) {
-//		List<Truyen> listTruyen = truyenRepo.findAll();
-//		model.addAttribute("listTruyenUser", listTruyen);
-//		model.addAttribute("content", "view/admin/truyen/quanLyTruyen");
-//		return "layout/admin_base";
-//	}
-
 	@GetMapping("/user/truyen/xoa/{id}")
 	public String xoaTruyen(@PathVariable Long id) {
 		truyenAdminSer.xoaTruyen(id);
