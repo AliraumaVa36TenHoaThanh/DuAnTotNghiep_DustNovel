@@ -34,8 +34,7 @@ public class RutTienController {
         var user = napTienService.getByTenDangNhap(auth.getName());
 
         model.addAttribute("title", "DustNovel | Rút tiền");
-        model.addAttribute("content", "truyen/rut-tien"); // fragment path
-
+        model.addAttribute("content", "truyen/rut-tien"); 
         model.addAttribute("user", user);
 
         return "layout/main";
@@ -52,7 +51,7 @@ public class RutTienController {
 
         var user = napTienService.getByTenDangNhap(auth.getName());
 
-        // 🚨 Kiểm tra số dư
+      
         if (soToken <= 0) {
             redirectAttributes.addFlashAttribute("error", "Số token không hợp lệ!");
             return "redirect:/DustNovel/rut-tien";

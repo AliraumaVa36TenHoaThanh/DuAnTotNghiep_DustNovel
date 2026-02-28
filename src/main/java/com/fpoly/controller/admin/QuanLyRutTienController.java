@@ -20,8 +20,6 @@ public class QuanLyRutTienController {
 
     @Autowired
     NguoiDungRepository nguoiDungRepo;
-
-    // ===== DANH SÁCH =====
     @GetMapping("/rut-tien")
     public String listRutTien(
             @RequestParam(required = false) String username,
@@ -61,7 +59,6 @@ public class QuanLyRutTienController {
         return "layout/admin_base";
     }
 
-    // ===== DUYỆT =====
     @GetMapping("/rut-tien/duyet/{id}")
     public String duyetRut(@PathVariable Long id) {
 
@@ -73,7 +70,6 @@ public class QuanLyRutTienController {
 
         NguoiDung user = rut.getNguoiDung();
 
-        // 🔥 Trừ token người dùng
         if (user.getToken() < rut.getSoToken())
             return "redirect:/dba/rut-tien";
 
@@ -86,7 +82,6 @@ public class QuanLyRutTienController {
         return "redirect:/dba/rut-tien";
     }
 
-    // ===== TỪ CHỐI =====
     @GetMapping("/rut-tien/tu-choi/{id}")
     public String tuChoiRut(@PathVariable Long id) {
 

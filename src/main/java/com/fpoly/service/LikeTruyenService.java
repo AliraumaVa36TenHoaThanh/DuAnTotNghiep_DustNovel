@@ -54,7 +54,7 @@ public class LikeTruyenService {
             truyen.setTongLike(truyen.getTongLike() + 1);
         }
 
-        truyenRepo.save(truyen); // ⭐ BẮT BUỘC
+        truyenRepo.save(truyen);
         return truyen.getTongLike();
     }
     

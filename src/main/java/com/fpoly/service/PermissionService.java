@@ -82,25 +82,6 @@ public class PermissionService {
     public boolean canToggleChuong(Long chuongId) {
         return canEditChuong(chuongId);
     }
-
- 
-//    public boolean canReadChuong(Chuong chuong, NguoiDung user) {
-//        if (chuong == null) return false;
-//        if (!chuong.isKhoa()) return true;
-//        if (user == null) return false;
-//        if (isAdmin(user)) return true;
-//        if (chuong.getNguoiDang() != null && chuong.getNguoiDang().getId().equals(user.getId())) {
-//            return true;
-//        }
-//  
-//        if (chuong.getTruyen() != null &&
-//            chuong.getTruyen().getNguoiDang() != null &&
-//            chuong.getTruyen().getNguoiDang().getId().equals(user.getId())) {
-//            return true;
-//        }
-//
-//        return moKhoaChuongRepo.existsByNguoiDung_IdAndChuong_Id( user.getId(), chuong.getId());
-//    }
     
     public boolean canReadChuong(Chuong chuong, NguoiDung user) {
 

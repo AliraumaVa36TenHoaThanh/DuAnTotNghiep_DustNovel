@@ -34,6 +34,6 @@ public class RegisterService {
         nguoiDungRepository.save(nd);
 
 
-        return null; // thành công
+        return null; 
     }
 }

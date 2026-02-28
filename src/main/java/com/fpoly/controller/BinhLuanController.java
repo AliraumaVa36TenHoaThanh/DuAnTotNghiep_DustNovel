@@ -17,8 +17,6 @@ public class BinhLuanController {
     public BinhLuanController(BinhLuanService binhLuanService) {
         this.binhLuanService = binhLuanService;
     }
-
-    // ================= THÊM =================
     @PostMapping("/add")
     public String addComment(@RequestParam Long truyenId,
                              @RequestParam String noiDung,
@@ -41,7 +39,7 @@ public class BinhLuanController {
 
         return "redirect:/DustNovel/chuong/" + chuongId;
     }
-    // ================= REPLY =================
+
     @PostMapping("/reply")
     public String replyComment(@RequestParam Long truyenId,
                                @RequestParam Long parentId,
@@ -59,8 +57,7 @@ public class BinhLuanController {
 
         return "redirect:/DustNovel/truyen/" + truyenId;
     }
-    
-    // ================= delete =================
+   
     @PostMapping("/delete")
     public String deleteComment(@RequestParam Long commentId,
                                 @RequestParam Long truyenId,
@@ -80,8 +77,6 @@ public class BinhLuanController {
 
         return "redirect:/DustNovel/truyen/" + truyenId;
     }
-
-    // ================= UPDATE =================
     @PostMapping("/update")
     public String updateComment(@RequestParam Long commentId,
                                 @RequestParam Long truyenId,

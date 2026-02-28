@@ -14,9 +14,6 @@ import com.fpoly.model.enums.LoaiTruyen;
 
 @Repository
 public interface TruyenRepository extends JpaRepository<Truyen, Long> {
-
-    /* ===================== THỂ LOẠI ===================== */
-
   
     @Query("""
         SELECT DISTINCT t
@@ -27,10 +24,6 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     List<Truyen> findByTheLoai(@Param("theLoaiId") Long theLoaiId);
 
     List<Truyen> findByTheLoais_Id(Long theLoaiId);
-
-
-    /* ===================== LOẠI TRUYỆN (ENUM) ===================== */
-
   
     List<Truyen> findByLoaiTruyen(LoaiTruyen loaiTruyen);
 
@@ -43,13 +36,8 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
         @Param("loaiTruyen") LoaiTruyen loaiTruyen
     );
 
-
-    /* ===================== TÌM KIẾM ===================== */
-
     List<Truyen> findByTenTruyenContainingIgnoreCase(String keyword);
 
-
-    /* ===================== TÌM KIẾM KHÔNG THỂ LOẠI ===================== */
 
     @Query("""
     	    SELECT t FROM Truyen t
@@ -65,11 +53,6 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     	    @Param("loaiTruyen") LoaiTruyen loaiTruyen,
     	    @Param("showTag18") Boolean showTag18
     	);
-
-
-
-
-    /* ===================== TÌM KIẾM CÓ THỂ LOẠI ===================== */
 
     @Query("""
     	    SELECT DISTINCT t FROM Truyen t
@@ -132,13 +115,6 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     @Query("SELECT t FROM Truyen t LEFT JOIN Chuong c ON t.id = c.truyen.id WHERE t.loaiTruyen = :loaiTruyen GROUP BY t.id, t.tenTruyen, t.moTa, t.tenTacGia, t.loaiTruyen, t.trangThai, t.tag18, t.nguoiDang.id, t.anhBia, t.ngayTao, t.tongLike, t.luotXem ORDER BY MAX(c.ngayTao) DESC NULLS LAST, t.ngayTao DESC")
     List<Truyen> findByLoaiTruyenOrderByChuongMoiNhat(@Param("loaiTruyen") LoaiTruyen loaiTruyen);
     
-//    @Query("SELECT t FROM Truyen t " +
-//            "LEFT JOIN t.danhSachTap tap " +
-//            "LEFT JOIN tap.danhSachChuong c " +
-//            "WHERE t.loaiTruyen = :loaiTruyen " +
-//            "GROUP BY t " +
-//            "ORDER BY MAX(c.ngayTao) DESC NULLS LAST, t.ngayTao DESC")
-//     List<Truyen> findByLoaiTruyenOrderByChuongMoiNhatHome(@Param("loaiTruyen") LoaiTruyen loaiTruyen);
     @Query("SELECT t FROM Truyen t " +
             "LEFT JOIN t.danhSachTap tap " +
             "LEFT JOIN tap.danhSachChuong c " +
@@ -155,26 +131,6 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
             "ORDER BY COALESCE(MAX(c.ngayTao), t.ngayTao) DESC")
     Page<Truyen> findByPage(@Param("loaiTruyen") LoaiTruyen loaiTruyen, Pageable pageable);
     
-//    @Query(
-//    	    value = """
-//    	        SELECT t
-//    	        FROM Truyen t
-//    	        LEFT JOIN t.danhSachTap tap
-//    	        LEFT JOIN tap.danhSachChuong c
-//    	        WHERE t.loaiTruyen = :loaiTruyen
-//    	        GROUP BY t
-//    	        ORDER BY COALESCE(MAX(c.ngayTao), t.ngayTao) DESC
-//    	    """,
-//    	    countQuery = """
-//    	        SELECT COUNT(t)
-//    	        FROM Truyen t
-//    	        WHERE t.loaiTruyen = :loaiTruyen
-//    	    """
-//    	)
-//    	Page<Truyen> findByLoaiTruyenOrderByChuongMoiNhatPage(
-//    	    @Param("loaiTruyen") LoaiTruyen loaiTruyen,
-//    	    Pageable pageable
-//    	);
     @Query(
     	    value = """
     	        SELECT t

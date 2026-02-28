@@ -54,8 +54,6 @@ public class NhomDichController {
 
         return "layout/main";
     }
-
-    // Xử lý submit
     
     @PostMapping("/dang-ky-nhom")
     public String taoNhom(@RequestParam String tenNhom,
@@ -68,7 +66,6 @@ public class NhomDichController {
             return "redirect:/DustNovel/login";
         }
         
-     // 🔥 Nếu đã là trưởng nhóm
         if (nhomDichRepository.existsByTruongNhom(user)) {
 
             redirectAttributes.addFlashAttribute(
@@ -79,7 +76,6 @@ public class NhomDichController {
             return "redirect:/DustNovel/nhom-dich";
         }
 
-        // 🔥 Nếu đã là thành viên nhóm khác
         if (thanhVienRepo.existsByNguoiDungAndTrangThai(user, "DA_DUYET")) {
 
             redirectAttributes.addFlashAttribute(
@@ -127,8 +123,6 @@ public class NhomDichController {
                 thanhVienRepo.findByNhomDichAndTrangThai(nhom, "DA_DUYET");
 
         System.out.println("Thành viên: " + danhSachThanhVien.size());
-
-        // 🔥 THIẾU CHÍNH LÀ DÒNG NÀY
         model.addAttribute("danhSachThanhVien", danhSachThanhVien);
 
         model.addAttribute("nhom", nhom);
@@ -221,8 +215,6 @@ public class NhomDichController {
         if (nhom != null) {
         	String tenNhom = nhom.getTenNhom();
             nhomDichRepository.delete(nhom);
-
-            // ✅ Thông báo thành công
             redirectAttributes.addFlashAttribute(
                     "successMessage",
                     "Nhóm \"" + tenNhom + "\" đã xóa thành công!"

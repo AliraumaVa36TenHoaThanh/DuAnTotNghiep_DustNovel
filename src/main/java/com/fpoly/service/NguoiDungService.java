@@ -19,7 +19,6 @@ public class NguoiDungService {
         repo.deleteById(id);
     }
     
-    /* ===== THÊM / ĐỔI AVATAR ===== */
     public void luuAvatar(Long id, String avatar) {
         if (!repo.existsById(id)) {
             throw new RuntimeException("Không tìm thấy tài khoản");
@@ -30,7 +29,6 @@ public class NguoiDungService {
         });
     }
 
-    /* ===== XÓA AVATAR ===== */
     public void xoaAvatar(Long id) {
         if (!repo.existsById(id)) {
             throw new RuntimeException("Không tìm thấy tài khoản");
@@ -41,7 +39,6 @@ public class NguoiDungService {
         });
     }
     
-    /* ===== THÊM VÀ ĐỔI BANNER ===== */
     public void luuBanner(Long id, String banner) {
         if (!repo.existsById(id)) {
             throw new RuntimeException("Không tìm thấy tài khoản");
@@ -52,7 +49,6 @@ public class NguoiDungService {
         });
     }
 
-    /* ===== XÓA BANNER ===== */
     public void xoaBanner(Long id) {
         if (!repo.existsById(id)) {
             throw new RuntimeException("Không tìm thấy tài khoản");

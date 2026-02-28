@@ -14,61 +14,53 @@ import java.util.List;
 @Service
 public class AdminUserService {
 
-    @Autowired
-    private NguoiDungRepository nguoiDungRepository;
+	@Autowired
+	private NguoiDungRepository nguoiDungRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-    // Lấy toàn bộ user
-    public List<NguoiDung> getAllUsers() {
-        return nguoiDungRepository.findAll();
-    }
+	public List<NguoiDung> getAllUsers() {
+		return nguoiDungRepository.findAll();
+	}
 
-    // Lấy theo ID
-    public NguoiDung getUserById(Long id) {
-        return nguoiDungRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy user"));
-    }
+	public NguoiDung getUserById(Long id) {
+		return nguoiDungRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy user"));
+	}
 
-    // Save (add + update)
-    public void saveUser(NguoiDung user) {
+	public void saveUser(NguoiDung user) {
 
-        if (user.getId() != null) {
+		if (user.getId() != null) {
 
-            NguoiDung oldUser = nguoiDungRepository
-                    .findById(user.getId())
-                    .orElseThrow();
+			NguoiDung oldUser = nguoiDungRepository.findById(user.getId()).orElseThrow();
 
-            // giữ password
-            if (user.getMatKhau() == null || user.getMatKhau().isBlank()) {
-                user.setMatKhau(oldUser.getMatKhau());
-            } else {
-                user.setMatKhau(passwordEncoder.encode(user.getMatKhau()));
-            }
+			if (user.getMatKhau() == null || user.getMatKhau().isBlank()) {
+				user.setMatKhau(oldUser.getMatKhau());
+			} else {
+				user.setMatKhau(passwordEncoder.encode(user.getMatKhau()));
+			}
 
-            // giữ token
-            if (user.getToken() == null) {
-                user.setToken(oldUser.getToken());
-            }
+			if (user.getToken() == null) {
+				user.setToken(oldUser.getToken());
+			}
 
-            if (user.getTrangThai() == null) {
-                user.setTrangThai(oldUser.getTrangThai());
-            }
+			if (user.getTrangThai() == null) {
+				user.setTrangThai(oldUser.getTrangThai());
+			}
 
-        } else {
+		} else {
 
-            user.setMatKhau(passwordEncoder.encode(user.getMatKhau()));
+			user.setMatKhau(passwordEncoder.encode(user.getMatKhau()));
 
-            if (user.getTrangThai() == null) {
-                user.setTrangThai("HOAT_DONG");
-            }
-        }
+			if (user.getTrangThai() == null) {
+				user.setTrangThai("HOAT_DONG");
+			}
+		}
 
-        nguoiDungRepository.save(user);
-    }
+		nguoiDungRepository.save(user);
+	}
 
-    public void deleteUser(Long id) {
-        nguoiDungRepository.deleteById(id);
-    }
+	public void deleteUser(Long id) {
+		nguoiDungRepository.deleteById(id);
+	}
 }

@@ -137,26 +137,6 @@ public class ChuongController {
 	    return "layout/main";
 	}
 	
-	
-//	@PreAuthorize("@permissionService.canAddChuongByTap(#chuong.tap.id)")
-//    @PostMapping("/them")
-//    public String add(@ModelAttribute Chuong chuong) {
-//
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        CustomUserDetails cud = (CustomUserDetails) auth.getPrincipal();
-//        NguoiDung user = cud.getUser();
-//
-//        chuong.setNguoiDang(user);
-//
-//        int nextSo = chuongService.getNextSoChuongByTap(
-//                chuong.getTap().getId()
-//        );
-//        chuong.setSoChuong(nextSo);
-//        chuongService.save(chuong);
-//
-//        return "redirect:/DustNovel/truyen/"
-//                + chuong.getTap().getTruyen().getId();
-//    }
 	@PostMapping("/them")
 	@PreAuthorize("@permissionService.canAddChuongByTap(#chuong.tap.id)")
 	public String add(@ModelAttribute Chuong chuong) {

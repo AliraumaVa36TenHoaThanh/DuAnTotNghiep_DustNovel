@@ -24,27 +24,6 @@ public class LichSuDocService {
     @Autowired
     private TruyenRepository truyenRepository;
 
-//    @Transactional
-//    public void luuLichSuVaTangView(NguoiDung user, Chuong chuong) {
-//        Truyen truyen = chuong.getTruyen();
-//
-//        Long luotXemHienTai = truyen.getLuotXem() != null ? truyen.getLuotXem() : 0L;
-//        truyen.setLuotXem(luotXemHienTai + 1);
-//        truyenRepository.save(truyen);
-//
-//        if (user != null) {
-//            LichSuDoc lsd = lichSuDocRepository.findByNguoiDungAndChuong(user, chuong)
-//                    .orElse(new LichSuDoc());
-//
-//            lsd.setNguoiDung(user);
-//            lsd.setTruyen(truyen);
-//            lsd.setChuong(chuong);
-//            lsd.setLanDocCuoi(LocalDateTime.now());
-//
-//            lichSuDocRepository.save(lsd);
-//        }
-//    }
-
     @Transactional
     public void luuLichSuVaTangView(NguoiDung user, Chuong chuong) {
         Truyen truyen = chuong.getTruyen();

@@ -15,21 +15,17 @@ public class RegisterController {
 
     @Autowired
     private RegisterService registerService;
-
-    // HIỂN THỊ FORM
     @GetMapping("/register")
     public String registerForm(Model model) {
         model.addAttribute("nguoiDung", new NguoiDung());
         return "auth/register";
     }
-
-    // XỬ LÝ ĐĂNG KÝ
     @PostMapping("/register")
     public String register(
         @ModelAttribute("nguoiDung") NguoiDung nguoiDung,
         @RequestParam("reMatKhau") String reMatKhau,
         Model model,
-        RedirectAttributes redirectAttributes   // ✅ THÊM
+        RedirectAttributes redirectAttributes 
     ) {
         String error = registerService.register(nguoiDung, reMatKhau);
 
@@ -37,8 +33,6 @@ public class RegisterController {
             model.addAttribute("error", error);
             return "auth/register";
         }
-
-        // ✅ GỬI THÔNG BÁO SANG TRANG LOGIN
         redirectAttributes.addFlashAttribute(
             "success",
             "Đăng ký thành công! Vui lòng đăng nhập."

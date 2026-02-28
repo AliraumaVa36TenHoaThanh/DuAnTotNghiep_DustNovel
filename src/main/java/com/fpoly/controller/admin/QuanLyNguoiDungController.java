@@ -108,8 +108,6 @@ public class QuanLyNguoiDungController {
 
 	        truyen.setAnhBia("/uploads/truyen/" + fileName);
 	    }
-
-	    // Nếu không upload file và không nhập link
 	    if (truyen.getAnhBia() == null || truyen.getAnhBia().isBlank()) {
 	        truyen.setAnhBia("/images/aria.jpg");
 	    }
@@ -151,14 +149,11 @@ public class QuanLyNguoiDungController {
     }	
 	@PostMapping("/truyen-the-loai/them")
     public String xuLyThemTheLoai(@ModelAttribute TheLoai theLoai, Model model) {
-		// check rỗng
 	    if (theLoai.getTenTheLoai() == null || theLoai.getTenTheLoai().trim().isEmpty()) {
 	        model.addAttribute("errorTenTheLoai", "Tên thể loại không được để trống");
 	        model.addAttribute("content", "view/admin/truyen/ThemTheLoai");
 	        return "layout/admin_base";
 	    }
-
-	    // check trùng
 	    if (theLoaiRepository.existsByTenTheLoai(theLoai.getTenTheLoai())) {
 	        model.addAttribute("errorTenTheLoai", "Tên thể loại đã tồn tại");
 	        model.addAttribute("content", "view/admin/truyen/ThemTheLoai");
@@ -272,12 +267,6 @@ public class QuanLyNguoiDungController {
     @Autowired
     private NguoiDungRepository repo;
 
-//    @Autowired
-//    private TruyenRepository truyenRepo;
-
-    // =============================
-    // LIST USER
-    // =============================
     @GetMapping("/user")
     public String list(Model model) {
 
@@ -288,9 +277,6 @@ public class QuanLyNguoiDungController {
         return "/layout/admin_base";
     }
 
-    // =============================
-    // FORM EDIT USER
-    // =============================
     @GetMapping("/user/editUser/{id}")
     public String editUser(@PathVariable Long id, Model model){
 
@@ -304,16 +290,6 @@ public class QuanLyNguoiDungController {
         return "/layout/admin_base";
     }
 
-    // =============================
-    // UPDATE USER
-    // =============================
-//    @PostMapping("/user/update")
-//    public String updateUser(@ModelAttribute NguoiDung user) {
-//
-//        adminUserService.saveUser(user);
-//
-//        return "redirect:/dba/user";
-//    }
     @PostMapping("/user/update")
     public String updateUser(@ModelAttribute NguoiDung formUser,
                              Model model) {
@@ -321,7 +297,6 @@ public class QuanLyNguoiDungController {
         NguoiDung user = repo.findById(formUser.getId())
                 .orElseThrow();
 
-        // Nếu email thay đổi thì mới check trùng
         if (!user.getEmail().equals(formUser.getEmail())) {
 
             if (repo.existsByEmail(formUser.getEmail())) {
@@ -341,10 +316,6 @@ public class QuanLyNguoiDungController {
 
         return "redirect:/dba/user";
     }
-
-    // =============================
-    // DELETE USER
-    // =============================
     @GetMapping("/user/delete/{id}")
     public String deleteUser(@PathVariable Long id) {
 
@@ -353,9 +324,6 @@ public class QuanLyNguoiDungController {
         return "redirect:/dba/user";
     }
 
-    // =============================
-    // QUẢN LÝ TRUYỆN
-    // =============================
     @GetMapping("/user/truyen")
     public String truyenAdmin(Model model, Authentication authentication) {
 
