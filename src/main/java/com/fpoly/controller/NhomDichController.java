@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -166,5 +167,33 @@ public class NhomDichController {
         thanhVienRepo.save(tv);
 
         return "redirect:/DustNovel/nhom-dich/" + nhomId;
+    }
+    
+    
+    
+    
+    @PostMapping("/nhom-dich/xoa/{id}")
+    public String xoaNhom(@PathVariable Long id,
+                          RedirectAttributes redirectAttributes) {
+
+        NhomDich nhom = nhomDichRepository.findById(id).orElse(null);
+
+        if (nhom != null) {
+        	String tenNhom = nhom.getTenNhom();
+            nhomDichRepository.delete(nhom);
+
+            // ✅ Thông báo thành công
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Nhóm \"" + tenNhom + "\" đã xóa thành công!"
+            );
+        } else {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Nhóm không tồn tại!"
+            );
+        }
+
+        return "redirect:/DustNovel/nhom-dich";
     }
 }

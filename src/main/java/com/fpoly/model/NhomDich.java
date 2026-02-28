@@ -3,7 +3,7 @@ package com.fpoly.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-
+import java.util.List;
 @Entity
 @Table(name = "nhom_dich")
 @Getter @Setter
@@ -39,4 +39,42 @@ public class NhomDich {
         }
         this.ngayTao = LocalDateTime.now();
     }
+    
+    
+    
+    
+    
+ // ==========================================================
+ // Quan hệ 1-N giữa NhomDich và ThanhVienNhomDich
+ //
+ // mappedBy = "nhomDich":
+ //   - Liên kết với thuộc tính nhomDich bên entity ThanhVienNhomDich
+ //   - Bảng thanh_vien_nhom_dich là bên giữ khóa ngoại
+ //
+ // cascade = CascadeType.ALL:
+ //   - Khi thêm / sửa / xóa NhomDich → tự động tác động lên các ThanhVienNhomDich liên quan
+ //   - Đặc biệt: Khi xóa nhóm → tự động xóa toàn bộ thành viên (tránh lỗi foreign key)
+ //
+ // orphanRemoval = true:
+ //   - Nếu xóa một ThanhVienNhomDich khỏi danhSachThanhVien
+ //   - Hibernate sẽ xóa luôn record đó trong database
+ // ==========================================================
+ @OneToMany(mappedBy = "nhomDich",
+         cascade = CascadeType.ALL,
+         orphanRemoval = true)
+ private List<ThanhVienNhomDich> danhSachThanhVien;
+ 
+ 
+ 
+ 
+ 
+//==========================================================
+//Quan hệ 1-N giữa NhomDich và LoiMoiNhomDich
+//Khi xóa nhóm → tự động xóa toàn bộ lời mời liên quan
+//Tránh lỗi foreign key constraint fk_lmnd_nhom
+//==========================================================
+@OneToMany(mappedBy = "nhomDich",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true)
+private List<LoiMoiNhomDich> danhSachLoiMoi;
 }
