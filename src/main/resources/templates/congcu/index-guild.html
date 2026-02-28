@@ -1,8 +1,127 @@
 <div xmlns:th="http://www.thymeleaf.org"
-     th:fragment="content"
-     class="container mt-4">
+     th:fragment="content" class="container mt-4">
+     
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+     
+<style>
+/* ===== DROPDOWN CHA ===== */
+.custom-dropdown {
+    position: relative;
+    width: 270px;
+}
 
+/* ===== NÚT ===== */
+.custom-toggle {
+    width: 100%;
+    height: 48px;
+    border-radius: 4px;
+    text-align: left;
+    padding: 0 16px;
+    border: 1px solid;
+}
+
+/* ===== MENU ===== */
+.custom-menu {
+    position: absolute !important;
+    top: 60px;
+    left: 0;
+    width: 104%;
+    border-radius: 6px;
+    padding: 0;
+    overflow: hidden; /* cắt nền tràn */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* ===== ITEM ===== */
+.custom-menu .dropdown-item {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    background: transparent;
+    border: none;
+}
+
+/* ===== XÓA NHÓM LUÔN ĐỎ ===== */
+.custom-item-danger,
+.custom-item-danger i {
+    color: #dc3545 !important;
+}
+
+/* ============================= */
+/* ===== LIGHT MODE ===== */
+/* ============================= */
+
+[data-theme="light"] .custom-toggle {
+    background: #ffffff;
+    border-color: #000000;
+    color: #000000;
+}
+
+[data-theme="light"] .custom-menu {
+    background: #ffffff;
+    border: 1px solid #000000;
+}
+
+/* ============================= */
+/* ===== DARK MODE ===== */
+/* ============================= */
+
+[data-theme="dark"] .custom-toggle {
+    background: #1e1e1e;
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .custom-menu {
+    background: #1e1e1e;
+    border: 1px solid #ffffff;
+}
+
+
+</style>
+    <!--  
     <h2 th:text="${nhom.tenNhom}"></h2>
+    -->
+    
+    <div class="d-flex justify-content-between align-items-center">
+
+    <h2 class="mb-3" th:text="${nhom.tenNhom}"></h2>
+
+    <div th:if="${laTruongNhom}" class="dropdown">
+
+        <button class="custom-toggle dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown">
+
+            <i class="bi bi-gear-fill me-2"></i>
+            Quản lý nhóm
+
+        </button>
+
+        <ul class="dropdown-menu custom-menu">
+
+            <li>
+                <form th:action="@{/DustNovel/nhom-dich/xoa/{id}(id=${nhom.id})}"
+                      method="post"
+                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhóm này không?');">
+
+                    <button type="submit"
+                            class="dropdown-item custom-item-danger">
+
+                        <i class="bi bi-trash3 me-2"></i>
+                        Xóa nhóm
+
+                    </button>
+
+                </form>
+            </li>
+
+        </ul>
+    </div>
+
+</div>
+    
         <strong>Trưởng nhóm:</strong>
         <span th:text="${nhom.truongNhom.tenDangNhap}"></span>
     </p>

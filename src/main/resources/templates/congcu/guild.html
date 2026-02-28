@@ -27,8 +27,17 @@
 	 .btn-cute:active {
 	     transform: scale(0.96);
 	 }
-	 </style>	
-    <h2 class="mb-4">Danh sách nhóm dịch</h2>
+	 </style>
+
+	<div th:if="${successMessage}" class="alert alert-success">
+		<span th:text="${successMessage}"></span>
+	</div>
+
+	<div th:if="${errorMessage}" class="alert alert-danger">
+		<span th:text="${errorMessage}"></span>
+	</div>
+
+	<h2 class="mb-4">Danh sách nhóm dịch</h2>
 
     <div class="row">
         <div class="col-md-4 mb-3"
