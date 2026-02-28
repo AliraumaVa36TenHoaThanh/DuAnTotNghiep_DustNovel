@@ -53,16 +53,19 @@ public class ChuongController {
 	@Autowired
 	MoKhoaChuongRepository moKhoaChuongRepo;
 	@Autowired
+	LichSuDocRepository lichSuDocRepo;
+	@Autowired
 	SecurityUtil securityUtil;
 	@Autowired
 	PermissionService permissionService;
 	@Autowired
 	TapService tapService;
-	
-	
-	
+	@Autowired
+	PhieuThuongService phieuThuongService;
 	@Autowired
 	private BinhLuanService binhLuanService;
+	@Autowired
+	LichSuDocService lichSuDocService;
 	
 	@GetMapping("/{id}")
 	public String read(@PathVariable Long id, Model model) {
