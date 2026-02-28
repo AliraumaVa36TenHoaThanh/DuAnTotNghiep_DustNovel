@@ -52,6 +52,18 @@ public class RutTienController {
 
         var user = napTienService.getByTenDangNhap(auth.getName());
 
+        // 🚨 Kiểm tra số dư
+        if (soToken <= 0) {
+            redirectAttributes.addFlashAttribute("error", "Số token không hợp lệ!");
+            return "redirect:/DustNovel/rut-tien";
+        }
+
+        if (soToken > user.getToken()) {
+            redirectAttributes.addFlashAttribute("error", 
+                "Số token muốn rút lớn hơn số dư hiện tại!");
+            return "redirect:/DustNovel/rut-tien";
+        }
+
         Long thue = soToken / 10; // 10%
         Long thucNhan = soToken - thue;
 
@@ -60,7 +72,6 @@ public class RutTienController {
         rutTien.setSoToken(soToken);
         rutTien.setThue(thue);
         rutTien.setTokenThucNhan(thucNhan);
-
         rutTien.setNganHang(nganHang);
         rutTien.setSoTaiKhoan(soTaiKhoan);
         rutTien.setTenChuTaiKhoan(tenChuTaiKhoan);
