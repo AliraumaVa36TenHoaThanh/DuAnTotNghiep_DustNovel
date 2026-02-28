@@ -24,7 +24,7 @@ public class NapTienTuDongController {
     public String hienThiBaoGia(Model model) {
         NguoiDung user = securityUtil.getCurrentUserFromDB();
         if (user == null) return "redirect:/DustNovel/login";
-        
+        model.addAttribute("title", "DustNovel | Nạp tiền tự động");
         model.addAttribute("user", user);
         model.addAttribute("content", "naptien/chon-goi-nap");
         return "layout/main";
