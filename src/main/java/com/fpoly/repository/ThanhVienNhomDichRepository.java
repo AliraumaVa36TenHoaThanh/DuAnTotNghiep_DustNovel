@@ -17,5 +17,7 @@ public interface ThanhVienNhomDichRepository extends JpaRepository<ThanhVienNhom
 
     Optional<ThanhVienNhomDich> 
     findByNhomDichAndNguoiDung(NhomDich nhom, NguoiDung nguoiDung);
+    
+    boolean existsByNguoiDungAndTrangThai(NguoiDung nguoiDung, String trangThai);
 
 }

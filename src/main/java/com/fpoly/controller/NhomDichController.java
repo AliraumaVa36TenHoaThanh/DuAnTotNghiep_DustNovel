@@ -59,15 +59,43 @@ public class NhomDichController {
     
     @PostMapping("/dang-ky-nhom")
     public String taoNhom(@RequestParam String tenNhom,
-                          @RequestParam String moTa) {
+                          @RequestParam String moTa,
+                          RedirectAttributes redirectAttributes) {
 
         NguoiDung user = securityUtil.getCurrentUserFromDB();
 
         if (user == null) {
             return "redirect:/DustNovel/login";
         }
+        
+     // 🔥 Nếu đã là trưởng nhóm
+        if (nhomDichRepository.existsByTruongNhom(user)) {
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Bạn đã tạo 1 nhóm rồi, không thể tạo thêm!"
+            );
+
+            return "redirect:/DustNovel/nhom-dich";
+        }
+
+        // 🔥 Nếu đã là thành viên nhóm khác
+        if (thanhVienRepo.existsByNguoiDungAndTrangThai(user, "DA_DUYET")) {
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Bạn đã thuộc 1 nhóm khác!"
+            );
+
+            return "redirect:/DustNovel/nhom-dich";
+        }
 
         nhomDichService.taoNhom(tenNhom, moTa, user);
+        
+        redirectAttributes.addFlashAttribute(
+                "successMessage",
+                "Tạo nhóm thành công!"
+        );
 
         return "redirect:/DustNovel/nhom-dich";
     }
@@ -114,11 +142,23 @@ public class NhomDichController {
     }
     
     @PostMapping("/nhom-dich/{id}/yeu-cau")
-    public String yeuCauThamGia(@PathVariable Long id) {
+    public String yeuCauThamGia(@PathVariable Long id,
+    		RedirectAttributes redirectAttributes) {
 
         NguoiDung user = securityUtil.getCurrentUserFromDB();
         if (user == null)
             return "redirect:/DustNovel/login";
+        
+        if (nhomDichRepository.existsByTruongNhom(user)
+                || thanhVienRepo.existsByNguoiDungAndTrangThai(user, "DA_DUYET")) {
+
+                redirectAttributes.addFlashAttribute(
+                        "errorMessage",
+                        "Bạn đã thuộc 1 nhóm rồi!"
+                );
+
+                return "redirect:/DustNovel/nhom-dich";
+            }
 
         NhomDich nhom = nhomDichService.findById(id);
         if (nhom == null)
