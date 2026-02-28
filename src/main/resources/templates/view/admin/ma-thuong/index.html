@@ -1,56 +1,351 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>Danh sách Mã Thưởng</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body { background-color: #f4f6f9; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+        .card-header { background-color: #ffffff; border-bottom: 1px solid #e5e7eb; padding: 16px 20px; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; }
+        .header-title h5 { margin: 0 0 20px 0; font-size: 25px; font-weight: 600; }
+        .header-title p { margin: 0 0 10px 0; font-size: 16px; color: #6b7280; }
+        .header-actions { display: flex; align-items: center; gap: 10px; margin-top: -80px; }
+        .search-box { width: 280px; }
+        .search-box input { height: 40px; font-size: 15px; padding: 8px 14px; border-radius: 8px; }
+        .header-actions .btn { height: 40px; padding: 0 15px; font-size: 16px; border-radius: 8px; display: flex; align-items: center; gap: 6px; }
+        .btn i { pointer-events: none; }
+        .badge-status { padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 500; display: inline-block;}
+        .badge-dadung { background: #f8d7da; color: #842029; }
+        .badge-hoatdong { background: #dcfce7; color: #166534; }
+        .row-limit-box { margin-top: 30px; }
+        .pagination li a { color: #333; padding: 6px 12px; border-radius: 6px; }
+        .pagination li.active a { background-color: #4f6ef7; color: #fff; }
+        .filter-box { position: relative; width: 260px; }
+        .filter-header { border: 1px solid #d1d5db; border-radius: 5px; padding: 4px 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #fff; margin-right:100px }
+        .filter-header span { color: #9ca3af; font-size: 14px; white-space: nowrap; text-overflow: ellipsis; }
+        .filter-list { display: none; position: absolute; top: 45px; min-width: 200px; max-height: 250px; background: #fff; border: 2px solid #000; border-radius: 12px; padding: 15px; z-index: 999; overflow-y: auto; overflow-x: hidden; grid-template-columns: 1fr; gap: 10px; }
+        .filter-item { padding: 6px 8px; font-size: 13px; border-radius: 8px; background: #f3f4f6; text-align: center; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+        .filter-item:hover, .filter-item.active { background: #4f6ef7; color: #fff; }
+        .btn { white-space: nowrap; }
+        .row-limit-box label { white-space: nowrap; }
+        .filter-list::-webkit-scrollbar { width: 6px; }
+        .filter-list::-webkit-scrollbar-track { background: transparent; }
+        .filter-list::-webkit-scrollbar-thumb { background: #c5c5c5; border-radius: 10px; }
+        .filter-list::-webkit-scrollbar-thumb:hover { background: #999; }
+    </style>
 </head>
+
 <body>
-<div th:fragment="content" class="container mt-4">
+<div th:fragment="content" class="container-fluid px-4 mt-4">
+    <div id="main">
 
-    <h4>Tạo Mã Thưởng</h4>
-
-    <form th:action="@{/admin/ma-thuong/add}" method="post" class="row g-2">
-        <div class="col-md-3">
-            <input name="code" class="form-control" placeholder="CODE" required>
+        <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i><span th:text="${successMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i><span th:text="${errorMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
-        <div class="col-md-2">
-            <input name="soPhieuThuong" type="number" class="form-control" placeholder="Phiếu">
-        </div>
+        <section class="section">
+            <div class="card">
 
-        <div class="col-md-2">
-            <input name="soLuongNhap" type="number" class="form-control" placeholder="Lượt">
-        </div>
+                <div class="card-header">
+                    <div class="header-flex">
 
-        <div class="col-md-3">
-            <input name="ngayHetHan" type="datetime-local" class="form-control">
-        </div>
+                        <div class="header-title">
+                            <h5>Danh sách Mã Thưởng</h5>
+                            <p>Quản lý các mã giftcode trong hệ thống</p>
 
-        <div class="col-md-2">
-            <button class="btn btn-primary w-100">Tạo</button>
-        </div>
-    </form>
+                            <div class="d-flex align-items-center gap-2 row-limit-box">
+                                <label class="mb-0">Hiển thị :</label> 
+                                <select id="rowLimit" class="form-select form-select-sm" style="width: 80px;">
+                                    <option value="5">5</option>
+                                    <option value="10" selected>10</option>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                </select>
 
-    <hr>
+                                <div class="filter-box">
+                                    <div class="filter-header" onclick="toggleFilter()">
+                                        <span id="filterText">Trạng thái</span> <i class="fa-solid fa-chevron-down"></i>
+                                    </div>
 
-    <h5>Danh sách mã</h5>
+                                    <div class="filter-list" id="filterList" style="min-width: 150px;">
+                                        <div class="filter-item active" onclick="locTatCa(this)">Tất cả</div>
+                                        <div class="filter-item" data-ten="Đang hoạt động" onclick="chonTrangThai(this)">Đang hoạt động</div>
+                                        <div class="filter-item" data-ten="Đã khóa" onclick="chonTrangThai(this)">Đã khóa</div>
+                                    </div>
+                                </div>
+                            </div>																								
+                        </div>
+                        
+                        <div class="header-actions">
+                            <form method="get" class="search-box" onsubmit="return false;">
+                                <input type="text" id="searchInput" class="form-control form-control-sm"
+                                       placeholder="Tìm kiếm mã code..." onkeyup="searchMaThuong()">
+                            </form>
+                                                    
+                            <a th:href="@{/admin/ma-thuong/them}" class="btn btn-sm btn-success">
+                               <i class="fa-solid fa-plus"></i> Tạo mã mới
+                            </a> 
+                        </div>
+                    </div>
+                </div>
+                                     
+                <div class="card-body">
+                    <table class="table table-hover align-middle" id="dataTable">
+                        <thead class="table-light text-center">
+                            <tr>
+                                <th>#</th>
+                                <th>Mã Code</th>
+                                <th>Phiếu thưởng</th>
+                                <th>Đã nhập / Tổng</th>
+                                <th>Ngày hết hạn</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
 
-    <table class="table table-bordered">
-        <tr>
-            <th>Code</th>
-            <th>Phiếu</th>
-            <th>Đã dùng</th>
-            <th>Hạn</th>
-        </tr>
+                        <tbody class="text-center">
+                            <tr th:each="ma, stat : ${dsMaThuong}">
+                                <td th:text="${stat.count}">1</td>
+                                <td>
+                                    <span class="fw-bold text-primary text-uppercase" th:text="${ma.code}">CODE</span>
+                                </td>
+                                <td class="fw-bold text-success" th:text="'+' + ${ma.soPhieuThuong}"></td>
+                                <td>
+                                    <span th:text="${ma.daNhap}"></span> / 
+                                    <span th:text="${ma.soLuongNhap == 999999 ? '∞' : ma.soLuongNhap}"></span>
+                                </td>
+                                <td th:text="${ma.ngayHetHan != null ? #temporals.format(ma.ngayHetHan, 'dd/MM/yyyy HH:mm') : 'Vô thời hạn'}"></td>
 
-        <tr th:each="m : ${list}">
-            <td th:text="${m.code}"></td>
-            <td th:text="${m.soPhieuThuong}"></td>
-            <td th:text="${m.daNhap}"></td>
-            <td th:text="${#temporals.format(m.ngayHetHan, 'dd/MM/yyyy HH:mm')}"></td>
-        </tr>
-    </table>
+                                <td>
+                                    <span th:class="${ma.statusMaThuong.name() == 'ON'} ? 'badge-status badge-hoatdong' : 'badge-status badge-dadung'">
+                                         <span th:text="${ma.statusMaThuong.name() == 'ON'} ? 'Đang hoạt động' : 'Đã khóa'"></span>
+                                     </span>
+                                </td>
 
+                                <td>
+                                    <a class="btn btn-sm btn-info me-1 text-white" th:href="@{/admin/ma-thuong/sua/{id}(id=${ma.id})}" title="Sửa mã">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+
+                                    <form th:action="@{/admin/ma-thuong/doi-trang-thai/{id}(id=${ma.id})}" method="post" class="d-inline">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                        <button type="submit" 
+                                                th:class="${ma.statusMaThuong.name() == 'ON'} ? 'btn btn-sm btn-warning' : 'btn btn-sm btn-success'"
+                                                th:title="${ma.statusMaThuong.name() == 'ON'} ? 'Khóa mã' : 'Mở khóa'"
+                                                onclick="return confirm('Bạn có chắc muốn đổi trạng thái mã này?');">
+                                            <i th:class="${ma.statusMaThuong.name() == 'ON'} ? 'fa-solid fa-lock' : 'fa-solid fa-unlock'"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(dsMaThuong)}">
+                                <td colspan="7" class="text-center text-muted py-4">Chưa có mã thưởng nào trong hệ thống!</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="d-flex justify-content-center mt-3">
+                       <ul class="pagination" id="pagination"></ul>
+                   </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
 </div>
+
+<script>
+/* =========================================================
+     TÌM KIẾM THEO MÃ CODE (Cột index = 1)
+   ========================================================= */
+let isSearching = false;
+let isFiltering = false;
+
+function searchMaThuong() {
+    const input = document.getElementById("searchInput");
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById("dataTable");
+    const tbody = table.getElementsByTagName("tbody")[0];
+    const rows = tbody.getElementsByTagName("tr");
+
+    const pagination = document.getElementById("pagination");
+    const rowLimitSelect = document.getElementById("rowLimit");
+    const filterHeader = document.querySelector(".filter-header");
+
+    if (filter !== "") {
+        isSearching = true;
+        pagination.style.pointerEvents = "none";
+        pagination.style.opacity = "0.5";
+        rowLimitSelect.disabled = true;
+        filterHeader.style.pointerEvents = "none";
+        filterHeader.style.opacity = "0.5";
+    } else {
+        isSearching = false;
+        pagination.style.pointerEvents = "auto";
+        pagination.style.opacity = "1";
+        rowLimitSelect.disabled = false;
+        filterHeader.style.pointerEvents = "auto";
+        filterHeader.style.opacity = "1";
+        displayTable(1);
+        return;
+    }
+
+    for (let i = 0; i < rows.length; i++) {
+        // Cột 1 là Mã Code
+        const codeCell = rows[i].getElementsByTagName("td")[1];
+        if (!codeCell) continue;
+
+        const text = codeCell.textContent || codeCell.innerText;
+        rows[i].style.display = text.toLowerCase().includes(filter) ? "" : "none";
+    }
+}
+
+/* =========================================================
+     PHÂN TRANG + GIỚI HẠN SỐ DÒNG
+   ========================================================= */
+let currentPage = 1;
+
+document.addEventListener("DOMContentLoaded", function () {
+    const table = document.getElementById("dataTable");
+    const tbody = table.querySelector("tbody");
+    const rows = tbody.querySelectorAll("tr");
+    const pagination = document.getElementById("pagination");
+    const rowLimitSelect = document.getElementById("rowLimit");
+
+    function displayTable(page) {
+        const limit = parseInt(rowLimitSelect.value);
+        const start = (page - 1) * limit;
+        const end = start + limit;
+
+        rows.forEach((row, index) => {
+            row.style.display = (index >= start && index < end) ? "" : "none";
+        });
+
+        currentPage = page;
+        setupPagination();
+    }
+
+    window.displayTable = displayTable;
+
+    function setupPagination() {
+        pagination.innerHTML = "";
+        const limit = parseInt(rowLimitSelect.value);
+        const pageCount = Math.ceil(rows.length / limit);
+
+        const prev = document.createElement("li");
+        prev.className = "page-item";
+        prev.innerHTML = `<a class="page-link" href="#">‹</a>`;
+        prev.onclick = (e) => { e.preventDefault(); if (currentPage > 1) displayTable(currentPage - 1); };
+        pagination.appendChild(prev);
+
+        for (let i = 1; i <= pageCount; i++) {
+            const li = document.createElement("li");
+            li.className = "page-item " + (i === currentPage ? "active" : "");
+            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            li.onclick = (e) => { e.preventDefault(); displayTable(i); };
+            pagination.appendChild(li);
+        }
+
+        const next = document.createElement("li");
+        next.className = "page-item";
+        next.innerHTML = `<a class="page-link" href="#">›</a>`;
+        next.onclick = (e) => { e.preventDefault(); if (currentPage < pageCount) displayTable(currentPage + 1); };
+        pagination.appendChild(next);
+    }
+
+    rowLimitSelect.addEventListener("change", function () {
+        if (!isSearching && !isFiltering) {
+            currentPage = 1;
+            displayTable(1);
+        }
+    });
+
+    displayTable(1);
+});
+
+/* =========================================================
+     MỞ / ĐÓNG DANH SÁCH FILTER
+   ========================================================= */
+function toggleFilter() {
+    const list = document.getElementById("filterList");
+    list.style.display = (list.style.display === "grid" || list.style.display === "block") ? "none" : "block";
+}
+
+/* =========================================================
+     CHỌN TRẠNG THÁI → KHÓA SEARCH + LỌC BẢNG (Cột index = 5)
+   ========================================================= */
+function chonTrangThai(element) {
+    const selected = element.getAttribute("data-ten");
+    const rows = document.querySelectorAll("#dataTable tbody tr");
+    const pagination = document.getElementById("pagination");
+    const rowLimitSelect = document.getElementById("rowLimit");
+    const searchInput = document.getElementById("searchInput");
+
+    isFiltering = true;
+
+    // Khóa các ô khác
+    pagination.style.pointerEvents = "none";
+    pagination.style.opacity = "0.5";
+    rowLimitSelect.disabled = true;
+    searchInput.disabled = true;
+
+    document.querySelectorAll(".filter-item").forEach(item => item.classList.remove("active"));
+    element.classList.add("active");
+
+    document.getElementById("filterText").innerText = selected;
+    document.getElementById("filterText").style.color = "#111";
+
+    rows.forEach(row => {
+        const trangThaiCell = row.cells[5];
+        if (!trangThaiCell) return;
+        const trangThaiText = trangThaiCell.innerText.trim();
+        row.style.display = (trangThaiText === selected) ? "" : "none";
+    });
+
+    document.getElementById("filterList").style.display = "none";
+}
+
+/* =========================================================
+     CHỌN "TẤT CẢ" → MỞ LẠI TOÀN BỘ CHỨC NĂNG
+   ========================================================= */
+function locTatCa(element) {
+    const pagination = document.getElementById("pagination");
+    const rowLimitSelect = document.getElementById("rowLimit");
+    const searchInput = document.getElementById("searchInput");
+
+    isFiltering = false;
+    isSearching = false;
+
+    // Mở lại
+    pagination.style.pointerEvents = "auto";
+    pagination.style.opacity = "1";
+    rowLimitSelect.disabled = false;
+    searchInput.disabled = false;
+
+    document.querySelectorAll(".filter-item").forEach(item => item.classList.remove("active"));
+    element.classList.add("active");
+
+    document.getElementById("filterText").innerText = "Trạng thái";
+    document.getElementById("filterText").style.color = "#9ca3af";
+    searchInput.value = "";
+
+    displayTable(1);
+    document.getElementById("filterList").style.display = "none";
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
