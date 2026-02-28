@@ -1,6 +1,11 @@
 package com.fpoly.controller;
 
 import com.fpoly.model.MaThuong;
+import com.fpoly.model.NguoiDung;
+import com.fpoly.repository.NguoiDungRepository;
+import com.fpoly.repository.PhieuThuongRepository;
+// Lưu ý: Import class SecurityUtil theo đúng đường dẫn project của cậu nhé
+// import com.fpoly.security.SecurityUtil; 
 import com.fpoly.service.MaThuongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

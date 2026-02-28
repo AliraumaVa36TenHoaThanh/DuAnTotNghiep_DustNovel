@@ -57,5 +57,6 @@ public class Chuong {
     }
     @OneToMany(mappedBy = "chuong", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MoKhoaChuong> danhSachMoKhoa;
-    
+    @OneToMany(mappedBy = "chuong", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<BinhLuan> binhLuans;
 }
