@@ -74,14 +74,14 @@
 
         .hidden { display: none !important; }
     </style>
-
+	
     <h4 class="text-center fw-bold"
     th:text="'Chương ' + ${chuong.soChuong} + ': ' + ${chuong.tieuDe}">
 </h4>
     <p class="text-center text-muted small">
         Cập nhật: <span th:text="${#temporals.format(chuong.ngayTao, 'dd/MM/yyyy HH:mm')}"></span>
     </p>
-
+<input type="hidden" id="chuongIdCurrent" th:value="${chuong.id}">
     <div id="reader-content" class="fs-5 lh-lg my-4" th:if="${canRead}" th:utext="${chuong.noiDung}"></div>
 
     <div id="reader-setting-btn">⚙️</div>
@@ -217,6 +217,154 @@
         if (savedFont) { fontSelect.value = savedFont; applyStyle("font-family", savedFont); }
         const savedSize = localStorage.getItem("dust-fontSize");
         if (savedSize) { fontSize.value = savedSize; applyStyle("font-size", savedSize + "px"); }
+        
+     // ==========================================
+        // LOGIC LƯU BOOKMARK (BÔI ĐEN + NÚT NỔI)
+        // ==========================================
+        
+        // 1. Tự động tạo nút Bookmark nổi bằng JS (Khỏi cần viết thêm HTML/CSS)
+        const floatingBtn = document.createElement("div");
+        floatingBtn.innerHTML = "🔖 Lưu vị trí";
+        floatingBtn.style.cssText = "display:none; position:absolute; background:#00d4ff; color:#000; padding:8px 15px; border-radius:8px; cursor:pointer; z-index:1050; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.5); transition: 0.2s;";
+        document.body.appendChild(floatingBtn);
+
+        let currentViTri = 0;
+        let currentPhanTram = 0;
+        let currentText = "";
+
+        // 2. Bắt sự kiện bôi đen chữ
+        content.addEventListener("mouseup", function (e) {
+            const selection = window.getSelection();
+            if (!selection.rangeCount || selection.toString().trim() === "") {
+                floatingBtn.style.display = "none";
+                return;
+            }
+
+            // Lấy vị trí, phần trăm và text
+            const range = selection.getRangeAt(0);
+            currentViTri = range.startOffset;
+            currentText = selection.toString().substring(0, 100);
+            currentPhanTram = Math.floor(window.scrollY / document.body.scrollHeight * 100);
+
+            // Bật nút nổi lên ngay chỗ chuột
+            floatingBtn.style.display = "block";
+            floatingBtn.style.left = e.pageX - 20 + "px";
+            floatingBtn.style.top = (e.pageY - 50) + "px";
+        });
+
+        // 3. Ẩn nút nếu bấm ra ngoài
+        document.addEventListener("mousedown", function(e) {
+            if (e.target !== floatingBtn) {
+                floatingBtn.style.display = "none";
+            }
+        });
+
+        // 4. Xử lý khi user bấm nút "Lưu vị trí"
+        floatingBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+            
+            // Lấy ID chương từ thẻ hidden ở Bước 1
+            const chuongId = document.getElementById("chuongIdCurrent").value;
+            
+            // "Trộm" luôn CSRF Token từ cái form mua chương của ông có sẵn ở trên
+            const csrfTokenNode = document.querySelector('input[name="_csrf"]');
+            const csrfToken = csrfTokenNode ? csrfTokenNode.value : '';
+
+            // Đóng gói dữ liệu chuẩn URL-encoded để gửi cho Controller
+            const formData = new URLSearchParams();
+            formData.append("chuongId", chuongId);
+            formData.append("viTri", currentViTri);
+            formData.append("phanTram", currentPhanTram);
+            formData.append("text", currentText);
+
+            floatingBtn.innerHTML = "⏳ Đang lưu...";
+
+            // Bắn API
+            fetch("/DustNovel/bookmark/save", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRF-TOKEN": csrfToken // Chìa khóa qua cửa Spring Security
+                },
+                body: formData.toString()
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Chưa đăng nhập hoặc lỗi hệ thống!");
+                return response.text();
+            })
+            .then(data => {
+                alert("✅ Đã lưu vị trí đọc thành công!");
+                floatingBtn.style.display = "none";
+                floatingBtn.innerHTML = "🔖 Lưu vị trí";
+                window.getSelection().removeAllRanges(); // Xóa bôi đen
+            })
+            .catch(err => {
+                alert("❌ Không thể lưu Bookmark: " + err.message);
+                floatingBtn.innerHTML = "🔖 Lưu vị trí";
+            });
+        });
+        
+     // ==========================================
+        // LOGIC 2: TỰ ĐỘNG CUỘN TRANG TỚI VỊ TRÍ BOOKMARK
+        // ==========================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const savedOffset = urlParams.get('offset');
+
+        // Nếu trên URL có chữ ?offset=... thì mới chạy tính năng cuộn
+        if (savedOffset && content) {
+            // Đợi 0.5s để web load xong hết font chữ, ảnh, định dạng rồi mới cuộn cho chuẩn
+            setTimeout(() => {
+                scrollToOffset(content, parseInt(savedOffset));
+            }, 500);
+        }
+
+        function scrollToOffset(container, offset) {
+            let charCount = 0;
+            let targetNode = null;
+            let targetNodeOffset = 0;
+
+            // Bộ máy đào xới HTML: Tìm xem ký tự thứ "offset" nó nằm ở cái thẻ <p> nào
+            const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+            while ((node = walker.nextNode())) {
+                let nextCharCount = charCount + node.length;
+                if (nextCharCount >= offset) {
+                    targetNode = node;
+                    targetNodeOffset = offset - charCount;
+                    break;
+                }
+                charCount = nextCharCount;
+            }
+
+            // Nếu tìm thấy vị trí
+            if (targetNode) {
+                try {
+                    const range = document.createRange();
+                    range.setStart(targetNode, targetNodeOffset);
+                    range.collapse(true);
+                    
+                    // Tạo một điểm neo (span) vô hình ngay tại vị trí chữ đó
+                    const marker = document.createElement("span");
+                    range.insertNode(marker);
+                    
+                    // 1. Lệnh xịn nhất: Tự động trượt màn hình mượt mà tới đúng điểm neo đó
+                    marker.scrollIntoView({ behavior: "smooth", block: "center" });
+                    
+                    // 2. Ép thêm tí "hiệu ứng Hollywood": Highlight vàng chớp tắt để User chú ý
+                    marker.style.backgroundColor = "rgba(255, 193, 7, 0.6)"; 
+                    marker.style.transition = "background-color 2s ease-in-out";
+                    
+                    // Nửa giây sau từ từ mờ đi cho đỡ chói mắt
+                    setTimeout(() => { 
+                        marker.style.backgroundColor = "transparent"; 
+                    }, 1500);
+                    
+                } catch(e) { 
+                    console.log("Lỗi khi tạo điểm neo cuộn trang:", e); 
+                }
+            }
+        }
+        
     });
     
     

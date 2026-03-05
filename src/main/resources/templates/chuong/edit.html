@@ -28,13 +28,14 @@
             </div>
         </div>
 
-        <textarea name="noiDung"
-          class="form-control"
-          required
-          minlength="1"
-          placeholder="Nhập nội dung chương"
-></textarea>
-
+        <textarea th:field="*{noiDung}"
+                  class="form-control shadow-sm"
+                  required
+                  minlength="1"
+                  rows="25"
+                  style="min-height: 500px; resize: vertical; font-size: 16px; line-height: 1.8;"
+                  placeholder="Nhập nội dung chương"
+        ></textarea>
 <div class="invalid-feedback">
     Nội dung chương ít nhất phải 1 ký tự
 </div>
