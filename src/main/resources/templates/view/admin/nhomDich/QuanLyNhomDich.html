@@ -405,8 +405,8 @@ th {
 
 						<a th:href="@{/dba/nhom-dich/xoa/{id}(id=${nhom.id})}"
 							class="action-btn btn-delete"
-							onclick="return confirm('Bạn chắc chắn muốn xóa nhóm này?')">
-								<i class="fa-solid fa-skull"></i>
+							onclick="return xacNhanXoa()">
+								<i class="fa-solid fa-trash"></i>	
 						</a>
 						</td>
 				</tr>
@@ -667,6 +667,20 @@ function locTatCa(element) {
 	displayTable(1);
 
 	document.getElementById("filterList").style.display = "none";
+}
+
+
+function xacNhanXoa() {
+
+	if (confirm("Bạn chắc chắn muốn xóa nhóm này?")) {
+
+		alert("Xóa nhóm thành công!");
+
+		return true;
+
+	}
+
+	return false;
 }
 </script>
 
