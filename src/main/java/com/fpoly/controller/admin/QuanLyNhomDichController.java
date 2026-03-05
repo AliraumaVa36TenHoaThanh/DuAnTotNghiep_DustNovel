@@ -1,6 +1,7 @@
 package com.fpoly.controller.admin;
 
 import java.util.List;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,34 +50,59 @@ public class QuanLyNhomDichController {
      return "layout/admin_base"; // bỏ dấu /
  }
     
- // ================= FORM SỬA =================
-    @GetMapping("/sua/{id}")
-    public String formSua(@PathVariable Long id, Model model) {
+//================= FORM SỬA =================
+	@GetMapping("/sua/{id}")
+	public String formSua(@PathVariable Long id, Model model) {
 
-        NhomDich nhom = nhomDichRepository.findById(id).orElse(null);
+		NhomDich nhom = nhomDichRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy nhóm"));
 
-        model.addAttribute("nhom", nhom);
-        model.addAttribute("content", "/view/admin/nhomDich/SuaNhom");
-        model.addAttribute("title", "Sửa Nhóm Dịch");
+		model.addAttribute("nhom", nhom);
+		model.addAttribute("content", "/view/admin/nhomDich/UpdateNhomDich");
+		model.addAttribute("title", "Sửa Nhóm Dịch");
 
-        return "/layout/admin_base";
-    }
+		return "/layout/admin_base";
+	}
 
-    // ================= UPDATE =================
-    @PostMapping("/sua/{id}")
-    public String capNhat(@PathVariable Long id,
-                          @ModelAttribute NhomDich nhomForm) {
+//================= UPDATE =================
+	@PostMapping("/sua/{id}")
+	public String capNhat(@PathVariable Long id,
+	                      @ModelAttribute("nhom") NhomDich nhomForm,
+	                      Model model) {
 
-        NhomDich nhom = nhomDichRepository.findById(id).orElse(null);
+	    boolean hasError = false;
 
-        if (nhom != null) {
-            nhom.setTenNhom(nhomForm.getTenNhom());
-            nhom.setTrangThai(nhomForm.getTrangThai());
-            nhomDichRepository.save(nhom);
-        }
+	    // validate tên nhóm
+	    if (nhomForm.getTenNhom() == null || nhomForm.getTenNhom().trim().isEmpty()) {
+	        model.addAttribute("errorTenNhom", "Tên nhóm không được để trống");
+	        hasError = true;
+	    }
 
-        return "redirect:/dba/nhom-dich";
-    }
+	    // validate mô tả
+	    if (nhomForm.getMoTa() == null || nhomForm.getMoTa().trim().isEmpty()) {
+	        model.addAttribute("errorMoTa", "Mô tả không được để trống");
+	        hasError = true;
+	    }
+
+	    // nếu có lỗi -> quay lại form sửa
+	    if (hasError) {
+	        model.addAttribute("nhom", nhomForm);
+	        model.addAttribute("content", "/view/admin/nhomDich/UpdateNhomDich");
+	        model.addAttribute("title", "Sửa Nhóm Dịch");
+	        return "/layout/admin_base";
+	    }
+
+	    // tìm nhóm trong database
+	    NhomDich nhom = nhomDichRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Không tìm thấy nhóm"));
+
+	    // cập nhật field cho phép
+	    nhom.setTenNhom(nhomForm.getTenNhom());
+	    nhom.setMoTa(nhomForm.getMoTa());
+
+	    nhomDichRepository.save(nhom);
+
+	    return "redirect:/dba/nhom-dich";
+	}
 
     // =============================
     // XÓA NHÓM
