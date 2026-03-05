@@ -7,7 +7,7 @@
 	     margin-top: 20px;
 	     padding: 12px 28px;
 	     background: linear-gradient(135deg, #ff4da6, #ff9966);
-	     color: white;
+	     color: white !important;
 	     font-weight: 700;
 	     font-size: 16px;
 	     border-radius: 40px;
@@ -27,6 +27,22 @@
 	 .btn-cute:active {
 	     transform: scale(0.96);
 	 }
+	 
+     .container.mt-4 *:not(.btn-cute):not(.btn-cute *) {
+         color: #d63384 !important;
+     }
+
+     .table-pink td {
+         color: #d63384 !important;
+     }
+     
+     .card {
+    background: #ffe6f0;   /* hồng nhạt */
+    border: 1px solid #ffb3d9;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+     
 	 </style>
 
 	<h2 class="mb-4">Danh sách nhóm dịch</h2>

@@ -1,8 +1,10 @@
 package com.fpoly.controller;
 
+import com.fpoly.model.LoiMoiNhomDich;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.model.NhomDich;
 import com.fpoly.model.ThanhVienNhomDich;
+import com.fpoly.repository.LoiMoiNhomDichRepository;
 import com.fpoly.repository.NhomDichRepository;
 import com.fpoly.repository.ThanhVienNhomDichRepository;
 import com.fpoly.security.SecurityUtil;
@@ -32,6 +34,7 @@ public class NhomDichController {
     ThanhVienNhomDichRepository thanhVienRepo;
     private final NhomDichService nhomDichService;
     private final SecurityUtil securityUtil;
+    private final LoiMoiNhomDichRepository loiMoiRepo;
 
 
     @GetMapping("/nhom-dich")
@@ -79,16 +82,16 @@ public class NhomDichController {
             return "redirect:/DustNovel/nhom-dich";
         }
 
-        // 🔥 Nếu đã là thành viên nhóm khác
-        if (thanhVienRepo.existsByNguoiDungAndTrangThai(user, "DA_DUYET")) {
-
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage",
-                    "Bạn đã thuộc 1 nhóm khác!"
-            );
-
-            return "redirect:/DustNovel/nhom-dich";
-        }
+//        // 🔥 Nếu đã là thành viên nhóm khác
+//        if (thanhVienRepo.existsByNguoiDungAndTrangThai(user, "DA_DUYET")) {
+//
+//            redirectAttributes.addFlashAttribute(
+//                    "errorMessage",
+//                    "Bạn đã thuộc 1 nhóm khác!"
+//            );
+//
+//            return "redirect:/DustNovel/nhom-dich";
+//        }
 
         nhomDichService.taoNhom(tenNhom, moTa, user);
         
@@ -146,19 +149,38 @@ public class NhomDichController {
     		RedirectAttributes redirectAttributes) {
 
         NguoiDung user = securityUtil.getCurrentUserFromDB();
-        if (user == null)
+        if (user == null) {
             return "redirect:/DustNovel/login";
+        }
+//        if (nhomDichRepository.existsByTruongNhom(user)
+//                || thanhVienRepo.existsByNguoiDungAndTrangThai(user, "DA_DUYET")) {
+//
+//                redirectAttributes.addFlashAttribute(
+//                        "errorMessage",
+//                        "Bạn đã thuộc 1 nhóm rồi!"
+//                );
+//
+//                return "redirect:/DustNovel/nhom-dich";
+//            }
         
-        if (nhomDichRepository.existsByTruongNhom(user)
-                || thanhVienRepo.existsByNguoiDungAndTrangThai(user, "DA_DUYET")) {
+     //  Kiểm tra nếu đã là thành viên của bất kỳ nhóm nào (đã duyệt)
+        boolean daLaThanhVien =
+                thanhVienRepo.existsByNguoiDungAndTrangThai(user, "DA_DUYET");
 
-                redirectAttributes.addFlashAttribute(
-                        "errorMessage",
-                        "Bạn đã thuộc 1 nhóm rồi!"
-                );
+        // Kiểm tra nếu đang có yêu cầu chờ duyệt ở nhóm khác
+        boolean dangChoDuyet =
+                loiMoiRepo.existsByNguoiDuocMoiAndTrangThai(user, "CHO_DUYET");
 
-                return "redirect:/DustNovel/nhom-dich";
-            }
+        // Nếu đang chờ duyệt hoặc đã tham gia nhóm khác → chặn
+        if (daLaThanhVien || dangChoDuyet) {
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Bạn đang chờ duyệt hoặc đã tham gia vào nhóm khác rồi!"
+            );
+
+            return "redirect:/DustNovel/nhom-dich";
+        }
 
         NhomDich nhom = nhomDichService.findById(id);
         if (nhom == null)
@@ -171,24 +193,42 @@ public class NhomDichController {
     
     @PostMapping("/nhom-dich/duyet/{loiMoiId}")
     public String duyet(@PathVariable Long loiMoiId,
-                        @RequestParam Long nhomId) {
-
-        nhomDichService.duyetYeuCau(loiMoiId);
+                        @RequestParam Long nhomId,
+                        RedirectAttributes redirectAttributes) {
+    	
+        LoiMoiNhomDich loiMoi = loiMoiRepo.findById(loiMoiId).orElse(null);
+        if (loiMoi != null) {
+        	String tenUser = loiMoi.getNguoiMoi().getTenDangNhap();
+            nhomDichService.duyetYeuCau(loiMoiId);
+             redirectAttributes.addFlashAttribute(
+                "successMessage",
+                "Đã duyệt yêu cầu của \"" + tenUser + "\""
+        );
+    }
 
         return "redirect:/DustNovel/nhom-dich/" + nhomId;
     }
     
     @PostMapping("/nhom-dich/tu-choi/{loiMoiId}")
     public String tuChoi(@PathVariable Long loiMoiId,
-                         @RequestParam Long nhomId) {
-
-        nhomDichService.tuChoiYeuCau(loiMoiId);
+                         @RequestParam Long nhomId,
+                         RedirectAttributes redirectAttributes) {
+    	LoiMoiNhomDich loiMoi = loiMoiRepo.findById(loiMoiId).orElse(null);
+    	if (loiMoi != null) {
+            String tenUser = loiMoi.getNguoiMoi().getTenDangNhap();
+            nhomDichService.tuChoiYeuCau(loiMoiId);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Đã từ chối yêu cầu của \"" + tenUser + "\""
+            );
+        }
 
         return "redirect:/DustNovel/nhom-dich/" + nhomId;
     }
     @PostMapping("/nhom-dich/kick/{id}")
     public String kickThanhVien(@PathVariable Long id,
-                                @RequestParam Long nhomId) {
+                                @RequestParam Long nhomId,
+                                RedirectAttributes redirectAttributes) {
 
         ThanhVienNhomDich tv = thanhVienRepo.findById(id).orElse(null);
         if (tv == null) {
@@ -202,9 +242,22 @@ public class NhomDichController {
 
         	return "redirect:/DustNovel/nhom-dich/" + nhomId;
         }
+        
+        String tenUser = tv.getNguoiDung().getTenDangNhap();
 
-        tv.setTrangThai("DA_KICK");
-        thanhVienRepo.save(tv);
+//        tv.setTrangThai("DA_KICK");
+//        thanhVienRepo.save(tv);
+//        
+//        loiMoiRepo.deleteByNguoiDuocMoiAndNhomDich(
+//                tv.getNguoiDung(),
+//                tv.getNhomDich()
+//        );
+        
+        nhomDichService.kickThanhVien(tv);
+        redirectAttributes.addFlashAttribute(
+                "successMessage",
+                "Đã kick \"" + tenUser + "\" ra khỏi nhóm"
+        );
 
         return "redirect:/DustNovel/nhom-dich/" + nhomId;
     }
@@ -234,6 +287,25 @@ public class NhomDichController {
             );
         }
 
+        return "redirect:/DustNovel/nhom-dich";
+    }
+    
+    
+    
+    @PostMapping("/nhom-dich/roi-nhom/{id}")
+    public String roiNhom(@PathVariable("id") Long nhomId,
+                          RedirectAttributes redirectAttributes) {
+
+        // Gọi service xử lý update trạng thái + xóa lời mời
+        nhomDichService.outNhom(nhomId);
+
+        // Thông báo
+        redirectAttributes.addFlashAttribute(
+                "successMessage",
+                "Bạn đã rời nhóm thành công!"
+        );
+
+        // ✅ QUAN TRỌNG: redirect ra danh sách nhóm
         return "redirect:/DustNovel/nhom-dich";
     }
 }

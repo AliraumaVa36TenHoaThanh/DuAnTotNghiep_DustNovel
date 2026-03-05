@@ -50,6 +50,11 @@ public class NhomDichService {
         return thanhVienRepository.findByNhomDich(nhom);
     }
     public void taoNhom(String tenNhom, String moTa, NguoiDung truongNhom) {
+    	
+    	// 🔥 Nếu đã là trưởng nhóm
+        if (nhomDichRepository.existsByTruongNhom(truongNhom)) {
+            throw new RuntimeException("Bạn đã tạo 1 nhóm rồi!");
+        }
 
         NhomDich nhom = new NhomDich();
         nhom.setTenNhom(tenNhom);
@@ -98,30 +103,85 @@ public class NhomDichService {
         return loiMoiRepo.findByNhomDichAndTrangThai(nhom, "CHO_DUYET");
     }
 
+//    public void duyetYeuCau(Long loiMoiId) {
+//
+//        LoiMoiNhomDich loiMoi = loiMoiRepo.findById(loiMoiId).orElse(null);
+//        if (loiMoi == null) return;
+//
+//        // Tạo thành viên mới
+//        ThanhVienNhomDich tv = new ThanhVienNhomDich();
+//        tv.setNhomDich(loiMoi.getNhomDich());
+//        tv.setNguoiDung(loiMoi.getNguoiMoi());
+//        tv.setVaiTro("THANH_VIEN");
+//        tv.setTrangThai("DA_DUYET");
+//
+//        thanhVienRepository.save(tv);
+//
+//        loiMoi.setTrangThai("DA_DUYET");
+//        loiMoiRepo.save(loiMoi);
+//    }
+    
+    @Transactional
     public void duyetYeuCau(Long loiMoiId) {
 
         LoiMoiNhomDich loiMoi = loiMoiRepo.findById(loiMoiId).orElse(null);
         if (loiMoi == null) return;
 
-        // Tạo thành viên mới
-        ThanhVienNhomDich tv = new ThanhVienNhomDich();
-        tv.setNhomDich(loiMoi.getNhomDich());
-        tv.setNguoiDung(loiMoi.getNguoiMoi());
-        tv.setVaiTro("THANH_VIEN");
-        tv.setTrangThai("DA_DUYET");
+        NhomDich nhom = loiMoi.getNhomDich();
+        NguoiDung user = loiMoi.getNguoiMoi();
 
-        thanhVienRepository.save(tv);
+        // 🔥 Kiểm tra đã tồn tại thành viên chưa
+        Optional<ThanhVienNhomDich> tonTai =
+                thanhVienRepository.findByNhomDichAndNguoiDung(nhom, user);
 
+        if (tonTai.isPresent()) {
+
+            // Nếu đã tồn tại (ví dụ từng bị kick) → cập nhật lại
+            ThanhVienNhomDich tv = tonTai.get();
+            tv.setTrangThai("DA_DUYET");
+            tv.setVaiTro("THANH_VIEN");
+
+            thanhVienRepository.save(tv);
+
+        } else {
+
+            // Nếu chưa từng tồn tại → tạo mới
+            ThanhVienNhomDich tv = new ThanhVienNhomDich();
+            tv.setNhomDich(nhom);
+            tv.setNguoiDung(user);
+            tv.setVaiTro("THANH_VIEN");
+            tv.setTrangThai("DA_DUYET");
+
+            thanhVienRepository.save(tv);
+        }
+
+        // Cập nhật trạng thái lời mời
         loiMoi.setTrangThai("DA_DUYET");
         loiMoiRepo.save(loiMoi);
     }
-
+    
+    
+    @Transactional
     public void tuChoiYeuCau(Long loiMoiId) {
         LoiMoiNhomDich loiMoi = loiMoiRepo.findById(loiMoiId).orElse(null);
         if (loiMoi == null) return;
 
         loiMoi.setTrangThai("TU_CHOI");
         loiMoiRepo.save(loiMoi);
+        
+        loiMoiRepo.deleteById(loiMoiId);
+    }
+    
+    @Transactional
+    public void kickThanhVien(ThanhVienNhomDich tv) {
+
+        tv.setTrangThai("DA_KICK");
+        thanhVienRepository.save(tv);
+
+        loiMoiRepo.deleteByNguoiDuocMoiAndNhomDich(
+                tv.getNguoiDung(),
+                tv.getNhomDich()
+        );
     }
     @Transactional
     public void xoaNhom(Long nhomId) {
@@ -147,7 +207,13 @@ public class NhomDichService {
         ThanhVienNhomDich tv = thanhVienRepository
                 .findByNhomDichAndNguoiDung(nhom, user)
                 .orElseThrow();
+ 
+//        thanhVienRepository.delete(tv);
+        
+        tv.setTrangThai("DA_KICK");
+        thanhVienRepository.save(tv);
 
-        thanhVienRepository.delete(tv);
+        loiMoiRepo.deleteByNguoiDuocMoiAndNhomDich(user, nhom);
+
     }
 }
