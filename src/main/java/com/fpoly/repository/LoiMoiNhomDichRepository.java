@@ -30,4 +30,8 @@ public interface LoiMoiNhomDichRepository extends JpaRepository<LoiMoiNhomDich, 
     );
     
     boolean existsByNhomDichAndNguoiMoi(NhomDich nhom, NguoiDung nguoiMoi);
+    
+    boolean existsByNguoiDuocMoiAndTrangThai(NguoiDung user, String trangThai);
+    
+    void deleteByNguoiDuocMoiAndNhomDich(NguoiDung nguoiDung, NhomDich nhomDich);
 }
