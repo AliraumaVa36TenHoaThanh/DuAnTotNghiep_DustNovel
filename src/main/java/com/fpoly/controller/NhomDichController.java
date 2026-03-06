@@ -95,6 +95,21 @@ public class NhomDichController {
 
         nhomDichService.taoNhom(tenNhom, moTa, user);
         
+		NhomDich nhomVuaTao = nhomDichRepository.findByTruongNhom(user).stream().reduce((first, second) -> second)
+				.orElse(null);
+
+		if (nhomVuaTao != null) {
+
+			ThanhVienNhomDich tv = new ThanhVienNhomDich();
+			tv.setNhomDich(nhomVuaTao);
+			tv.setNguoiDung(user);
+			tv.setVaiTro("TRUONG_NHOM");
+			tv.setTrangThai("DA_DUYET");
+
+			thanhVienRepo.save(tv);
+		}
+
+        
         redirectAttributes.addFlashAttribute(
                 "successMessage",
                 "Tạo nhóm thành công!"
@@ -113,12 +128,17 @@ public class NhomDichController {
 
         boolean laTruongNhom = false;
         boolean daGuiYeuCau = false;
+        boolean laThanhVien = false;
 
         if (user != null) {
             laTruongNhom = user.getId()
                     .equals(nhom.getTruongNhom().getId());
 
             daGuiYeuCau = nhomDichService.daGuiYeuCau(nhom, user);
+            
+            laThanhVien = thanhVienRepo
+                    .existsByNhomDichAndNguoiDungAndTrangThai(
+                            nhom, user, "DA_DUYET");
         }
 
         if (laTruongNhom) {
@@ -137,6 +157,7 @@ public class NhomDichController {
         model.addAttribute("nhom", nhom);
         model.addAttribute("laTruongNhom", laTruongNhom);
         model.addAttribute("daGuiYeuCau", daGuiYeuCau);
+        model.addAttribute("laThanhVien", laThanhVien);
 
         model.addAttribute("content", "congcu/index-guild");
         model.addAttribute("title", nhom.getTenNhom());
@@ -165,7 +186,9 @@ public class NhomDichController {
         
      //  Kiểm tra nếu đã là thành viên của bất kỳ nhóm nào (đã duyệt)
         boolean daLaThanhVien =
-                thanhVienRepo.existsByNguoiDungAndTrangThai(user, "DA_DUYET");
+                thanhVienRepo.existsByNguoiDungAndTrangThaiAndVaiTroNot(
+                        user, "DA_DUYET", "TRUONG_NHOM"
+                );
 
         // Kiểm tra nếu đang có yêu cầu chờ duyệt ở nhóm khác
         boolean dangChoDuyet =

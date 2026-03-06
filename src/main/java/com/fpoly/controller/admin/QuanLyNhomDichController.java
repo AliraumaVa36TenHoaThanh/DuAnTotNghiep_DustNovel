@@ -33,22 +33,22 @@ public class QuanLyNhomDichController {
         return "/layout/admin_base";
     }
 
- // =============================
- // CHI TIẾT NHÓM
- // =============================
- @GetMapping("/chi-tiet/{id}")
- public String chiTiet(@PathVariable Long id, Model model) {
-
-     NhomDich nhom = nhomDichRepository.findById(id)
-             .orElseThrow(() -> new RuntimeException("Không tìm thấy nhóm"));
-
-     model.addAttribute("nhom", nhom);
-     model.addAttribute("laTruongNhom", false); // tránh lỗi thymeleaf null boolean
-     model.addAttribute("content", "congcu/index-guild"); // bỏ dấu /
-     model.addAttribute("title", "Chi Tiết Nhóm Dịch");
-
-     return "layout/admin_base"; // bỏ dấu /
- }
+// // =============================
+// // CHI TIẾT NHÓM
+// // =============================
+// @GetMapping("/chi-tiet/{id}")
+// public String chiTiet(@PathVariable Long id, Model model) {
+//
+//     NhomDich nhom = nhomDichRepository.findById(id)
+//             .orElseThrow(() -> new RuntimeException("Không tìm thấy nhóm"));
+//
+//     model.addAttribute("nhom", nhom);
+//     model.addAttribute("laTruongNhom", false); // tránh lỗi thymeleaf null boolean
+//     model.addAttribute("content", "congcu/index-guild"); // bỏ dấu /
+//     model.addAttribute("title", "Chi Tiết Nhóm Dịch");
+//
+//     return "layout/admin_base"; // bỏ dấu /
+// }
     
 //================= FORM SỬA =================
 	@GetMapping("/sua/{id}")
