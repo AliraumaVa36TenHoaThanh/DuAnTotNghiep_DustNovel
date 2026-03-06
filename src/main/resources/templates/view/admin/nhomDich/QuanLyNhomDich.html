@@ -37,6 +37,7 @@ tbody tr:hover {
 	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 	padding: 20px;
 	margin-left: 40px;
+	margin-bottom:-25px;
 }
 
 .page-title {
@@ -313,6 +314,83 @@ th {
 <body>
 
 <div class="main-content">
+	<div class="card card-top">
+
+		<div class="page-title">Nhóm dịch của tôi</div>
+	
+
+		<table>
+			<thead>
+				<tr>
+					<th>Tên nhóm</th>
+					<th>Trưởng nhóm</th>
+					<th>Trạng thái</th>
+					<th>Ngày tạo</th>
+					<th class="text-center">Quản lý</th>
+				</tr>
+			</thead>
+
+			<tbody id="storyTable">
+				<tr th:each="nhom : ${listNhomDich.?[truongNhom.vaiTro.name() == 'ADMIN']}">
+					<td th:text="${nhom.tenNhom}">Tên nhóm</td>
+
+					<td th:text="${nhom.truongNhom.tenDangNhap}">
+						Trưởng nhóm
+					</td>
+
+					<td>
+						<span th:if="${nhom.trangThai == 'HOAT_DONG'}"
+							class="badge badge-hoatdong">
+							Hoạt động
+						</span>
+
+						<span th:if="${nhom.trangThai == 'TAM_KHOA'}"
+							class="badge badge-tamkhoa">
+							Tạm khóa
+						</span>
+					</td>
+
+					<td th:text="${#temporals.format(nhom.ngayTao,'dd/MM/yyyy')}">
+						01/02/2026
+					</td>
+
+					<td class="text-center">
+						<a th:href="@{/DustNovel/nhom-dich/{id}(id=${nhom.id})}"
+							class="action-btn btn-view">
+							<i class="fa-solid fa-eye"></i>
+						</a>
+
+						<a th:href="@{/dba/nhom-dich/suaAdmin/{id}(id=${nhom.id})}"
+							class="action-btn btn-edit">
+							<i class="fa-solid fa-pen"></i>
+						</a>
+
+						<a th:href="@{/dba/nhom-dich/xoa/{id}(id=${nhom.id})}"
+							class="action-btn btn-delete"
+							onclick="return xacNhanXoa()">
+								<i class="fa-solid fa-trash"></i>	
+						</a>
+						</td>
+				</tr>
+
+				<tr th:if="${#lists.isEmpty(listNhomDich.?[truongNhom.vaiTro.name() == 'ADMIN'])}">
+					<td colspan="5" class="empty">
+						Bạn chưa tạo nhóm dịch nào !
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<script th:if="${successMessage}">
+alert("[[${successMessage}]]");
+</script>
+
+
+
+
+
+<div class="main-content">
 	<div class="card">
 
 		<div class="page-title">Quản lý toàn bộ nhóm dịch</div>
@@ -369,7 +447,7 @@ th {
 			</thead>
 
 			<tbody id="storyTable">
-				<tr th:each="nhom : ${listNhomDich}">
+				<tr th:each="nhom : ${listNhomDich.?[truongNhom.vaiTro.name() == 'USER']}">
 					<td th:text="${nhom.tenNhom}">Tên nhóm</td>
 
 					<td th:text="${nhom.truongNhom.tenDangNhap}">
@@ -411,9 +489,9 @@ th {
 						</td>
 				</tr>
 
-				<tr th:if="${#lists.isEmpty(listNhomDich)}">
+				<tr th:if="${#lists.isEmpty(listNhomDich.?[truongNhom.vaiTro.name() == 'USER'])}">
 					<td colspan="5" class="empty">
-						Chưa có nhóm dịch nào
+						Chưa có nhóm dịch nào !
 					</td>
 				</tr>
 			</tbody>
