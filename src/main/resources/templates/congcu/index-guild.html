@@ -542,7 +542,7 @@ button[type="submit"]:active {
 	     th:if="${!laTruongNhom}">
 
 	    <!-- Nếu chưa gửi yêu cầu -->
-	    <form th:if="${!daGuiYeuCau}"
+	    <form th:if="${!laTruongNhom and !laThanhVien and !daGuiYeuCau}"
 	          th:action="@{/DustNovel/nhom-dich/{id}/yeu-cau(id=${nhom.id})}"
 	          method="post">
 
@@ -598,20 +598,28 @@ button[type="submit"]:active {
 
 				            <button class="btn btn-danger btn-sm">
                                 <i class="bi bi-person-x-fill"></i> Kick
-
+                            </button>
 				        </form>
 
 				    </div>
 
 				    <!-- Nếu không phải trưởng nhóm -->
 				    <div th:if="${!laTruongNhom or tv.nguoiDung.id == nhom.truongNhom.id}">
-				        <span th:text="${tv.trangThai == 'DA_DUYET' ? 'Đã duyệt' 
-                                      : (tv.trangThai == 'CHO_DUYET' ? 'Chờ duyệt' 
-                                      : 'Bị từ chối')}">
-                       </span>
-				    </div>
 
-				</td>
+							<!-- nếu là trưởng nhóm -->
+							<span th:if="${tv.vaiTro == 'TRUONG_NHOM'}"> Người quản lý
+							</span>
+
+							<!-- nếu là thành viên -->
+							<span th:if="${tv.vaiTro != 'TRUONG_NHOM'}"
+								th:text="${tv.trangThai == 'DA_DUYET' ? 'Đã duyệt' 
+                        : (tv.trangThai == 'CHO_DUYET' ? 'Chờ duyệt' 
+                        : 'Bị từ chối')}">
+							</span>
+
+						</div>
+
+					</td>
 	        </tr>
 	        </tbody>
 	    </table>

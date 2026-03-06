@@ -11,4 +11,6 @@ public interface NhomDichRepository extends JpaRepository<NhomDich, Long> {
     List<NhomDich> findByTrangThai(String trangThai);
     
     boolean existsByTruongNhom(NguoiDung truongNhom);
+    
+    List<NhomDich> findByTruongNhom(NguoiDung truongNhom);
 }
