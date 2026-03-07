@@ -425,7 +425,7 @@ alert("[[${successMessage}]]");
 			Tất cả
 		</div>
 
-		<div th:each="nhom : ${listNhomDich}"
+		<div th:each="nhom : ${listNhomDich.?[truongNhom.vaiTro.name() == 'USER']}"
 			 class="filter-item"
 			 th:text="${nhom.tenNhom}"
 			 th:attr="data-ten=${nhom.tenNhom}, data-id=${nhom.id}"
