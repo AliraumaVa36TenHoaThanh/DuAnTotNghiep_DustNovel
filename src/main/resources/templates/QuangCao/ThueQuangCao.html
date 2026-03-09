@@ -1,0 +1,400 @@
+<div th:fragment="content">
+	<div class="qc-page">
+
+		<style>
+.qc-page {
+    font-family: 'Poppins', sans-serif;
+    padding: 40px 20px;
+}
+
+/* container */
+.qc-page .container {
+    max-width: 800px;
+    margin: auto;
+}
+
+/* LIGHT MODE */
+.qc-page .header{
+    text-align:center;
+    color:#2c3e50;
+    margin-bottom:40px;
+}
+
+/* DARK MODE */
+[data-theme="dark"] .qc-page .header{
+    color:#ffffff;
+}
+
+.qc-page .header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.qc-page .header p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* card */
+.qc-page .card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    color: #222;
+}
+
+/* DARK MODE CARD */
+[data-theme="dark"] .qc-page .card{
+    background:#1f1f1f;
+    color:#f1f1f1;
+}
+
+/* form group */
+.qc-page .form-group {
+    margin-bottom: 25px;
+}
+
+.qc-page .form-group:last-of-type {
+    margin-bottom: 30px;
+}
+
+/* label */
+.qc-page label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 0.95rem;
+}
+
+/* DARK MODE LABEL */
+[data-theme="dark"] .qc-page label{
+    color:#f1f1f1;
+}
+
+/* icon */
+.qc-page .form-group i {
+    margin-right: 8px;
+    color: #667eea;
+}
+
+/* input select */
+.qc-page input,
+.qc-page select {
+    width: 100%;
+    padding: 13px 20px 13px 16px;
+    border: 2px solid #e8eef7;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg,#f8f9ff 0%,#f5f8ff 100%);
+    color: #2c3e50;
+}
+
+/* DARK MODE INPUT */
+[data-theme="dark"] .qc-page input,
+[data-theme="dark"] .qc-page select{
+    background:#2b2b2b;
+    color:#f1f1f1;
+    border:2px solid #444;
+}
+
+/* select arrow */
+.qc-page select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23667eea' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+}
+
+.qc-page select::-ms-expand {
+    display: none;
+}
+
+/* hover focus */
+.qc-page input:focus,
+.qc-page select:focus,
+.qc-page input:hover,
+.qc-page select:hover {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* button */
+.qc-page button {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    background: #3c5064;
+}
+
+.qc-page button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* preview */
+.qc-page .banner-preview {
+    margin-top: 30px;
+    padding: 0;
+    background: #f8f9ff;
+    border-radius: 15px;
+    border: 2px dashed #667eea;
+    text-align: center;
+    min-height: 240px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+/* DARK MODE PREVIEW */
+[data-theme="dark"] .qc-page .banner-preview{
+    background:#2a2a2a;
+    border:2px dashed #777;
+}
+
+.qc-page .banner-preview.show {
+    display: flex;
+}
+
+.qc-page .banner-preview img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 10px;
+    margin: 20px;
+    object-fit: cover;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* info box */
+.qc-page .info-box {
+    background: linear-gradient(
+        135deg,
+        rgba(102,126,234,0.1) 0%,
+        rgba(118,75,162,0.05) 100%
+    );
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    font-size: 1rem;
+    color: #2c3e50;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(102,126,234,0.15);
+}
+
+/* DARK MODE INFO */
+[data-theme="dark"] .qc-page .info-box{
+    background: rgba(255,255,255,0.05);
+    color:#e5e5e5;
+}
+
+.qc-page .info-box i {
+    margin-right: 10px;
+    color: #667eea;
+    font-size: 1.2rem;
+}
+
+/* file input */
+.qc-page .custom-file {
+    position: relative;
+    width: 100%;
+    height: 45px;
+}
+
+.qc-page .custom-file input[type=file] {
+    opacity: 0;
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+}
+
+.qc-page .custom-file .file-label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #e8eef7;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    color: #737373;
+    background: linear-gradient(135deg,#f8f9ff 0%,#f5f8ff 100%);
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* DARK MODE FILE */
+[data-theme="dark"] .qc-page .file-label{
+    background:#2b2b2b;
+    color:#ddd;
+    border:2px solid #444;
+}
+
+/* responsive */
+@media (max-width:600px){
+
+    .qc-page .header h1{
+        font-size:1.8rem;
+    }
+
+    .qc-page .card{
+        padding:25px;
+    }
+
+    .qc-page .header{
+        margin-bottom:25px;
+    }
+
+}
+
+/* ===== DARK MODE DATE ICON ===== */
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator{
+    filter: invert(1);
+    cursor:pointer;
+}
+
+
+</style>
+
+
+		<div class="wrapper">
+			<div class="container">
+
+				<div class="header">
+					<h1>
+						<i class="bi bi-megaphone"></i> Thuê Vị Trí Quảng Cáo
+					</h1>
+					<p>Thuê vị trí banner trên nền tảng để quảng bá truyện của bạn
+						đến nhiều độc giả hơn</p>
+				</div>
+
+				<div class="card">
+
+					<div class="info-box">
+						<i class="bi bi-lightbulb"></i> Bạn có thể thuê các vị trí quảng
+						cáo trên website để hiển thị banner truyện của mình. Các vị trí
+						nổi bật như <b>TOP, SIDEBAR hoặc HOME</b> giúp tăng lượt xem và
+						tiếp cận độc giả nhanh hơn.
+					</div>
+
+					<form id="bannerForm">
+						<div class="form-group">
+							<label><i class="bi bi-book"></i> Chọn truyện</label> <select
+								required name="truyenId">
+
+								<!-- Option mặc định -->
+								<option value="" selected disabled>Chọn truyện</option>
+
+								<!-- Danh sách truyện -->
+								<option th:each="truyen : ${listTruyen}" 
+								        th:value="${truyen.id}"
+									    th:text="${truyen.tenTruyen}"></option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label><i class="bi bi-geo-alt"></i> Chọn vị trí quảng
+								cáo</label> <select required>
+								<option value="" selected disabled>Chọn vị trí</option>
+								<option value="TOP">TOP - Banner đầu trang</option>
+								<option value="SIDEBAR">SIDEBAR - Banner cột bên</option>
+								<option value="HOME">HOME - Banner trang chủ</option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label><i class="bi bi-calendar-event"></i> Ngày bắt đầu
+								quảng cáo</label> <input type="date" id="startDate" required>
+						</div>
+
+						<div class="form-group">
+							<label><i class="bi bi-calendar-x"></i> Ngày kết thúc
+								quảng cáo</label> <input type="date" id="endDate" required>
+						</div>
+
+						<div class="form-group">
+							<label><i class="bi bi-image"></i> Ảnh banner quảng cáo</label>
+							<div class="custom-file">
+								<input type="file" accept="image/*" id="bannerImg"> <span
+									class="file-label">Chọn ảnh banner...</span>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label><i class="bi bi-coin"></i> Token mỗi ngày</label> <input
+								type="number" placeholder="VD: 1000 token / ngày" min="1000">
+						</div>
+
+						<button type="submit">
+							<i class="bi bi-megaphone"></i> Đặt Thuê Quảng Cáo
+						</button>
+
+					</form>
+
+					<div class="banner-preview" id="preview">
+						<img id="previewImg" src="" alt="Banner preview">
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	const previewContainer = document.getElementById('preview');
+	const previewImg = document.getElementById('previewImg');
+	previewContainer.classList.remove('show');
+	previewImg.src = '';
+
+	const fileInput = document.getElementById('bannerImg');
+	const fileLabel = document.querySelector('.custom-file .file-label');
+
+	fileInput.addEventListener('change', function(e) {
+		const file = e.target.files[0];
+		if (file) {
+			const reader = new FileReader();
+			reader.onload = function(event) {
+				previewImg.src = event.target.result;
+				previewContainer.classList.add('show');
+			};
+			reader.readAsDataURL(file);
+			fileLabel.textContent = file.name;
+		} else {
+			fileLabel.textContent = 'Chọn tệp...';
+			previewImg.src = '';
+			previewContainer.classList.remove('show');
+		}
+	});
+
+	document.getElementById('bannerForm').addEventListener(
+			'submit',
+			function(e) {
+				e.preventDefault();
+				const startDate = new Date(
+						document.getElementById('startDate').value);
+				const endDate = new Date(
+						document.getElementById('endDate').value);
+				if (startDate >= endDate) {
+					alert('Ngày kết thúc phải sau ngày bắt đầu!');
+					return;
+				}
+				alert('Bạn đã đặt quảng cáo thành công!');
+			});
+</script>
