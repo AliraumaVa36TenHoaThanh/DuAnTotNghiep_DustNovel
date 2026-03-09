@@ -71,5 +71,17 @@ public class QuangCaoController {
 		model.addAttribute("content", "/QuangCao/ThueQuangCao");
 		return "/layout/main";
 	}
+	
+	@GetMapping("LichSu/QuangCao")
+	public String LichSuQuangCao(Authentication authentication, Model model) {
+		model.addAttribute("content", "/QuangCao/LichSuQuangCao");
+		return "/layout/main";
+	}
+	
+	@GetMapping("LichSu/ThueQuangCao")
+	public String LichSuThueQuangCao(Authentication authentication, Model model) {
+		model.addAttribute("content", "/QuangCao/LichSuThueQuangCao");
+		return "/layout/main";
+	}
 
 }

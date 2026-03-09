@@ -410,29 +410,50 @@
 							</li>
 						</ul>
 					</li>
-					
-					<li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                       📢 Quảng cáo
-                    </a>
 
-                    <ul class="dropdown-menu shadow-sm">
-                    <li>
-                     <a class="dropdown-item" th:href="@{/quang-cao/}">
-                       <i class="bi bi-bookmark-star me-2"></i>
-                         Quảng cáo truyện của bạn
-                    </a>
-                   </li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#"
+						data-bs-toggle="dropdown"> 📢 Quảng cáo </a>
 
-                    <li>
-                     <a class="dropdown-item" th:href="@{/quang-cao/thueQuangCao}">
-                       <i class="bi bi-rocket-takeoff me-2"></i>
-                        Thuê quảng cáo
-                    </a>
-                   </li>
-                  </ul>
-               </li>
-					
+						<ul class="dropdown-menu shadow-sm">
+
+							<!-- Nhóm Quảng cáo -->
+							<li>
+								<h6 class="dropdown-header">Quảng cáo</h6>
+							</li>
+
+							<li><a class="dropdown-item" th:href="@{/quang-cao/}"> <i
+									class="bi bi-megaphone me-2"></i> Quảng cáo truyện
+							</a>
+						</li>
+
+							<li><a class="dropdown-item"
+								th:href="@{/quang-cao/thueQuangCao}"> <i
+									class="bi bi-rocket-takeoff me-2"></i> Thuê quảng cáo truyện
+							</a>
+						</li>
+
+							<li><hr class="dropdown-divider"></li>
+
+							<!-- Nhóm Lịch sử -->
+							<li>
+								<h6 class="dropdown-header">Lịch sử</h6>
+							</li>
+
+							<li><a class="dropdown-item"
+								th:href="@{/quang-cao/LichSu/QuangCao}"> <i
+									class="bi bi-clock-history me-2"></i> Quảng cáo truyện
+							</a>
+						</li>
+
+							<li><a class="dropdown-item"
+								th:href="@{/quang-cao/LichSu/ThueQuangCao}"> <i
+									class="bi bi-journal-text me-2"></i>Thuê quảng cáo truyện
+							</a>
+						 </li>
+						</ul>
+					</li>
+
 					<li class="nav-item"><a class="nav-link" th:href="@{/DustNovel/nap-tien-tu-dong}">⚡ Nạp tự động</a>
 					</li>
 					<li class="nav-item"><a class="nav-link" th:href="@{/DustNovel/truyen/tim-kiem-nang-cao}">🔎 Tìm
