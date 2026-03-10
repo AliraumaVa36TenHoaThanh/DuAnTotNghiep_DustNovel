@@ -99,7 +99,27 @@
     <option value="'Spectral', serif">Spectral (Cổ phong)</option>
     <option value="'Noto Serif', serif">Noto Serif (Đọc lâu)</option>
         </select>
+		
+		<label class="small text-muted">Ngôn ngữ</label>
 
+<div class="position-relative mb-2">
+
+<select id="langSelect" class="form-select form-select-sm fw-bold">
+    <option value="vi">🇻🇳 Tiếng Việt</option>
+    <option value="en">🇬🇧 English</option>
+    <option value="ja">🇯🇵 日本語</option>
+    <option value="zh">🇨🇳 中文</option>
+</select>
+
+<div id="translateSpinner"
+     class="spinner-border spinner-border-sm text-primary position-absolute"
+     style="right:10px; top:8px; display:none;"
+     role="status">
+</div>
+
+</div>
+		
+		
         <label class="small text-muted">Cỡ chữ</label>
         <input type="range" id="fontSize" class="form-range" min="14" max="50">
 
@@ -364,6 +384,53 @@
                 }
             }
         }
+        
+        const langSelect = document.getElementById('langSelect');
+        const readerContent = document.getElementById('reader-content');
+        const translateSpinner = document.getElementById('translateSpinner');
+        const originalContent = readerContent.innerHTML; // Lưu lại bản gốc tiếng Việt
+
+        langSelect.addEventListener('change', function() {
+            const lang = this.value;
+
+            // Nếu chọn về tiếng Việt thì lấy luôn bản gốc, khỏi gọi API
+            if(lang === 'vi') {
+                readerContent.innerHTML = originalContent;
+                return;
+            }
+
+            // Bật hiệu ứng xoay tròn chờ dịch
+            translateSpinner.classList.remove('d-none');
+            readerContent.style.opacity = '0.5';
+
+            const chuongId = document.getElementById("chuongIdCurrent").value;
+            const csrfTokenNode = document.querySelector('input[name="_csrf"]');
+            const csrfToken = csrfTokenNode ? csrfTokenNode.value : '';
+
+            fetch('/DustNovel/api/dich/chuong', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    chuongId: chuongId,
+                    lang: lang
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                readerContent.innerHTML = data; // Đắp chữ mới vào
+            })
+            .catch(err => {
+                alert("Lỗi khi gọi bản dịch!");
+                console.error(err);
+            })
+            .finally(() => {
+                translateSpinner.classList.add('d-none');
+                readerContent.style.opacity = '1';
+            });
+        });
         
     });
     
