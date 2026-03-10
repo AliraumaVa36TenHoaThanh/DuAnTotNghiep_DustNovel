@@ -120,6 +120,27 @@
 </div>
 		
 		
+		<!-- ============================= -->
+<!-- 🔊 TÍNH NĂNG AI ĐỌC TRUYỆN -->
+<!-- ============================= -->
+
+<label class="small text-muted mt-2">Giọng đọc</label>
+
+<select id="voiceSelect" class="form-select form-select-sm mb-2">
+    <option value="">Mặc định</option>
+</select>
+
+<label class="small text-muted">Tốc độ đọc</label>
+<input type="range" id="voiceSpeed" class="form-range" min="0.5" max="2" step="0.1" value="1">
+
+<div class="d-grid gap-1 mt-2">
+    <button id="readBtn" class="btn btn-sm btn-success">▶ Đọc chương</button>
+    <button id="stopBtn" class="btn btn-sm btn-danger">⏹ Dừng</button>
+</div>
+		
+		
+		
+		
         <label class="small text-muted">Cỡ chữ</label>
         <input type="range" id="fontSize" class="form-range" min="14" max="50">
 
@@ -431,6 +452,65 @@
                 readerContent.style.opacity = '1';
             });
         });
+        
+        
+     // ==========================================
+     // 🔊 LOGIC AI ĐỌC TRUYỆN (TEXT TO SPEECH)
+     // ==========================================
+
+     // COMMENT: Thêm biến điều khiển giọng đọc
+     const readBtn = document.getElementById("readBtn");
+     const stopBtn = document.getElementById("stopBtn");
+     const voiceSelect = document.getElementById("voiceSelect");
+     const voiceSpeed = document.getElementById("voiceSpeed");
+
+     let voices = [];
+
+     // COMMENT: Lấy danh sách giọng đọc từ trình duyệt
+     function loadVoices() {
+         voices = speechSynthesis.getVoices();
+
+         voiceSelect.innerHTML = "";
+
+         voices.forEach((voice, index) => {
+             const option = document.createElement("option");
+
+             option.value = index;
+             option.textContent = voice.name + " (" + voice.lang + ")";
+
+             voiceSelect.appendChild(option);
+         });
+     }
+
+     speechSynthesis.onvoiceschanged = loadVoices;
+
+     // COMMENT: Bấm nút đọc chương
+     readBtn.addEventListener("click", function() {
+
+         const text = readerContent.innerText;
+
+         if (!text) return;
+
+         const speech = new SpeechSynthesisUtterance(text);
+
+         // COMMENT: chọn giọng
+         const selectedVoice = voices[voiceSelect.value];
+         if (selectedVoice) {
+             speech.voice = selectedVoice;
+         }
+
+         // COMMENT: tốc độ đọc
+         speech.rate = voiceSpeed.value;
+
+         speech.lang = "vi-VN";
+
+         speechSynthesis.speak(speech);
+     });
+
+     // COMMENT: Dừng đọc
+     stopBtn.addEventListener("click", function() {
+         speechSynthesis.cancel();
+     });
         
     });
     
