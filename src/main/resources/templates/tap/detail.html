@@ -111,6 +111,25 @@
                 </li>
             </th:block>
         </ul>
+        
+        <script type="text/javascript">
+
+     function showAllChapters(tapId) {
+
+         const hiddenChapters = document.querySelectorAll('.extra-chuong-' + tapId);
+
+         hiddenChapters.forEach(function(item){
+             item.classList.remove('d-none');
+         });
+         
+         const btn = document.getElementById('btn-show-more-' + tapId);
+         if(btn){
+             btn.style.display = 'none';
+         }
+     }
+        
+        </script>
+        
     </div>
-</div>
+
 

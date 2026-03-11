@@ -1,0 +1,188 @@
+<div th:fragment="content">
+	<div class="qc-page">
+
+		<style>
+.qc-page {
+	font-family: 'Poppins', sans-serif;
+	padding: 40px 20px;
+}
+
+/* container full width */
+.qc-page .container {
+	max-width: 100%;
+	margin: auto;
+}
+
+/* HEADER */
+.qc-page .header {
+	text-align: center;
+	color: #2c3e50;
+	margin-bottom: 40px;
+}
+
+[data-theme="dark"] .qc-page .header {
+	color: #ffffff;
+}
+
+.qc-page .header h1 {
+	font-size: 2.5rem;
+	font-weight: 800;
+	margin-bottom: 10px;
+}
+
+.qc-page .header p {
+	font-size: 1.1rem;
+	opacity: 0.9;
+}
+
+/* TABLE */
+.qc-page table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+/* header line */
+.qc-page thead {
+	border-bottom: 2px solid #667eea;
+}
+
+.qc-page th {
+	padding: 16px;
+	text-align: left;
+	font-weight: 700;
+	font-size: 14px;
+	color: #2c3e50;
+}
+
+/* dark mode */
+[data-theme="dark"] .qc-page th {
+	color: #f1f1f1;
+}
+
+/* rows */
+.qc-page tbody tr {
+	border-bottom: 1px solid #e5e7eb;
+	transition: all .2s ease;
+}
+
+.qc-page tbody tr:hover {
+	background: #f8fafc;
+}
+
+[data-theme="dark"] .qc-page tbody tr:hover {
+	background: #2a2a2a;
+}
+
+/* cell */
+.qc-page td {
+	padding: 16px;
+	font-size: 14px;
+	color: #475569;
+}
+
+[data-theme="dark"] .qc-page td {
+	color: #d1d1d1;
+}
+
+/* status */
+.qc-page .status-badge {
+	font-weight: 600;
+	font-size: 13px;
+}
+
+.qc-page .status-active {
+	color: #10b981;
+}
+
+.qc-page .status-expired {
+	color: #ef4444;
+}
+
+/* responsive */
+@media ( max-width :768px) {
+	.qc-page .header h1 {
+		font-size: 1.8rem;
+	}
+	.qc-page th, .qc-page td {
+		padding: 12px;
+		font-size: 13px;
+	}
+}
+</style>
+
+		<div class="container">
+
+			<div class="header">
+				<h1>
+					<i class="bi bi-clock-history"></i> Lịch Sử Quảng Cáo Truyện
+				</h1>
+
+				<p>Xem các quảng cáo đã tạo và trạng thái của chúng</p>
+			</div>
+
+			<table>
+
+    <thead>
+
+        <tr>
+            <th><i class="bi bi-book"></i> Truyện</th>
+            <th><i class="bi bi-geo-alt"></i> Vị Trí</th>
+            <th><i class="bi bi-calendar-event"></i> Ngày Bắt Đầu</th>
+            <th><i class="bi bi-calendar-x"></i> Ngày Kết Thúc</th>
+            <th><i class="bi bi-coin"></i> Token/Ngày</th>
+            <th><i class="bi bi-toggle2-on"></i> Trạng Thái</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        <tr th:each="banner : ${listBanner}">
+
+            <!-- Truyện -->
+            <td>
+                <a th:href="@{/DustNovel/truyen/{id}(id=${banner.truyenId})}">
+                    <span th:text="${banner.truyenId}"></span>
+                </a>
+            </td>
+
+            <!-- Vị trí -->
+            <td th:text="${banner.viTri}"></td>
+
+            <!-- Ngày bắt đầu -->
+            <td th:text="${banner.ngayBatDau}"></td>
+
+            <!-- Ngày kết thúc -->
+            <td th:text="${banner.ngayKetThuc}"></td>
+
+            <!-- Token -->
+            <td th:text="${banner.tokenMoiNgay + ' token'}"></td>
+
+            <!-- Trạng thái -->
+            <td>
+
+                <span th:if="${banner.trangThai == 'HOAT_DONG'}"
+                      class="status-badge status-active">
+                      Đang chạy
+                </span>
+
+                <span th:if="${banner.trangThai == 'HET_HAN'}"
+                      class="status-badge status-expired">
+                      Hết hạn
+                </span>
+
+            </td>
+
+        </tr>
+
+    </tbody>
+
+</table>
+
+		</div>
+	</div>
+</div>
+
+<script>
+
+</script>
