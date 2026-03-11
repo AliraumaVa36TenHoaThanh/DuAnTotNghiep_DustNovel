@@ -31,7 +31,6 @@ public class BinhLuanService {
         this.nguoiDungRepo = nguoiDungRepo;
     }
 
-    // ================= LẤY COMMENT =================	
     public List<BinhLuan> getByTruyen(Long truyenId) {
         return binhLuanRepo.findByTruyenIdOrderByNgayBinhLuanDesc(truyenId);
     }
@@ -39,7 +38,6 @@ public class BinhLuanService {
     public List<BinhLuan> getByChuong(Long chuongId) {
         return binhLuanRepo.findParentCommentsWithChildren(chuongId);
     }
-    // ================= THÊM =================
     public void save(Long truyenId, Long userId, String noiDung) {
 
         Truyen truyen = truyenRepo.findById(truyenId).orElseThrow(() -> new RuntimeException("Không tìm thấy truyện"));
@@ -66,11 +64,10 @@ BinhLuan bl = new BinhLuan();
 bl.setNoiDung(noiDung);
 bl.setNguoiDung(user);
 bl.setChuong(chuong);
-bl.setTruyen(null); // BẮT BUỘC
+bl.setTruyen(null); 
 
 binhLuanRepo.save(bl);
 }
-    // ================= REPLY =================
     public void replyForChuong(Long chuongId,
             Long userId,
             Long parentId,
@@ -113,9 +110,7 @@ binhLuanRepo.save(bl);
         binhLuanRepo.save(reply);
     }
 
-    
-    
-    // Chỉ Admin hoặc Chủ comment được sửa
+   
    
     public void update(Long commentId,String noiDung,Long currentUserId,boolean isAdmin) {
 
@@ -123,15 +118,12 @@ binhLuanRepo.save(bl);
 
     		Long ownerId = bl.getNguoiDung().getId();
 
-// Nếu là chủ comment
     		if (ownerId.equals(currentUserId)) {bl.setNoiDung(noiDung);binhLuanRepo.save(bl);
     		return; }
 
-// Nếu là admin
     		if (isAdmin) {bl.setNoiDung(noiDung);binhLuanRepo.save(bl);
     		return;}
 
-// Nếu là chủ truyện thì cấm sửa
     		if (bl.getTruyen() != null &&
     				bl.getTruyen().getNguoiDang().getId().equals(currentUserId)) {
 
@@ -163,7 +155,6 @@ binhLuanRepo.save(bl);
 
         BinhLuan reply = binhLuanRepo.findById(replyId).orElseThrow(() -> new RuntimeException("Reply not found"));
 
-        // chỉ chủ reply mới được sửa
         if (!reply.getNguoiDung().getId().equals(userId)) {
             throw new RuntimeException("Không có quyền sửa");
         }
@@ -172,9 +163,6 @@ binhLuanRepo.save(bl);
         binhLuanRepo.save(reply);
     }
     
-    
-
-    // Chủ comment, Admin, hoặc Người đăng truyện dc xóa
     public void delete(Long commentId,Long currentUserId, boolean isAdmin) {
 
     		BinhLuan bl = binhLuanRepo.findById(commentId).orElseThrow(() -> new RuntimeException("Không tìm thấy bình luận"));

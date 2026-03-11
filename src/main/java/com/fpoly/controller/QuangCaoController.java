@@ -47,7 +47,7 @@ public class QuangCaoController {
         model.addAttribute("listTruyen", listTruyen);
         
         // Xác định file giao diện sẽ load vào layout chính
-		model.addAttribute("content", "/QuangCao/QuangCao");
+		model.addAttribute("content", "quangcao/QuangCao");
 		
 		 // Trả về layout chính
         return "/layout/main";
@@ -68,7 +68,7 @@ public class QuangCaoController {
 		List<Truyen> listTruyen = truyenRepository.findByNguoiDang_Id(user.getId());
 
 		model.addAttribute("listTruyen", listTruyen);
-		model.addAttribute("content", "/QuangCao/ThueQuangCao");
+		model.addAttribute("content", "quangcao/ThueQuangCao");
 		return "/layout/main";
 	}
 	
