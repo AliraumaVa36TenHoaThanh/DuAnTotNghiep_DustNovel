@@ -293,7 +293,7 @@ input[type="number"]::-webkit-outer-spin-button {
 						để tăng lượt đọc truyện của bạn!
 					</div>
 
-					<form id="bannerForm">
+					<form id="bannerForm" th:action="@{/quang-cao/TaoQuangCao}" method="post" enctype="multipart/form-data">
 						<div class="form-group">
 							<label><i class="bi bi-book"></i> Chọn truyện</label> <select
 								required name="truyenId">
@@ -310,35 +310,38 @@ input[type="number"]::-webkit-outer-spin-button {
 
 						<div class="form-group">
 							<label><i class="bi bi-geo-alt"></i> Vị trí banner</label> <select
-								required>
+								required name="viTri">
 								<option value="" selected disabled>Chọn vị trí</option>
 								<option value="TOP">Top trang (Vị trí hàng đầu)</option>
 								<option value="SIDEBAR">Sidebar (Cột bên)</option>
 								<option value="HOME">Trang chủ (Trang đầu tiên)</option>
+								<option value="TRUYEN">Trong truyện (Dưới tiêu đề chương)</option>
 							</select>
 						</div>
 
 						<div class="form-group">
 							<label><i class="bi bi-calendar-event"></i> Ngày bắt đầu</label>
-							<input type="date" id="startDate" required>
+							<input type="date" id="startDate" name="startDate" required>
 						</div>
 
 						<div class="form-group">
 							<label><i class="bi bi-calendar-x"></i> Ngày kết thúc</label> <input
-								type="date" id="endDate" required>
+								type="date" id="endDate" name="endDate" required>
 						</div>
 
 						<div class="form-group">
 							<label><i class="bi bi-image"></i> Ảnh banner</label>
+
 							<div class="custom-file">
-								<input type="file" accept="image/*" id="bannerImg"> <span
+								<input type="file" name="file" accept="image/*" id="bannerImg"> <span
 									class="file-label">Chọn tệp...</span>
 							</div>
+
 						</div>
 
 						<div class="form-group">
 							<label><i class="bi bi-coin"></i> Token mỗi ngày</label> <input
-								type="number" placeholder="VD: 1000 token / ngày" min="1000">
+								type="number" name="tokenMoiNgay" placeholder="VD: 1000 token / ngày" min="1000" required>
 						</div>
 
 						<button type="submit">
@@ -356,44 +359,55 @@ input[type="number"]::-webkit-outer-spin-button {
 </div>
 
 <script>
-	// preview chỉ xuất hiện khi có ảnh
+document.addEventListener("DOMContentLoaded", function(){
+
 	const previewContainer = document.getElementById('preview');
 	const previewImg = document.getElementById('previewImg');
+	const fileInput = document.getElementById('bannerImg');
+	const fileLabel = document.querySelector('.custom-file .file-label');
+	const form = document.getElementById('bannerForm');
+
 	previewContainer.classList.remove('show');
 	previewImg.src = '';
 
-	const fileInput = document.getElementById('bannerImg');
-	const fileLabel = document.querySelector('.custom-file .file-label');
+	fileInput.addEventListener('change', function(e){
 
-	fileInput.addEventListener('change', function(e) {
-		const file = e.target.files[0];
-		if (file) {
-			const reader = new FileReader();
-			reader.onload = function(event) {
-				previewImg.src = event.target.result;
-				previewContainer.classList.add('show');
-			};
-			reader.readAsDataURL(file);
-			fileLabel.textContent = file.name;
-		} else {
-			fileLabel.textContent = 'Chọn tệp...';
-			previewImg.src = '';
-			previewContainer.classList.remove('show');
-		}
+	    const file = e.target.files[0];
+
+	    if(file){
+
+	        const reader = new FileReader();
+
+	        reader.onload = function(event){
+	            previewImg.src = event.target.result;
+	            previewContainer.classList.add('show');
+	        };
+
+	        reader.readAsDataURL(file);
+	        fileLabel.textContent = file.name;
+
+	    }else{
+
+	        fileLabel.textContent = 'Chọn tệp...';
+	        previewImg.src = '';
+	        previewContainer.classList.remove('show');
+
+	    }
+
 	});
 
-	document.getElementById('bannerForm').addEventListener(
-			'submit',
-			function(e) {
-				e.preventDefault();
-				const startDate = new Date(
-						document.getElementById('startDate').value);
-				const endDate = new Date(
-						document.getElementById('endDate').value);
-				if (startDate >= endDate) {
-					alert('Ngày kết thúc phải sau ngày bắt đầu!');
-					return;
-				}
-				alert('Banner đã được tạo thành công!');
-			});
+	form.addEventListener('submit', function(e){
+
+	    const startDate = new Date(document.getElementById('startDate').value);
+	    const endDate = new Date(document.getElementById('endDate').value);
+
+	    if(startDate >= endDate){
+	        e.preventDefault();
+	        alert('Ngày kết thúc phải sau ngày bắt đầu!');
+	        return;
+	    }
+
+	});
+
+	});
 </script>

@@ -122,22 +122,62 @@
 
 			<table>
 
-				<thead>
+    <thead>
 
-					<tr>
-						<th><i class="bi bi-book"></i> Truyện</th>
-						<th><i class="bi bi-geo-alt"></i> Vị Trí</th>
-						<th><i class="bi bi-calendar-event"></i> Ngày Bắt Đầu</th>
-						<th><i class="bi bi-calendar-x"></i> Ngày Kết Thúc</th>
-						<th><i class="bi bi-coin"></i> Token/Ngày</th>
-						<th><i class="bi bi-toggle2-on"></i> Trạng Thái</th>
-					</tr>
+        <tr>
+            <th><i class="bi bi-book"></i> Truyện</th>
+            <th><i class="bi bi-geo-alt"></i> Vị Trí</th>
+            <th><i class="bi bi-calendar-event"></i> Ngày Bắt Đầu</th>
+            <th><i class="bi bi-calendar-x"></i> Ngày Kết Thúc</th>
+            <th><i class="bi bi-coin"></i> Token/Ngày</th>
+            <th><i class="bi bi-toggle2-on"></i> Trạng Thái</th>
+        </tr>
 
-				</thead>
+    </thead>
 
-				<tbody id="historyTable"></tbody>
+    <tbody>
 
-			</table>
+        <tr th:each="banner : ${listBanner}">
+
+            <!-- Truyện -->
+            <td>
+                <a th:href="@{/DustNovel/truyen/{id}(id=${banner.truyenId})}">
+                    <span th:text="${banner.truyenId}"></span>
+                </a>
+            </td>
+
+            <!-- Vị trí -->
+            <td th:text="${banner.viTri}"></td>
+
+            <!-- Ngày bắt đầu -->
+            <td th:text="${banner.ngayBatDau}"></td>
+
+            <!-- Ngày kết thúc -->
+            <td th:text="${banner.ngayKetThuc}"></td>
+
+            <!-- Token -->
+            <td th:text="${banner.tokenMoiNgay + ' token'}"></td>
+
+            <!-- Trạng thái -->
+            <td>
+
+                <span th:if="${banner.trangThai == 'HOAT_DONG'}"
+                      class="status-badge status-active">
+                      Đang chạy
+                </span>
+
+                <span th:if="${banner.trangThai == 'HET_HAN'}"
+                      class="status-badge status-expired">
+                      Hết hạn
+                </span>
+
+            </td>
+
+        </tr>
+
+    </tbody>
+
+</table>
 
 		</div>
 	</div>

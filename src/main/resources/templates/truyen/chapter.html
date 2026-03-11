@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="layout/main :: content">
 <div th:fragment="content">
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <style>
         /* Navigation layout */
@@ -73,6 +75,100 @@
         }
 
         .hidden { display: none !important; }
+        
+        .banner-quang-cao{
+            transition:0.25s;
+         }
+
+.banner-slider{
+    position:relative;
+    width:60%;
+    margin:30px auto;
+    height:150px;
+    overflow:hidden;
+}
+
+.banner-item{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    opacity:0;
+    transition:opacity 0.6s ease;
+    pointer-events:none;   
+}
+
+.banner-item.active{
+    opacity:1;
+    pointer-events:auto;  
+}
+
+/* ảnh */
+.banner-item img{
+    width:100%;
+    height:150px;
+    object-fit:cover;
+    border-radius:8px;
+}
+
+/* banner đang hiển thị */
+.banner-item.active{
+    opacity:1;
+}
+
+/* hiệu ứng ánh sáng trắng */
+.banner-item::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:50%;
+    height:100%;
+    background:linear-gradient(
+        120deg,
+        rgba(255,255,255,0) 40%,
+        rgba(255,255,255,0.7) 50%,
+        rgba(255,255,255,0) 100%
+    );
+    transform:skewX(-20deg);
+}
+
+/* khi banner active thì chạy ánh sáng */
+.banner-item.active::after{
+    animation:shine 1.2s ease;
+}
+
+/* animation ánh sáng */
+@keyframes shine{
+    0%{ left:-100%; }
+    100%{ left:150%; }
+}
+
+.banner-close{
+    position:absolute;
+    top:6px;
+    right:135px;
+    width:28px;
+    height:28px;
+    color:white;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    z-index:10;
+    font-size:14px;
+    transition:0.2s;
+}
+
+.banner-close:hover{
+    color:red;
+}
+.img-fluid {
+    max-width: 67%;
+    height: auto;
+}
     </style>
 	
     <h4 class="text-center fw-bold"
@@ -81,8 +177,35 @@
     <p class="text-center text-muted small">
         Cập nhật: <span th:text="${#temporals.format(chuong.ngayTao, 'dd/MM/yyyy HH:mm')}"></span>
     </p>
+    
+
+<div th:if="${bannerTruyen != null and !#lists.isEmpty(bannerTruyen)}"
+     class="text-center my-5 banner-slider" id="bannerSlider">
+     
+     <div class="banner-close" onclick="closeBanner()">
+        <i class="bi bi-x-lg"></i>
+    </div>
+
+    <div th:each="banner, stat : ${bannerTruyen}"
+         class="banner-item"
+         th:classappend="${stat.index == 0} ? ' active'">
+
+        <a th:href="@{/DustNovel/truyen/{id}(id=${banner.truyenId})}">
+
+            <img th:src="${banner.anhBanner}"
+                 class="img-fluid banner-quang-cao">
+
+        </a>
+
+    </div>
+
+</div>
+
+    
+    
 <input type="hidden" id="chuongIdCurrent" th:value="${chuong.id}">
     <div id="reader-content" class="fs-5 lh-lg my-4" th:if="${canRead}" th:utext="${chuong.noiDung}"></div>
+           
 
     <div id="reader-setting-btn">⚙️</div>
 
@@ -515,6 +638,30 @@
     });
     
     
+    let banners = document.querySelectorAll(".banner-item");
+    let index = 0;
+
+    if(banners.length > 1){
+
+    setInterval(function(){
+
+        banners[index].classList.remove("active");
+
+        index++;
+        if(index >= banners.length){
+            index = 0;
+        }
+
+        banners[index].classList.add("active");
+
+    }, 5000);
+
+    }
+    
+    
+    function closeBanner(){
+        document.getElementById("bannerSlider").style.display = "none";
+    }
     
     </script>
 </div> </html>

@@ -47,11 +47,22 @@ public class QuangCaoController {
         model.addAttribute("listTruyen", listTruyen);
         
         // Xác định file giao diện sẽ load vào layout chính
-		model.addAttribute("content", "quangcao/QuangCao");
+		model.addAttribute("content", "/QuangCao/QuangCao");
 		
 		 // Trả về layout chính
         return "/layout/main";
     }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	@GetMapping("/thueQuangCao")
 	public String ThueQuangCao(Authentication authentication, Model model) {
@@ -71,12 +82,7 @@ public class QuangCaoController {
 		model.addAttribute("content", "quangcao/ThueQuangCao");
 		return "/layout/main";
 	}
-	
-	@GetMapping("LichSu/QuangCao")
-	public String LichSuQuangCao(Authentication authentication, Model model) {
-		model.addAttribute("content", "/QuangCao/LichSuQuangCao");
-		return "/layout/main";
-	}
+
 	
 	@GetMapping("LichSu/ThueQuangCao")
 	public String LichSuThueQuangCao(Authentication authentication, Model model) {
