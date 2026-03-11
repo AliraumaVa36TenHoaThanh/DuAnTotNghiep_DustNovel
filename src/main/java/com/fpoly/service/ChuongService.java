@@ -47,32 +47,10 @@ public class ChuongService {
     public Chuong findById(Long id) {
         return chuongRepo.findById(id).orElse(null);
     }
-    
-//   public List<Chuong> findByTruyen(Long truyenId) {
-//        return chuongRepo.findByTapIdOrderBySoChuongAsc(truyenId);
-//   }
+   
    public List<Chuong> findByTap(Long tapId) {
 	    return chuongRepo.findByTapIdOrderBySoChuongAsc(tapId);
 	}
-
-
-
-//    public Chuong chuongTruoc(Chuong c) {
-//        return chuongRepo.findByTapIdAndSoChuong(
-//                        c.getTap().getId(),
-//                        c.getSoChuong() - 1
-//                )
-//                .orElse(null);
-//    }
-//
-//    public Chuong chuongSau(Chuong c) {
-//        return chuongRepo.findByTapIdAndSoChuong(
-//                        c.getTap().getId(),
-//                        c.getSoChuong() + 1
-//                )
-//                .orElse(null);
-//    }
-   
    @Autowired
    private TapRepository tapRepo;
 
@@ -204,10 +182,8 @@ public class ChuongService {
         Chuong chuong = chuongRepo.findById(chuongId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy chương"));
 
-        // 1️⃣ tăng view truyện (atomic)
         truyenRepo.tangLuotXem(chuong.getTruyen().getId());
 
-        // 2️⃣ lấy user hiện tại (có thể null nếu guest)
         NguoiDung user = securityUtil.getCurrentUserFromDB();
 
         if (user != null) {
