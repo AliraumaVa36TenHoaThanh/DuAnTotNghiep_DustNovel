@@ -1,5 +1,6 @@
 package com.fpoly.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.fpoly.model.Banner;
 import com.fpoly.model.BinhLuan;
 import com.fpoly.model.Chuong;
 import com.fpoly.model.MoKhoaChuong;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.model.PhieuThuong;
 import com.fpoly.model.Tap;
+import com.fpoly.repository.BannerRepository;
 import com.fpoly.repository.ChuongRepository;
 import com.fpoly.repository.LichSuDocRepository;
 import com.fpoly.repository.MoKhoaChuongRepository;
@@ -66,6 +69,8 @@ public class ChuongController {
 	private BinhLuanService binhLuanService;
 	@Autowired
 	LichSuDocService lichSuDocService;
+	@Autowired
+	BannerRepository bannerRepo;
 	
 	@GetMapping("/{id}")
 	public String read(@PathVariable Long id, Model model) {
@@ -99,6 +104,17 @@ public class ChuongController {
 	        boolean canReadNext = permissionService.canReadChuong(chuongSau, currentUser);
 	        model.addAttribute("canReadNext", canReadNext);
 	    }
+	    
+	    
+	    List<Banner> bannerTruyen = bannerRepo
+	    	    .findByViTriAndTrangThaiAndNgayBatDauLessThanEqualAndNgayKetThucGreaterThanEqualOrderByTokenMoiNgayDesc(
+	    	        "TRUYEN",
+	    	        "HOAT_DONG",
+	    	        LocalDate.now(),
+	    	        LocalDate.now()
+	    	    );
+
+	    model.addAttribute("bannerTruyen", bannerTruyen);
 	    
 	    
 	    List<Chuong> danhSachChuong = chuongService.findByTap(chuong.getTap().getId());

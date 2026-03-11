@@ -201,4 +201,5 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
 	boolean existsByTenTruyenIgnoreCaseAndIdNot(String tenTruyen, Long id);
 	
 	List<Truyen> findByNguoiDang_Id(Long userId);
+	
 }
