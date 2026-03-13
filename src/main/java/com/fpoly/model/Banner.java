@@ -17,8 +17,9 @@ public class Banner {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "truyen_id", nullable = false)
-    private Long truyenId;
+	/*
+	 * @Column(name = "truyen_id", nullable = false) private Long truyenId;
+	 */
 
     @Column(name = "vi_tri")
     private String viTri; 
@@ -37,4 +38,8 @@ public class Banner {
 
     @Column(name = "ngay_ket_thuc")
     private LocalDate ngayKetThuc;
+    
+    @ManyToOne
+    @JoinColumn(name = "truyen_id")
+    private Truyen truyen;
 }

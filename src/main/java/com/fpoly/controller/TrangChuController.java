@@ -1,5 +1,6 @@
 package com.fpoly.controller;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fpoly.model.Banner;
 import com.fpoly.model.Truyen;
 import com.fpoly.model.enums.LoaiTruyen;
+import com.fpoly.repository.BannerRepository;
 import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.CustomUserDetails;
 import com.fpoly.service.TruyenService;
@@ -28,6 +31,8 @@ public class TrangChuController {
     private TruyenService truyenService;
     @Autowired
     private TruyenRepository truyenRepo;
+    @Autowired
+    private BannerRepository bannerRepo;
 //    @GetMapping("/home")
 //    public String home(Model model, Authentication authentication) {
 //    	
@@ -55,6 +60,16 @@ public class TrangChuController {
             "truyenDich",
             truyenRepo.findByLoaiTruyenOrderByChuongMoiNhat(LoaiTruyen.DỊCH)
         );
+        
+        List<Banner> bannerDangChay = bannerRepo
+                .findByViTriAndTrangThaiAndNgayBatDauLessThanEqualAndNgayKetThucGreaterThanEqualOrderByTokenMoiNgayDesc(
+                    "TOP",
+                    "HOAT_DONG",
+                    LocalDate.now(),
+                    LocalDate.now()
+                );
+
+            model.addAttribute("bannerDangChay", bannerDangChay);
 
         return "layout/main";
     }

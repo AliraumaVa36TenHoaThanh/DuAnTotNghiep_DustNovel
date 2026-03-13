@@ -24,5 +24,7 @@ public interface BannerRepository extends JpaRepository<Banner, Long> {
             LocalDate ngayHienTai1,
             LocalDate ngayHienTai2
     );
+    
+    List<Banner> findByTrangThaiAndViTri(String trangThai, String viTri);
 
 }
