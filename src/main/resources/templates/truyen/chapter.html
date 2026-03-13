@@ -117,33 +117,6 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
     opacity:1;
 }
 
-/* hiệu ứng ánh sáng trắng */
-.banner-item::after{
-    content:"";
-    position:absolute;
-    top:0;
-    left:-100%;
-    width:50%;
-    height:100%;
-    background:linear-gradient(
-        120deg,
-        rgba(255,255,255,0) 40%,
-        rgba(255,255,255,0.7) 50%,
-        rgba(255,255,255,0) 100%
-    );
-    transform:skewX(-20deg);
-}
-
-/* khi banner active thì chạy ánh sáng */
-.banner-item.active::after{
-    animation:shine 1.2s ease;
-}
-
-/* animation ánh sáng */
-@keyframes shine{
-    0%{ left:-100%; }
-    100%{ left:150%; }
-}
 
 .banner-close{
     position:absolute;
@@ -190,7 +163,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
          class="banner-item"
          th:classappend="${stat.index == 0} ? ' active'">
 
-        <a th:href="@{/DustNovel/truyen/{id}(id=${banner.truyenId})}">
+        <a th:href="@{/DustNovel/truyen/{id}(id=${banner.truyen.id})}">
 
             <img th:src="${banner.anhBanner}"
                  class="img-fluid banner-quang-cao">

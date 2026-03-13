@@ -67,7 +67,7 @@
 /* label */
 .qc-page label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     font-weight: 700;
     color: #2c3e50;
     font-size: 0.95rem;
@@ -216,11 +216,24 @@
     height: 45px;
 }
 
-.qc-page .custom-file input[type=file] {
-    opacity: 0;
-    position: absolute;
-    inset: 0;
+.qc-page input[type="file"] {
+    width: 100%;
+    height: 51px;
+    padding: 11px;
+    border-radius: 10px;
+    font-size: 0.95rem;
     cursor: pointer;
+    margin: 0px;
+}
+
+.qc-page input[type="file"]::file-selector-button{
+    background:#667eea;
+    color:white;
+    border:none;
+    padding:1px 16px;
+    margin-right:12px;
+    border-radius:5px;
+    font-weight:100;
 }
 
 .qc-page .custom-file .file-label {
@@ -296,56 +309,69 @@ input[type="number"]::-webkit-outer-spin-button {
 					<form id="bannerForm" th:action="@{/quang-cao/TaoQuangCao}" method="post" enctype="multipart/form-data">
 						<div class="form-group">
 							<label><i class="bi bi-book"></i> Chọn truyện</label> <select
-								required name="truyenId">
+								 name="truyenId">
 
 								<!-- Option mặc định -->
-								<option value="" selected disabled>Chọn truyện</option>
+								<option value="" disabled th:selected="${truyenId == null}">Chọn truyện</option>
 
 								<!-- Danh sách truyện -->
 								<option th:each="truyen : ${listTruyen}" 
 								        th:value="${truyen.id}"
+								        th:selected="${truyen.id == truyenId}"
 									    th:text="${truyen.tenTruyen}"></option>
 							</select>
+							<!-- Hiển thị lỗi -->
+							<p style="color: red; font-size: 14px; margin-top: 5px;"
+								th:if="${errorTruyen}" th:text="${errorTruyen}"></p>
 						</div>
 
 						<div class="form-group">
 							<label><i class="bi bi-geo-alt"></i> Vị trí banner</label> <select
-								required name="viTri">
-								<option value="" selected disabled>Chọn vị trí</option>
-								<option value="TOP">Top trang (Vị trí hàng đầu)</option>
-								<option value="SIDEBAR">Sidebar (Cột bên)</option>
-								<option value="HOME">Trang chủ (Trang đầu tiên)</option>
-								<option value="TRUYEN">Trong truyện (Dưới tiêu đề chương)</option>
+								 name="viTri">
+								<option value="" disabled th:selected="${viTri == null}">Chọn vị trí</option>
+								<option value="TOP" th:selected="${viTri == 'TOP'}">trang chủ (Cuối trang)</option>
+								<option value="TRUYEN" th:selected="${viTri == 'TRUYEN'}">Trong truyện (Dưới tiêu đề chương)</option>
 							</select>
+							<p style="color: red; font-size: 14px; margin-top: 5px;"
+								th:if="${errorViTri}" th:text="${errorViTri}"></p>
 						</div>
 
 						<div class="form-group">
 							<label><i class="bi bi-calendar-event"></i> Ngày bắt đầu</label>
-							<input type="date" id="startDate" name="startDate" required>
+							<input type="date" id="startDate" name="startDate" th:value="${startDate}">
+							<p style="color: red; font-size: 14px; margin-top: 5px;"
+								th:if="${errorStartDate}" th:text="${errorStartDate}"></p>
 						</div>
+						
 
 						<div class="form-group">
 							<label><i class="bi bi-calendar-x"></i> Ngày kết thúc</label> <input
-								type="date" id="endDate" name="endDate" required>
+								type="date" id="endDate" name="endDate" th:value="${endDate}">
+							<p style="color: red; font-size: 14px; margin-top:  5px;"
+								th:if="${errorEndDate}" th:text="${errorEndDate}"></p>
 						</div>
 
 						<div class="form-group">
 							<label><i class="bi bi-image"></i> Ảnh banner</label>
 
 							<div class="custom-file">
-								<input type="file" name="file" accept="image/*" id="bannerImg"> <span
-									class="file-label">Chọn tệp...</span>
+								<input type="file" name="file" accept="image/*" id="bannerImg"> 
 							</div>
+							<p style="color: red; font-size: 14px; margin-top: 11px;"
+								th:if="${errorFile}" th:text="${errorFile}"></p>
 
 						</div>
 
 						<div class="form-group">
 							<label><i class="bi bi-coin"></i> Token mỗi ngày</label> <input
-								type="number" name="tokenMoiNgay" placeholder="VD: 1000 token / ngày" min="1000" required>
+								type="number" name="tokenMoiNgay" placeholder="VD: 1000 token / ngày" th:value="${tokenMoiNgay}">
+								
+							<p style="color: red; font-size: 14px; margin-top: 5px;"
+								th:if="${errorToken}" th:text="${errorToken}"></p>
 						</div>
 
 						<button type="submit">
-							<i class="bi bi-check-circle"></i> Tạo Banner
+							<i class="bi bi-check-circle"></i> Tạo Quảng Cáo 
 						</button>
 					</form>
 
@@ -396,18 +422,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
 	});
 
-	form.addEventListener('submit', function(e){
-
-	    const startDate = new Date(document.getElementById('startDate').value);
-	    const endDate = new Date(document.getElementById('endDate').value);
-
-	    if(startDate >= endDate){
-	        e.preventDefault();
-	        alert('Ngày kết thúc phải sau ngày bắt đầu!');
-	        return;
-	    }
-
-	});
-
-	});
+</script>
+<script th:if="${successMessage}">
+    alert("[[${successMessage}]]");
 </script>

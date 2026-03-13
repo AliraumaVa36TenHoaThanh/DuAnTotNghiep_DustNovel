@@ -141,6 +141,86 @@
             <span class="carousel-control-next-icon"></span>
         </button>
     </div>
+    
+    
+    <hr class="my-4">
+
+	<div class="d-flex justify-content-between align-items-center mb-3">
+
+		<h4 class="fw-bold m-0">
+			<i class="bi bi-cash-coin"></i> Truyện được tài trợ
+		</h4>
+
+		<div class="sponsor-controls">
+
+			<i class="bi bi-arrows-move sponsor-btn" id="modeScroll"
+				title="Kéo thủ công"></i> <i
+				class="bi bi-arrow-left-right sponsor-btn active" id="modeAuto"
+				title="Chạy tự động"></i>
+		</div>
+	</div>
+	
+	
+
+	<div class="sponsor-wrapper">
+	<div class="row sponsor-row">
+
+		<div class="col-md-3 mb-4" th:each="banner : ${bannerDangChay}"
+			th:with="truyen=${banner.truyen},
+              chuongMoi=${@chuongService.layChuongMoiNhat(truyen.id)}">
+            
+			<div class="sponsor-card">
+
+				<img th:src="@{${banner.anhBanner}}" style="cursor:pointer" th:onclick="'window.location.href=\'/DustNovel/truyen/' + ${truyen.id} + '\''">
+				
+				<div class="sponsor-ribbon">
+                  <i class="bi bi-cash-coin"></i> tài trợ
+               </div>
+
+				<div class="sponsor-overlay">
+
+					
+
+					<h6 class="fw-bold text-truncate" th:text="${truyen.tenTruyen}">
+					</h6>
+
+					<div th:if="${chuongMoi != null}" style="font-size: 13px">
+
+						<span class="badge bg-danger me-1">New</span> <a
+							th:href="@{/DustNovel/chuong/{id}(id=${chuongMoi.id})}"
+							class="text-white text-decoration-none fw-bold"
+							th:text="'Chương ' + ${chuongMoi.soChuong}"> </a>
+
+					</div>
+
+					<div th:unless="${chuongMoi != null}" style="font-size: 13px">
+						Chưa có chương</div>
+
+					<small th:text="'Tác giả: ' + ${truyen.tenTacGia}"></small>
+
+					<div class="mt-2 d-flex flex-wrap gap-1">
+
+						<a th:each="tl, stat : ${truyen.theLoais}"
+							th:if="${stat.index < 3}"
+							th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
+							th:text="${tl.tenTheLoai}"
+							class="badge bg-secondary text-decoration-none"> </a> <span
+							th:if="${#lists.size(truyen.theLoais) > 3}" class="badge bg-dark">
+							+<span th:text="${#lists.size(truyen.theLoais) - 3}"></span>
+						</span>
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+	</div>
+    
+    
     <h4 class="mb-3 fw-bold">🔥 Truyện sáng tác</h4>
     <div class="row">
         <div class="col-md-3 mb-4" 
@@ -234,8 +314,305 @@
             </a>
         </div>
     </div>
-    
-    <style>
-        .card:hover { transform: translateY(-5px); }
-    </style>
+
+
+	<style>
+.card:hover {
+	transform: translateY(-5px);
+}
+
+.sponsor-card {
+	position: relative;
+	border-radius: 12px;
+	overflow: hidden;
+	border: 2px solid #f5b400;
+}
+
+.sponsor-card img {
+	width: 100%;
+	height: 420px;
+	object-fit: cover;
+	display: block;
+}
+
+.sponsor-overlay {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	padding: 14px;
+	background: rgba(0, 0, 0, 0.25);
+	backdrop-filter: blur(6px);
+	color: white;
+}
+
+.sponsor-overlay h6 {
+	margin-bottom: 4px;
+}
+
+.sponsor-overlay small {
+	color: #ddd;
+}
+
+.sponsor-ribbon {
+	position: absolute;
+	top: 20px;
+	right: -40px;
+	padding: 7px 50px;
+	font-size: 15px;
+	font-weight: bold;
+	color: #000;
+	background: linear-gradient(45deg, #ffd700, #fff2a8, #ffc107, #ffe066, #ffd700);
+	background-size: 300% 300%;
+	transform: rotate(45deg);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35), 0 0 10px
+		rgba(255, 215, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.4);
+	z-index: 5;
+	animation: goldMove 4s linear infinite;
+	overflow: hidden;
+}
+
+.sponsor-ribbon::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 50%;
+	height: 100%;
+	background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.9),
+		transparent);
+	transform: skewX(-25deg);
+	animation: shineRibbon 3s infinite;
+}
+
+@keyframes goldMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes shineRibbon {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 150%;
+    }
+}
+
+
+
+/* khung hiển thị */
+.sponsor-wrapper{
+overflow:hidden;
+width:100%;
+}
+
+.sponsor-row{
+    flex-wrap: nowrap;
+    display: flex;
+    gap: 20px;
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.sponsor-row .col-md-3{
+    flex: 0 0 calc(26% - 15px);
+    max-width: calc(25.2% - 15px);
+}
+
+.sponsor-row.scroll{
+animation:sponsorScroll 20s linear infinite;
+}
+
+@keyframes sponsorScroll{
+0%{
+transform:translateX(0);
+}
+100%{
+transform:translateX(-50%);
+}
+}
+
+.sponsor-controls{
+display:flex;
+gap:12px;
+font-size:20px;
+}
+
+.sponsor-btn{
+cursor:pointer;
+color:#aaa;
+transition:0.2s;
+}
+
+.sponsor-btn:hover{
+color:#ffc107;
+}
+
+.sponsor-btn.active{
+color:#ffc107;
+}
+
+
+.sponsor-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+
+.sponsor-wrapper::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+}
+
+
+.sponsor-wrapper::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg,#facc15,#f59e0b);
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+
+.sponsor-wrapper::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg,#fde047,#facc15);
+}
+
+
+.sponsor-wrapper{
+    scrollbar-color:#facc15 rgba(255,255,255,0.05);
+    scrollbar-width:thin;
+}
+</style>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+const wrapper = document.querySelector(".sponsor-wrapper");
+const row = document.querySelector(".sponsor-row");
+
+const modeAuto = document.getElementById("modeAuto");
+const modeScroll = document.getElementById("modeScroll");
+
+/* đếm số card quảng cáo */
+const cardCount = row.querySelectorAll(".col-md-3").length;
+
+/* nếu <=4 thì tắt toàn bộ chức năng */
+
+if(cardCount <= 4){
+
+    modeAuto.style.color = "red";
+    modeScroll.style.color = "red";
+
+    modeAuto.style.cursor = "not-allowed";
+    modeScroll.style.cursor = "not-allowed";
+
+    modeAuto.onclick = null;
+    modeScroll.onclick = null;
+
+    return;
+}
+
+
+/* ===== chạy slider khi >4 ===== */
+
+const inner = document.createElement("div");
+inner.style.display = "flex";
+inner.style.gap = "20px";
+inner.style.flexWrap = "nowrap";
+
+while(row.firstChild){
+    inner.appendChild(row.firstChild);
+}
+
+row.appendChild(inner);
+
+const originalHTML = inner.innerHTML;
+
+let position = 0;
+let speed = 0.3;
+let autoMode = true;
+
+
+/* clone để loop */
+
+function enableLoop(){
+    inner.innerHTML = originalHTML + originalHTML;
+}
+
+function disableLoop(){
+    inner.innerHTML = originalHTML;
+}
+
+
+/* AUTO SCROLL */
+
+function autoScroll(){
+
+    if(autoMode){
+
+        let maxScroll = inner.scrollWidth / 2;
+
+        position += speed;
+
+        if(position >= maxScroll){
+            position = 0;
+        }
+
+        inner.style.transform = `translateX(-${position}px)`;
+
+    }
+
+    requestAnimationFrame(autoScroll);
+}
+
+enableLoop();
+autoScroll();
+
+
+/* AUTO MODE */
+
+modeAuto.onclick = () => {
+
+    autoMode = true;
+
+    enableLoop();
+
+    wrapper.style.overflow = "hidden";
+
+    modeAuto.classList.add("active");
+    modeScroll.classList.remove("active");
+
+}
+
+
+/* SCROLL MODE */
+
+modeScroll.onclick = () => {
+
+    autoMode = false;
+
+    disableLoop();
+
+    inner.style.transform = "translateX(0)";
+    wrapper.style.overflowX = "auto";
+
+    modeScroll.classList.add("active");
+    modeAuto.classList.remove("active");
+
+}
+
+});
+
+</script>
+
+
 </div>
