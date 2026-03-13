@@ -162,7 +162,8 @@ public class QuangCaoController {
 
 	    String fileName = System.currentTimeMillis() + "_banner_" + file.getOriginalFilename();
 
-	    String uploadDir = System.getProperty("user.dir") + "/uploads/banner/";
+	    String uploadDir = System.getProperty("user.dir")
+	            + "/src/main/resources/static/uploads/banner/";
 
 	    File dir = new File(uploadDir);
 	    if (!dir.exists()) {
