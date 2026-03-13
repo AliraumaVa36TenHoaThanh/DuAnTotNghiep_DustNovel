@@ -142,7 +142,135 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
     max-width: 67%;
     height: auto;
 }
-    </style>
+
+.banner-card{
+    position:relative;
+    overflow:hidden;
+    border-radius:10px;
+}
+
+.banner-card::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-120%;
+    width:50%;
+    height:100%;
+    background:linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.8),
+        rgba(255,255,255,0.4),
+        transparent
+    );
+    transform:skewX(-25deg);
+}
+
+/* chạy khi banner active */
+.banner-item.active .banner-card::after{
+    animation:bannerShine 1.0s ease;
+}
+
+@keyframes bannerShine{
+    from{
+        left:-120%;
+    }
+    to{
+        left:130%;
+    }
+} 	
+
+.banner-quang-cao{
+    width:100%;
+    height:260px;
+    object-fit:cover;
+}
+
+/* overlay info */
+.banner-overlay{
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    padding:15px;
+    color:white;
+    background:linear-gradient( transparent, rgba(0,0,0,0.5) );
+}
+
+.banner-ribbon{
+    position:absolute;
+    top:18px;
+    right:-40px;
+    padding:6px 50px;
+    font-weight:bold;
+    font-size:14px;
+    background:linear-gradient(45deg,#ffd700,#ffc107,#ffe066,#ffd700);
+    background-size:300% 300%;
+    color:black;
+    transform:rotate(45deg);
+    box-shadow:
+        0 4px 10px rgba(0,0,0,0.4),
+        0 0 10px rgba(255,215,0,0.7),
+        0 0 20px rgba(255,215,0,0.4);
+    overflow:hidden;
+    animation:goldMove 4s linear infinite;
+}
+
+/* ánh sáng trắng chạy qua */
+.banner-ribbon::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:50%;
+    height:100%;
+    background:linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.9),
+        transparent
+    );
+    transform:skewX(-25deg);
+    animation:shineRibbon 6s infinite;
+}
+
+/* kim tuyến */
+.banner-ribbon::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    background-image:
+        radial-gradient(white 1px, transparent 1px),
+        radial-gradient(#fff7c2 1px, transparent 1px),
+        radial-gradient(#fff 1px, transparent 1px);
+    background-size:6px 6px, 8px 8px, 10px 10px;
+    animation:glitterFall 6s linear infinite;
+    opacity:0.6;
+}
+
+/* nền vàng chuyển động */
+@keyframes goldMove{
+    0%{ background-position:0% 50%; }
+    50%{ background-position:100% 50%; }
+    100%{ background-position:0% 50%; }
+}
+
+/* ánh sáng trắng chạy */
+@keyframes shineRibbon{
+    0%{ left:-100%; }
+    100%{ left:150%; }
+}
+
+/* kim tuyến rơi */
+@keyframes glitterFall{
+    0%{ background-position:0 0, 0 0, 0 0; }
+    100%{ background-position:0 60px, 0 80px, 0 100px; }
+}
+</style>
 	
     <h4 class="text-center fw-bold"
     th:text="'Chương ' + ${chuong.soChuong} + ': ' + ${chuong.tieuDe}">
@@ -153,20 +281,68 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
     
 
 <div th:if="${bannerTruyen != null and !#lists.isEmpty(bannerTruyen)}"
-     class="text-center my-5 banner-slider" id="bannerSlider">
-     
-     <div class="banner-close" onclick="closeBanner()">
+     class="text-center my-5 banner-slider"
+     id="bannerSlider">
+
+    <div class="banner-close" onclick="closeBanner()">
         <i class="bi bi-x-lg"></i>
     </div>
 
     <div th:each="banner, stat : ${bannerTruyen}"
          class="banner-item"
-         th:classappend="${stat.index == 0} ? ' active'">
+         th:classappend="${stat.index == 0} ? ' active'"
+         th:with="truyen=${banner.truyen},
+                  chuongMoi=${@chuongService.layChuongMoiNhat(truyen.id)}">
 
-        <a th:href="@{/DustNovel/truyen/{id}(id=${banner.truyen.id})}">
+        <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}">
 
-            <img th:src="${banner.anhBanner}"
-                 class="img-fluid banner-quang-cao">
+            <div class="banner-card">
+
+                <img th:src="${banner.anhBanner}"
+                     class="img-fluid banner-quang-cao">
+
+                <!-- Ribbon tài trợ -->
+                <div class="banner-ribbon">
+                    <i class="bi bi-cash-coin"></i> tài trợ
+                </div>
+
+                <!-- Overlay info -->
+                <div class="banner-overlay">
+
+                    <h5 class="fw-bold text-truncate"
+                        th:text="${truyen.tenTruyen}">
+                    </h5>
+
+                    <div th:if="${chuongMoi != null}" style="font-size:14px">
+
+                        <span class="badge bg-danger me-1">New</span>
+
+                        <span th:text="'Chương ' + ${chuongMoi.soChuong}">
+                        </span>
+
+                    </div>
+
+                    <small th:text="'Tác giả: ' + ${truyen.tenTacGia}">
+                    </small>
+
+                   <div class="mt-1 d-flex flex-wrap gap-1">
+
+    <span th:each="tl, stat : ${truyen.theLoais}"
+          th:if="${stat.index < 3}"
+          th:text="${tl.tenTheLoai}"
+          class="badge bg-secondary">
+    </span>
+
+    <span th:if="${#lists.size(truyen.theLoais) > 3}"
+          class="badge bg-dark">
+        +<span th:text="${#lists.size(truyen.theLoais) - 3}"></span>
+    </span>
+
+</div>
+
+                </div>
+
+            </div>
 
         </a>
 
