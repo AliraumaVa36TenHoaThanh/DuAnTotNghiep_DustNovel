@@ -61,18 +61,23 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
             border-radius: 50%;
         }
 
-        #reader-setting-panel {
-            position: fixed;
-            top: 160px;
-            right: 20px;
-            width: 220px;
-            background: #111;
-            color: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            z-index: 999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
+       #reader-setting-panel {
+    position: fixed;
+    top: 160px;
+    right: 20px;
+    width: 240px;
+
+    background: #111;
+    color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+
+    z-index: 999;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+
+    max-height: 70vh;   /* giới hạn chiều cao */
+    overflow-y: auto;   /* cho kéo xuống */
+}
 
         .hidden { display: none !important; }
         
@@ -270,6 +275,42 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
     0%{ background-position:0 0, 0 0, 0 0; }
     100%{ background-position:0 60px, 0 80px, 0 100px; }
 }
+
+
+.scroll-btn{
+    position:fixed;
+    right:25px;
+    width:42px;
+    height:42px;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(5px);
+    color:white;
+    font-size:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    cursor:pointer;
+    z-index:999;
+    opacity:0;
+    transition:0.3s;
+}
+
+.scroll-btn:hover{
+    background:rgba(255,255,255,0.35);
+}
+
+#scrollUpBtn{
+    bottom:120px;
+}
+
+#scrollDownBtn{
+    bottom:70px;
+}
+
+.scroll-show{
+    opacity:0.6;
+}
 </style>
 	
     <h4 class="text-center fw-bold"
@@ -350,7 +391,8 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
 
 </div>
 
-    
+    <div id="scrollUpBtn" class="scroll-btn">▲</div>
+<div id="scrollDownBtn" class="scroll-btn">▼</div>
     
 <input type="hidden" id="chuongIdCurrent" th:value="${chuong.id}">
     <div id="reader-content" class="fs-5 lh-lg my-4" th:if="${canRead}" th:utext="${chuong.noiDung}"></div>
@@ -392,6 +434,21 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
 </div>
 		
 		
+		<div class="text-center my-3">
+        <button id="btnAiTomTat" class="btn btn-outline-info rounded-pill fw-bold shadow-sm px-4">
+            <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Nhờ AI tóm tắt chương này
+        </button>
+    </div>
+
+    <div id="aiSummaryBox" class="alert alert-info d-none shadow-sm mx-auto" style="max-width: 800px; border-left: 5px solid #0dcaf0;">
+        <div class="d-flex align-items-center mb-2">
+            <i class="fa-solid fa-robot text-info fs-4 me-2"></i>
+            <h6 class="mb-0 fw-bold">AI Tóm Tắt:</h6>
+        </div>
+        <div id="aiSummaryContent" class="fst-italic text-dark lh-base">
+            </div>
+    </div>
+		
 		<!-- ============================= -->
 <!-- 🔊 TÍNH NĂNG AI ĐỌC TRUYỆN -->
 <!-- ============================= -->
@@ -407,7 +464,8 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
 
 <div class="d-grid gap-1 mt-2">
     <button id="readBtn" class="btn btn-sm btn-success">▶ Đọc chương</button>
-    <button id="stopBtn" class="btn btn-sm btn-danger">⏹ Dừng</button>
+    <button id="pauseBtn" class="btn btn-sm btn-warning text-white fw-bold d-none">⏸ Tạm dừng</button>
+            <button id="stopBtn" class="btn btn-sm btn-danger fw-bold">⏹ Đọc lại từ đầu</button>
 </div>
 		
 		
@@ -727,63 +785,177 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
         
         
      // ==========================================
-     // 🔊 LOGIC AI ĐỌC TRUYỆN (TEXT TO SPEECH)
+        // 🔊 LOGIC AI ĐỌC TRUYỆN (TEXT TO SPEECH)
+        // ==========================================
+
+        const readBtn = document.getElementById("readBtn");
+        const pauseBtn = document.getElementById("pauseBtn");
+        const stopBtn = document.getElementById("stopBtn"); // Nút dừng hẳn
+        const voiceSelect = document.getElementById("voiceSelect");
+        const voiceSpeed = document.getElementById("voiceSpeed");
+
+        let voices = [];
+        let speechInstance = null;
+
+        function loadVoices(){
+            voices = speechSynthesis.getVoices();
+            voiceSelect.innerHTML = "";
+            voices.forEach((voice,index)=>{
+                const option = document.createElement("option");
+                option.value = index;
+                option.textContent = voice.name + " (" + voice.lang + ")";
+                voiceSelect.appendChild(option);
+            });
+        }
+
+        speechSynthesis.onvoiceschanged = loadVoices;
+
+        // ▶ ĐỌC TỪ ĐẦU
+        readBtn.addEventListener("click", function(){
+            const text = readerContent.innerText;
+            if(!text) return;
+
+            speechSynthesis.cancel(); // Ép hệ thống dừng hẳn mọi thứ đang đọc
+
+            speechInstance = new SpeechSynthesisUtterance(text);
+
+            const selectedVoice = voices[voiceSelect.value];
+            if(selectedVoice){
+                speechInstance.voice = selectedVoice;
+            }
+
+            speechInstance.rate = voiceSpeed.value;
+            speechInstance.lang = "vi-VN";
+
+            // Khi hệ thống đọc xong toàn bộ chương
+            speechInstance.onend = function() {
+                pauseBtn.classList.add("d-none"); // Ẩn nút Tạm dừng đi
+                pauseBtn.innerText = "⏸ Tạm dừng"; // Trả lại tên cũ
+            };
+
+            speechSynthesis.speak(speechInstance);
+            
+            // VỪA BẤM ĐỌC XONG: Phải HIỆN nút Tạm dừng lên ngay
+            pauseBtn.classList.remove("d-none");
+            pauseBtn.innerText = "⏸ Tạm dừng";
+        });
+
+
+        // ⏸ TẠM DỪNG / TIẾP TỤC
+        pauseBtn.addEventListener("click", function(){
+            if(speechSynthesis.speaking && !speechSynthesis.paused){
+                speechSynthesis.pause();
+                pauseBtn.innerText = "▶ Tiếp tục";
+                pauseBtn.classList.remove("btn-warning"); // Đổi màu cho sinh động (Tùy chọn)
+                pauseBtn.classList.add("btn-info");
+            }
+            else if(speechSynthesis.paused){
+                speechSynthesis.resume();
+                pauseBtn.innerText = "⏸ Tạm dừng";
+                pauseBtn.classList.remove("btn-info");
+                pauseBtn.classList.add("btn-warning");
+            }
+        });
+        
+        // ⏹ DỪNG HẲN (Xóa sổ trạng thái đọc)
+        stopBtn.addEventListener("click", function(){
+            speechSynthesis.cancel();
+            pauseBtn.classList.add("d-none"); // Ẩn nút Tạm dừng
+            pauseBtn.innerText = "⏸ Tạm dừng";
+            pauseBtn.classList.remove("btn-info");
+            pauseBtn.classList.add("btn-warning");
+        });
      // ==========================================
+        // 5. LOGIC AI TÓM TẮT CHƯƠNG
+        // ==========================================
+        const btnAiTomTat = document.getElementById('btnAiTomTat');
+        const aiSummaryBox = document.getElementById('aiSummaryBox');
+        const aiSummaryContent = document.getElementById('aiSummaryContent');
 
-     // COMMENT: Thêm biến điều khiển giọng đọc
-     const readBtn = document.getElementById("readBtn");
-     const stopBtn = document.getElementById("stopBtn");
-     const voiceSelect = document.getElementById("voiceSelect");
-     const voiceSpeed = document.getElementById("voiceSpeed");
+        btnAiTomTat.addEventListener('click', function() {
+            const chuongId = document.getElementById("chuongIdCurrent").value;
+            const csrfTokenNode = document.querySelector('input[name="_csrf"]');
+            const csrfToken = csrfTokenNode ? csrfTokenNode.value : '';
 
-     let voices = [];
+            // Đổi giao diện nút sang trạng thái loading
+            const originalBtnHtml = btnAiTomTat.innerHTML;
+            btnAiTomTat.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Đang tẩu hỏa nhập ma phân tích...';
+            btnAiTomTat.disabled = true;
 
-     // COMMENT: Lấy danh sách giọng đọc từ trình duyệt
-     function loadVoices() {
-         voices = speechSynthesis.getVoices();
+            fetch('/DustNovel/api/ai/tom-tat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({ chuongId: chuongId })
+            })
+            .then(response => response.text())
+            .then(data => {
+                aiSummaryBox.classList.remove('d-none'); // Hiện khung tóm tắt
+                // Dùng Markdown đơn giản (chuyển \n thành thẻ <br> cho đẹp)
+                aiSummaryContent.innerHTML = data.replace(/\n/g, '<br>'); 
+                btnAiTomTat.innerHTML = '<i class="fa-solid fa-check me-2"></i> Đã tóm tắt xong';
+            })
+            .catch(err => {
+                alert("Lỗi gọi AI tóm tắt!");
+                console.error(err);
+                btnAiTomTat.innerHTML = originalBtnHtml;
+                btnAiTomTat.disabled = false;
+            });
+        });
+     // ==============================
+     // SCROLL BUTTON UP / DOWN
+     // ==============================
 
-         voiceSelect.innerHTML = "";
+     const scrollUpBtn = document.getElementById("scrollUpBtn");
+     const scrollDownBtn = document.getElementById("scrollDownBtn");
 
-         voices.forEach((voice, index) => {
-             const option = document.createElement("option");
+     let lastScroll = window.scrollY;
+     let hideTimer;
 
-             option.value = index;
-             option.textContent = voice.name + " (" + voice.lang + ")";
+     window.addEventListener("scroll", function(){
 
-             voiceSelect.appendChild(option);
+         const currentScroll = window.scrollY;
+
+         // hiện button
+         if(currentScroll > lastScroll){
+             // đang cuộn xuống
+             scrollDownBtn.classList.add("scroll-show");
+             scrollUpBtn.classList.remove("scroll-show");
+         }else{
+             // đang cuộn lên
+             scrollUpBtn.classList.add("scroll-show");
+             scrollDownBtn.classList.remove("scroll-show");
+         }
+
+         lastScroll = currentScroll;
+
+         // reset timer
+         clearTimeout(hideTimer);
+
+         hideTimer = setTimeout(()=>{
+             scrollUpBtn.classList.remove("scroll-show");
+             scrollDownBtn.classList.remove("scroll-show");
+         },1500);
+
+     });
+
+     // lên đầu chương
+     scrollUpBtn.onclick = ()=>{
+         window.scrollTo({
+             top:0,
+             behavior:"smooth"
          });
      }
 
-     speechSynthesis.onvoiceschanged = loadVoices;
-
-     // COMMENT: Bấm nút đọc chương
-     readBtn.addEventListener("click", function() {
-
-         const text = readerContent.innerText;
-
-         if (!text) return;
-
-         const speech = new SpeechSynthesisUtterance(text);
-
-         // COMMENT: chọn giọng
-         const selectedVoice = voices[voiceSelect.value];
-         if (selectedVoice) {
-             speech.voice = selectedVoice;
-         }
-
-         // COMMENT: tốc độ đọc
-         speech.rate = voiceSpeed.value;
-
-         speech.lang = "vi-VN";
-
-         speechSynthesis.speak(speech);
-     });
-
-     // COMMENT: Dừng đọc
-     stopBtn.addEventListener("click", function() {
-         speechSynthesis.cancel();
-     });
-        
+     // xuống cuối chương
+     scrollDownBtn.onclick = ()=>{
+         window.scrollTo({
+             top:document.body.scrollHeight,
+             behavior:"smooth"
+         });
+     }
     });
     
     
@@ -812,5 +984,6 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
         document.getElementById("bannerSlider").style.display = "none";
     }
     
+ 
     </script>
 </div> </html>
