@@ -329,7 +329,7 @@ input[type="number"]::-webkit-outer-spin-button {
 							<label><i class="bi bi-geo-alt"></i> Vị trí banner</label> <select
 								 name="viTri">
 								<option value="" disabled th:selected="${viTri == null}">Chọn vị trí</option>
-								<option value="TOP" th:selected="${viTri == 'TOP'}">trang chủ (Cuối trang)</option>
+								<option value="TOP" th:selected="${viTri == 'TOP'}">trang chủ (Đầu trang)</option>
 								<option value="TRUYEN" th:selected="${viTri == 'TRUYEN'}">Trong truyện (Dưới tiêu đề chương)</option>
 							</select>
 							<p style="color: red; font-size: 14px; margin-top: 5px;"
@@ -342,15 +342,22 @@ input[type="number"]::-webkit-outer-spin-button {
 							<p style="color: red; font-size: 14px; margin-top: 5px;"
 								th:if="${errorStartDate}" th:text="${errorStartDate}"></p>
 						</div>
-						
+
 
 						<div class="form-group">
-							<label><i class="bi bi-calendar-x"></i> Ngày kết thúc</label> <input
-								type="date" id="endDate" name="endDate" th:value="${endDate}">
-							<p style="color: red; font-size: 14px; margin-top:  5px;"
-								th:if="${errorEndDate}" th:text="${errorEndDate}"></p>
-						</div>
+							<label><i class="bi bi-calendar-range"></i> Số ngày chạy</label>
 
+							<input type="number" id="soNgayChay" name="soNgayChay" min="1"
+								placeholder="VD: 3 ngày" th:value="${soNgayChay}">
+
+							<p style="color: red; font-size: 14px; margin-top: 5px;"
+								th:if="${errorSoNgay}" th:text="${errorSoNgay}"></p>
+
+							<small style="color: gray"> Ngày kết thúc sẽ được hệ
+								thống tự tính </small>
+
+
+						</div>
 						<div class="form-group">
 							<label><i class="bi bi-image"></i> Ảnh banner</label>
 
