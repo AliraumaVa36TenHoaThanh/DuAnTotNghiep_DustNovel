@@ -51,6 +51,13 @@
 			background-color: #f2f4f7;
 			transform: translateX(3px);
 		}
+		.sidebar-box {
+		    color: #212529;
+		}
+
+		[data-theme="dark"] .sidebar-box {
+		    color: #f1f1f1;
+		}
 
 		/* ===== THEME TOGGLE SWITCH ===== */
 		.theme-switch {
@@ -59,6 +66,7 @@
 			justify-content: space-between;
 			gap: 12px;
 			padding: 10px 14px;
+			height: 100%;
 		}
 
 		.theme-switch span {
@@ -251,6 +259,10 @@
 			letter-spacing: 0.5px;
 		}
 
+		.navbar-nav {
+		    display: flex;
+		    align-items: center;
+		}
 		/* Menu links */
 		.navbar-nav .nav-link {
 			padding: 6px 10px;
@@ -422,12 +434,12 @@
 							</li>
 
 							<li><a class="dropdown-item" th:href="@{/quang-cao/}"> <i class="bi bi-megaphone me-2"></i>
-									Quảng cáo truyện
+									Quảng cáo truyện ở trang chính
 								</a>
 							</li>
 
 							<li><a class="dropdown-item" th:href="@{/quang-cao/thueQuangCao}"> <i
-										class="bi bi-rocket-takeoff me-2"></i> Thuê quảng cáo truyện
+										class="bi bi-rocket-takeoff me-2"></i> Quảng cáo trong truyện
 								</a>
 							</li>
 
@@ -439,12 +451,12 @@
 							</li>
 
 							<li><a class="dropdown-item" th:href="@{/quang-cao/LichSu/QuangCao}"> <i
-										class="bi bi-clock-history me-2"></i> Quảng cáo truyện
+										class="bi bi-clock-history me-2"></i> Lịch sử quảng cáo trang chính
 								</a>
 							</li>
 
 							<li><a class="dropdown-item" th:href="@{/quang-cao/LichSu/ThueQuangCao}"> <i
-										class="bi bi-journal-text me-2"></i>Thuê quảng cáo truyện
+										class="bi bi-journal-text me-2"></i> Lịch sử quảng cáo trong truyện
 								</a>
 							</li>
 						</ul>
@@ -452,7 +464,14 @@
 
 					<li class="nav-item"><a class="nav-link" th:href="@{/DustNovel/nap-tien-tu-dong}">⚡ Nạp tự động</a>
 					</li>
-					<li class="nav-item"><a class="nav-link" th:href="@{/DustNovel/nhom-dich}">📖 Nhóm dịch</a></li>
+					<li class="nav-item d-flex align-items-center ms-2">
+					    <div class="theme-switch">
+					        <label class="switch">
+					            <input type="checkbox" id="themeToggle">
+					            <span class="slider"></span>
+					        </label>
+					    </div>
+					</li>
 				</ul>
 				<form class="d-flex ms-auto me-3" th:action="@{/DustNovel/truyen/tim-kiem}" method="get"> <input
 						class="form-control search-input me-2" type="search" name="keyword" placeholder="Tìm truyện...">
@@ -486,9 +505,7 @@
 									<span class="token-label">🎟️ Phiếu thưởng</span>
 									<span class="token-value text-warning fw-bold" th:text="${userPhieuThuong}">0</span>
 								</div>
-								<div class="theme-switch"> <span class="theme-label">Giao diện</span> <label
-										class="switch"> <input type="checkbox" id="themeToggle"> <span
-											class="slider"></span> </label> </div>
+
 							</li>
 							<li>
 								<a class="dropdown-item custom-item" th:href="@{/DustNovel/lich-su-doc}">
@@ -498,6 +515,11 @@
 							<li>
 								<a class="dropdown-item custom-item" th:href="@{/DustNovel/bookmark}">
 									<span>🔖 Dấu trang</span>
+								</a>
+							</li>
+							<li>
+								<a class="dropdown-item custom-item" th:href="@{/DustNovel/nhom-dich}">
+									<span>📖 Nhóm dịch</span>
 								</a>
 							</li>
 							<li>
