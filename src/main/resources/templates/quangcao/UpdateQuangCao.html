@@ -1,0 +1,275 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+<style>
+/* ===== TEXT THEME ===== */
+
+/* Light mode */
+[data-theme="light"] .page-heading,
+[data-theme="light"] .card,
+[data-theme="light"] .form-label {
+    color: #212529;
+}
+
+/* Dark mode */
+[data-theme="dark"] .page-heading,
+[data-theme="dark"] .card,
+[data-theme="dark"] .form-label {
+    color: #f1f1f1;
+}
+
+/* ===== INPUT NORMAL (đen nhạt) ===== */
+[data-theme="dark"] .form-control {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #f1f1f1;
+}
+
+/* ===== INPUT DISABLED (đen đậm hơn) ===== */
+[data-theme="dark"] .form-control:disabled {
+    background: #1b1b1c;
+    border-color: #333;
+    color: #9a9a9a;
+}
+
+/* Card background */
+[data-theme="dark"] .card {
+    background: #1e1e1e;
+}
+
+/* Placeholder */
+[data-theme="dark"] input::placeholder {
+    color: #aaa;
+}
+
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Ẩn trên Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* ===== VỊ TRÍ - LIGHT MODE ===== */
+[data-theme="light"] select[name="viTri"] {
+    background-color: #ffffff;
+    color: #212529;
+    border: 1px solid #ced4da;
+}
+
+/* ===== VỊ TRÍ - DARK MODE ===== */
+[data-theme="dark"] select[name="viTri"] {
+    background-color: #2a2a2a;
+    color: #f1f1f1;
+}
+
+/* ===== DISABLED - LIGHT ===== */
+[data-theme="light"] select[name="viTri"]:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+}
+
+/* ===== DISABLED - DARK ===== */
+[data-theme="dark"] select[name="viTri"]:disabled {
+    background-color: #1b1b1c;
+    color: #888;
+    border-color: #333;
+}
+
+[data-theme="light"] .form-control[readonly] {
+    background-color: #e9ecef;   
+    border-color: #ced4da;
+}
+
+/* DARK MODE */
+[data-theme="dark"] .form-control[readonly] {
+    background: #1b1b1c;        
+    border-color: #333;
+    color: #9a9a9a;
+}
+
+.readonly-select {
+    pointer-events: none !important;
+    background-color: #e9ecef !important; 
+    border-color: #ced4da !important;
+}
+
+[data-theme="light"] .readonly-select {
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+    opacity: 1 !important;
+}
+
+[data-theme="dark"] .readonly-select {
+    pointer-events: none !important;
+    background: #1b1b1c !important; 
+    border-color: #333 !important;
+    color: #888 !important;
+    opacity: 1 !important;
+}
+</style>
+<div id="main">
+
+<div class="page-heading">
+
+<div class="page-title mb-4 text-center">
+<h3 class="text-primary fw-bold"><i class="bi bi-pencil-square"></i> Chỉnh sửa quảng cáo</h3>
+<p class="text-muted">Chỉ có thể tăng ngân sách và gia hạn ngày chạy</p>
+</div>
+
+<section class="section">
+
+<div class="card shadow-lg border-0 bg-light">
+
+<div class="card-header bg-primary text-white">
+<h5 class="mb-0"><i class="bi bi-arrow-repeat"></i> Cập nhật quảng cáo</h5>
+</div>
+
+<div class="card-body p-4">
+
+<form th:action="@{/quang-cao/update}" method="post">
+
+<input type="hidden" name="id" th:value="${banner.id}">
+<input type="hidden" name="action" value="update">
+
+<div class="row g-3">
+
+<!-- TRUYEN -->
+<div class="col-md-6 mb-3">
+<label class="form-label fw-bold"><i class="bi bi-book text-primary"></i> Truyện</label>
+<input type="text" class="form-control form-control-lg"
+       th:value="${banner.truyen.tenTruyen}"
+       disabled>
+</div>
+
+<!-- VỊ TRÍ -->
+<div class="col-md-6 mb-3">
+<label class="form-label fw-bold">
+<i class="bi bi-geo-alt text-success"></i> Vị trí
+</label>
+
+<select name="viTri" class="form-select form-select-lg" th:readonly="${banner.trangThai == 'HOAT_DONG'}"
+        th:classappend="${banner.trangThai == 'HOAT_DONG'} ? 'readonly-select' : ''">
+
+<option value="" disabled th:selected="${banner.viTri == null}">
+Chọn vị trí
+</option>
+
+<option value="TOP"
+        th:selected="${banner.viTri == 'TOP'}">
+Trang chủ (Đầu trang)
+</option>
+
+<option value="TRUYEN"
+        th:selected="${banner.viTri == 'TRUYEN'}">
+Trong truyện (Dưới tiêu đề chương)
+</option>
+
+</select>
+</div>
+
+<!-- NGÀY BẮT ĐẦU -->
+<div class="col-md-6 mb-3">
+    <label class="form-label fw-bold">
+        <i class="bi bi-calendar-event text-info"></i> Ngày bắt đầu
+    </label>
+
+    <input type="date"
+       class="form-control form-control-lg"
+       name="ngayBatDau"
+       th:value="${ngayBatDau != null ? ngayBatDau : #temporals.format(banner.ngayBatDau,'yyyy-MM-dd')}"
+       th:readonly="${banner.trangThai == 'HOAT_DONG' or banner.trangThai == 'TAM_DUNG'}">
+
+    <p class="text-danger small mt-2"
+       th:if="${errorStart}"
+       th:text="${errorStart}">
+    </p>
+</div>
+
+<!-- TOKEN MỖI NGÀY -->
+<div class="col-md-6 mb-3">
+<label class="form-label fw-bold"><i class="bi bi-cash text-warning"></i> Token mỗi ngày</label>
+
+<input type="number"
+       class="form-control form-control-lg"
+       name="tokenMoiNgay"
+       th:value="${banner.tokenMoiNgay}"
+       min="1000"
+       max="50000000"
+       style="appearance: textfield;">
+       
+       <p class="text-danger small mt-2"
+   th:if="${errorToken}"
+   th:text="${errorToken}">
+</p>
+</div>
+
+<!-- NGÀY KẾT THÚC -->
+<div class="col-md-6 mb-3">
+<label class="form-label fw-bold"><i class="bi bi-calendar-x text-danger"></i> Ngày kết thúc</label>
+
+<input type="date"
+       class="form-control form-control-lg"
+       name="ngayKetThuc"
+       th:value="${ngayKetThuc != null ? ngayKetThuc : #temporals.format(banner.ngayKetThuc,'yyyy-MM-dd')}">
+       
+       <p class="text-danger small mt-2"
+   th:if="${errorNgay}"
+   th:text="${errorNgay}">
+</p>
+
+</div>
+
+<!-- TRẠNG THÁI -->
+<div class="col-md-6 mb-3">
+<label class="form-label fw-bold">
+<i class="bi bi-info-circle text-secondary"></i> Trạng thái
+</label>
+
+<select class="form-control form-control-lg" name="trangThai" th:disabled="${banner.trangThai == 'CHO_CHAY'}">
+
+    <option value="CHO_CHAY"
+            th:if="${banner.trangThai == 'CHO_CHAY'}"
+            th:selected="true">
+        Chờ chạy
+    </option>
+
+    <option value="HOAT_DONG"
+            th:selected="${banner.trangThai == 'HOAT_DONG'}">
+        Hoạt động
+    </option>
+
+    <option value="TAM_DUNG"
+            th:selected="${banner.trangThai == 'TAM_DUNG'}">
+        Tạm dừng
+    </option>
+
+</select>
+</div>
+</div>
+
+<div class="text-center mt-4">
+<i class="bi bi-check-circle-fill text-success fs-1" onclick="this.closest('form').submit()" style="cursor:pointer;" title="Cập nhật quảng cáo"></i>
+</div>
+
+<a th:href="@{/quang-cao/LichSu/QuangCao}"
+   class="btn btn-secondary btn-lg" title="Quay lại">
+  <i class="bi bi-arrow-left-circle" style="font-size: 1rem;"></i>
+</a>
+
+</div>
+
+</form>
+
+</div>
+</div>
+
+</section>
+
+</div>
+
+</div>
+
+</div>

@@ -1,6 +1,7 @@
 package com.fpoly.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,13 +106,13 @@ public class ChuongController {
 	        model.addAttribute("canReadNext", canReadNext);
 	    }
 	    
-	    
+	    LocalDateTime now = LocalDateTime.now();
 	    List<Banner> bannerTruyen = bannerRepo
 	    	    .findByViTriAndTrangThaiAndNgayBatDauLessThanEqualAndNgayKetThucGreaterThanEqualOrderByTokenMoiNgayDesc(
 	    	        "TRUYEN",
 	    	        "HOAT_DONG",
-	    	        LocalDate.now(),
-	    	        LocalDate.now()
+	    	        now,
+	    	        now
 	    	    );
 
 	    model.addAttribute("bannerTruyen", bannerTruyen);

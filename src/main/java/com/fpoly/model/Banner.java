@@ -1,6 +1,8 @@
 package com.fpoly.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,10 +19,6 @@ public class Banner {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-	/*
-	 * @Column(name = "truyen_id", nullable = false) private Long truyenId;
-	 */
-
     @Column(name = "vi_tri")
     private String viTri; 
 
@@ -34,10 +32,23 @@ public class Banner {
     private String trangThai;
     
     @Column(name = "ngay_bat_dau")
-    private LocalDate ngayBatDau;
+    private LocalDateTime ngayBatDau;
 
     @Column(name = "ngay_ket_thuc")
-    private LocalDate ngayKetThuc;
+    private LocalDateTime ngayKetThuc;
+    
+    @Column(name = "gio_tao")
+    private LocalTime gioTao;
+    
+    @Column(name = "thoi_gian_con_lai")
+    private Long thoiGianConLai;
+    
+    @Column(name = "token_da_dung")
+    private Long tokenDaDung = 0L;
+    
+    @Column(name = "last_update_time")
+    private LocalDateTime lastUpdateTime;
+    
     
     @ManyToOne
     @JoinColumn(name = "truyen_id")

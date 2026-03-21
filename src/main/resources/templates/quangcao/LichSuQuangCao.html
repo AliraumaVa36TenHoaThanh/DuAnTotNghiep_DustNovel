@@ -7,13 +7,11 @@
 	padding: 40px 20px;
 }
 
-/* container full width */
 .qc-page .container {
 	max-width: 100%;
 	margin: auto;
 }
 
-/* HEADER */
 .qc-page .header {
 	text-align: center;
 	color: #2c3e50;
@@ -35,13 +33,11 @@
 	opacity: 0.9;
 }
 
-/* TABLE */
 .qc-page table {
 	width: 100%;
 	border-collapse: collapse;
 }
 
-/* header line */
 .qc-page thead {
 	border-bottom: 2px solid #667eea;
 }
@@ -54,12 +50,10 @@
 	color: #2c3e50;
 }
 
-/* dark mode */
 [data-theme="dark"] .qc-page th {
 	color: #f1f1f1;
 }
 
-/* rows */
 .qc-page tbody tr {
 	border-bottom: 1px solid #e5e7eb;
 	transition: all .2s ease;
@@ -73,7 +67,6 @@
 	background: #2a2a2a;
 }
 
-/* cell */
 .qc-page td {
 	padding: 16px;
 	font-size: 14px;
@@ -84,7 +77,6 @@
 	color: #d1d1d1;
 }
 
-/* status */
 .qc-page .status-badge {
 	font-weight: 600;
 	font-size: 13px;
@@ -98,7 +90,6 @@
 	color: #ef4444;
 }
 
-/* responsive */
 @media ( max-width :768px) {
 	.qc-page .header h1 {
 		font-size: 1.8rem;
@@ -119,8 +110,11 @@
 
 				<p>Xem các quảng cáo đã tạo và trạng thái của chúng</p>
 			</div>
+			
 
 			<table>
+			
+			
 
     <thead>
 
@@ -131,6 +125,7 @@
             <th><i class="bi bi-calendar-x"></i> Ngày Kết Thúc</th>
             <th><i class="bi bi-coin"></i> Token/Ngày</th>
             <th><i class="bi bi-toggle2-on"></i> Trạng Thái</th>
+             <th><i class="bi bi-gear"></i> Hành động</th>
         </tr>
 
     </thead>
@@ -151,36 +146,94 @@
             <td th:text="${banner.viTri}"></td>
 
             <!-- Ngày bắt đầu -->
-            <td th:text="${banner.ngayBatDau}"></td>
+						<td>
+							<div
+								th:text="${#temporals.format(banner.ngayBatDau,'dd-MM-yyyy')}"></div>
 
-            <!-- Ngày kết thúc -->
-            <td th:text="${banner.ngayKetThuc}"></td>
+							<small style="color: gray"
+							th:text="${#temporals.format(banner.gioTao,'HH:mm')}"> </small>
+						</td>
 
-            <!-- Token -->
-            <td th:text="${banner.tokenMoiNgay + ' token'}"></td>
+						<!-- Ngày kết thúc -->
+						<td>
 
+							<div
+								th:text="${#temporals.format(banner.ngayKetThuc,'dd-MM-yyyy')}"></div>
+
+							<!-- đang chạy -->
+							<div
+								th:if="${banner.trangThai == 'HOAT_DONG' or banner.trangThai == 'TAM_DUNG'}">
+
+								<div style="font-size: 12px; color: #9ca3af"
+									th:text="'Còn: ' + ${#vars['phutConLai_' + banner.id]/60} + ' giờ ' + ${#vars['phutConLai_' + banner.id]%60} + ' phút'">
+								</div>
+
+							</div> 
+							<!-- chưa chạy -->
+							<div th:if="${banner.trangThai == 'CHO_CHAY'}"
+								style="font-size: 12px; color: #9ca3af">Chưa bắt đầu</div> 
+							<!-- hết hạn -->
+							<div th:if="${banner.trangThai == 'HET_HAN'}"
+								style="font-size: 12px; color: #9ca3af">Đã kết thúc</div>
+
+						</td>
+
+			<!-- Token -->
+            <td th:text="${#vars['tokenDaTru_' + banner.id] + ' / ' + banner.tokenMoiNgay + ' token'}"></td>
+            <!-- 
+            <td th:text="${#vars['tokenDaTru_' + banner.id] + ' / ' + banner.tokenMoiNgay + ' token'}"></td>
+            -->
             <!-- Trạng thái -->
             <td>
 
                 <span th:if="${banner.trangThai == 'CHO_CHAY'}"
-							class="status-badge" style="color: #f59e0b; font-weight: 600;">
-								Chờ chạy 
-							</span> 
+					class="status-badge" style="color: #f59e0b; font-weight: 600;">
+				    Chờ chạy 
+					</span> 
 			    <span th:if="${banner.trangThai == 'HOAT_DONG'}"
-							class="status-badge status-active"> 
-							Đang chạy 
-							</span>
+					class="status-badge status-active"> 
+					Đang chạy 
+					</span>
 			    <span th:if="${banner.trangThai == 'HET_HAN'}" class="status-badge"
-							style="color: #ef4444; font-weight: 600;"> 
-							Hết hạn 
-							</span>
+					style="color: #ef4444; font-weight: 600;"> 
+					Hết hạn 
+					</span>
+							
+				<span th:if="${banner.trangThai == 'TAM_DUNG'}"
+                     class="status-badge"
+                     style="color:#f97316; font-weight:600;">
+                     Tạm dừng
+                </span>			
+			</td>
+
+
+
+						<td style="padding-left:40px;">
+							<!-- Nút sửa --> 
+							<a							
+							th:if="${banner.trangThai != 'HET_HAN'}"
+							th:href="@{/quang-cao/sua/{id}(id=${banner.id})}"
+							title="Sửa quảng cáo"
+							style="color: #3b82f6; font-size: 18px; margin-right: 10px;">
+								<i class="bi bi-pencil-square"></i>
+
+						</a> 
+						<!-- Nút xóa -->
+						 <a
+							th:href="@{/quang-cao/xoa/{id}(id=${banner.id})}"
+							title="Xóa quảng cáo"
+							onclick="return confirm('Bạn có chắc muốn xóa quảng cáo này?')"
+							style="color: #ef4444; font-size: 18px;"> <i
+								class="bi bi-trash"></i>
+
+						</a>
+
 						</td>
 
-        </tr>
+					</tr>
+                </tbody>
 
-    </tbody>
-
-</table>
+         </table>
 
 		</div>
 	</div>

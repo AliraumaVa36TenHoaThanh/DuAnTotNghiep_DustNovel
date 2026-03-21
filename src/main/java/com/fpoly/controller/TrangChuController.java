@@ -1,6 +1,7 @@
 package com.fpoly.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -61,12 +62,13 @@ public class TrangChuController {
             truyenRepo.findByLoaiTruyenOrderByChuongMoiNhat(LoaiTruyen.DỊCH)
         );
         
+        LocalDateTime now = LocalDateTime.now();
         List<Banner> bannerDangChay = bannerRepo
                 .findByViTriAndTrangThaiAndNgayBatDauLessThanEqualAndNgayKetThucGreaterThanEqualOrderByTokenMoiNgayDesc(
                     "TOP",
                     "HOAT_DONG",
-                    LocalDate.now(),
-                    LocalDate.now()
+                    now,
+	    	        now
                 );
 
             model.addAttribute("bannerDangChay", bannerDangChay);

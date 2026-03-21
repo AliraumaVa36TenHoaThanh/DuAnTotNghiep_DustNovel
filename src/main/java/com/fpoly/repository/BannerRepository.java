@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -21,8 +22,8 @@ public interface BannerRepository extends JpaRepository<Banner, Long> {
     List<Banner> findByViTriAndTrangThaiAndNgayBatDauLessThanEqualAndNgayKetThucGreaterThanEqualOrderByTokenMoiNgayDesc(
             String viTri,
             String trangThai,
-            LocalDate ngayHienTai1,
-            LocalDate ngayHienTai2
+            LocalDateTime ngayHienTai1,
+            LocalDateTime ngayHienTai2
     );
     
     List<Banner> findByTrangThaiAndViTri(String trangThai, String viTri);
