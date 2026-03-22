@@ -329,8 +329,8 @@ input[type="number"]::-webkit-outer-spin-button {
 							<label><i class="bi bi-geo-alt"></i> Vị trí banner</label> <select
 								 name="viTri">
 								<option value="" disabled th:selected="${viTri == null}">Chọn vị trí</option>
-								<option value="TOP" th:selected="${viTri == 'TOP'}">trang chủ (Đầu trang)</option>
-								<option value="TRUYEN" th:selected="${viTri == 'TRUYEN'}">Trong truyện (Dưới tiêu đề chương)</option>
+								<option value="TOP" th:selected="${viTri == 'TOP'}">Trang Chủ (Đầu trang)</option>
+								<option value="TRUYEN" th:selected="${viTri == 'TRUYEN'}">Trong Truyện (Dưới tiêu đề chương)</option>
 							</select>
 							<p style="color: red; font-size: 14px; margin-top: 5px;"
 								th:if="${errorViTri}" th:text="${errorViTri}"></p>
