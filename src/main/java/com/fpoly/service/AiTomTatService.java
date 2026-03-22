@@ -24,9 +24,7 @@ public class AiTomTatService {
 
     private final AiTomTatRepository aiTomTatRepo;
     private final ChuongRepository chuongRepo;
-    
-    // ĐIỀN API KEY GROQ CỦA ÔNG VÀO ĐÂY (Bắt đầu bằng gsk_...)
-    private final String GROQ_API_KEY = "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";
+    private final String GROQ_API_KEY = "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";
 
     public String getTomTatChuong(Long chuongId) {
         Chuong chuong = chuongRepo.findById(chuongId)
