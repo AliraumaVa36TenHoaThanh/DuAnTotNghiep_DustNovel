@@ -96,10 +96,19 @@ public class SecurityConfig {
 
             	    // ADMIN
             	    .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
+            	    
+            	    .requestMatchers("/quang-cao/**")
+                    .hasAnyRole("USER", "ADMIN")
 
 
                 .anyRequest().authenticated()
             )
+            
+            .exceptionHandling(ex -> ex
+                    .accessDeniedHandler((request, response, accessDeniedException) -> {
+                        response.sendRedirect("/DustNovel/login");
+                    })
+                )
 
             .formLogin(form -> form
                 .loginPage("/DustNovel/login")
