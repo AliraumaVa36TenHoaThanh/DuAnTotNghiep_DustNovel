@@ -292,4 +292,27 @@ public class ChuongService {
         }
     }
     
+    @Transactional(rollbackOn = Exception.class)
+    public void capNhatKhoaHangLoat(Long truyenId, List<Long> chuongKhoaIds) {
+        List<Chuong> tatCaChuong = chuongRepo.findByTruyenId(truyenId);
+        long giaChung = com.fpoly.config.GiaChuongKhoa.gia_chuong;
+
+        for (Chuong c : tatCaChuong) {
+            
+            boolean isLocked = (chuongKhoaIds != null && chuongKhoaIds.contains(c.getId()));
+            
+            c.setKhoa(isLocked);
+            
+            if (isLocked) {
+               
+                if (c.getGiaToken() == null || c.getGiaToken() == 0) {
+                    c.setGiaToken(giaChung);
+                }
+            } else {
+               
+                c.setGiaToken(0L); 
+            }
+        }
+        chuongRepo.saveAll(tatCaChuong);
+    }
 }

@@ -582,4 +582,20 @@ public class ChuongController {
             return "redirect:/DustNovel/nap-tien";
         }
     }
+    
+    @PostMapping("/quan-ly-khoa")
+    @PreAuthorize("@permissionService.canEditTruyen(#truyenId)") // Khóa bảo mật: Chỉ tác giả/admin mới được chạy hàm này
+    public String quanLyKhoa(
+            @RequestParam("truyenId") Long truyenId,
+            @RequestParam(value = "chuongKhoaIds", required = false) List<Long> chuongKhoaIds,
+            HttpServletRequest request) {
+        
+        try {
+            chuongService.capNhatKhoaHangLoat(truyenId, chuongKhoaIds);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return "redirect:" + request.getHeader("Referer");
+    }
 }
