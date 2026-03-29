@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.fpoly.config.GiaChuongKhoa;
 import com.fpoly.model.Chuong;
 import com.fpoly.model.LichSuDoc;
+import com.fpoly.model.MoKhoaChuong;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.model.Tap;
 import com.fpoly.model.enums.VaiTro;
@@ -240,6 +241,55 @@ public class ChuongService {
             }
         }
         return null;
+    }
+    
+    @Transactional(rollbackOn = Exception.class)
+    public void muaHangLoat(List<Long> chuongIds, NguoiDung user) throws Exception {
+        if (chuongIds == null || chuongIds.isEmpty()) return;
+
+        long tongTienCanThanhToan = 0;
+        List<Chuong> danhSachCanMua = chuongRepo.findAllById(chuongIds);
+        List<Chuong> danhSachThucSuMua = new java.util.ArrayList<>();
+        
+        // Lấy giá mặc định của hệ thống (phòng hờ chương bị lưu giá 0 trong DB)
+        long giaChung = com.fpoly.config.GiaChuongKhoa.gia_chuong;
+
+        for (Chuong c : danhSachCanMua) {
+            if (!moKhoaChuongRepo.existsByNguoiDung_IdAndChuong_Id(user.getId(), c.getId())) {
+                // Ưu tiên giá riêng của chương, nếu không có thì xài giá chung
+                long giaThucTe = (c.getGiaToken() != null && c.getGiaToken() > 0) ? c.getGiaToken() : giaChung;
+                tongTienCanThanhToan += giaThucTe;
+                danhSachThucSuMua.add(c);
+            }
+        }
+
+        if (danhSachThucSuMua.isEmpty()) return;
+
+        if (user.getToken() < tongTienCanThanhToan) {
+            throw new Exception("Không đủ Token để thanh toán!");
+        }
+
+        // Trừ tiền người mua
+        user.setToken(user.getToken() - tongTienCanThanhToan);
+        nguoiDungRepository.save(user);
+
+        // Trả tiền tác giả & Lưu lịch sử
+        for (Chuong c : danhSachThucSuMua) {
+            long giaThucTe = (c.getGiaToken() != null && c.getGiaToken() > 0) ? c.getGiaToken() : giaChung;
+            
+            NguoiDung nguoiDang = c.getNguoiDang();
+            if (nguoiDang != null) {
+                long tokenHienTai = (nguoiDang.getToken() != null) ? nguoiDang.getToken() : 0L;
+                nguoiDang.setToken(tokenHienTai + giaThucTe);
+                nguoiDungRepository.save(nguoiDang);
+            }
+
+            MoKhoaChuong mk = new MoKhoaChuong();
+            mk.setNguoiDung(user);
+            mk.setChuong(c);
+            mk.setGiaToken(giaThucTe);
+            moKhoaChuongRepo.save(mk);
+        }
     }
     
 }

@@ -1,11 +1,14 @@
 <div th:fragment="tapDetail(tap, truyen, currentUser)">
    <div class="card mb-4 shadow-sm border-0">
-
+		
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
         <h6 class="mb-0 fw-bold" th:text="${tap.tenTap}"></h6>
+        
+        
+        
         <div class="d-flex align-items-center gap-2"
              th:if="${@permissionService.canAddChuongByTap(tap.id)}">
-
+		
             <a class="btn btn-sm btn-outline-light fw-bold"
                th:href="@{/DustNovel/chuong/them/{truyenId}/{tapId}
                (truyenId=${truyen.id}, tapId=${tap.id})}">

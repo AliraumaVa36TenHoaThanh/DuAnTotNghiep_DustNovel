@@ -34,7 +34,7 @@
 </div>
 
 --> 
-
+.
 
 <div th:fragment="muaModal(chap, currentUser)">
     <div class="modal fade"
@@ -95,7 +95,7 @@
                             Token
                         </div>
 
-                        <form th:action="@{/DustNovel/chuong/{id}/mua-token(id=${chap.id})}"
+                        <form th:action="@{/DustNovel/chuong/{id}/mua(id=${chap.id})}"
                               method="post">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                             <button class="btn btn-outline-danger w-100"
@@ -161,4 +161,114 @@
             </div>
         </div>
     </div>
+</div>
+
+<div th:fragment="muaHangLoatTruyenModal(truyen, tatCaChuong, currentUser)">
+    <div class="modal fade" th:id="'muaHangLoatTruyenModal__' + ${truyen.id}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title fw-bold text-dark">🛒 Mua nhiều chương - <span th:text="${truyen.tenTruyen}"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                
+                <form th:id="'formMuaHangLoatTruyen_' + ${truyen.id}" th:action="@{/DustNovel/chuong/mua-hang-loat}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    
+                    <div class="modal-body p-0">
+                        <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                            <div class="form-check">
+                                <input class="form-check-input border-dark" type="checkbox" th:id="'checkAllTruyen_' + ${truyen.id}" 
+                                       th:onchange="'toggleAllCartTruyen(' + ${truyen.id} + ', this.checked)'">
+                                <label class="form-check-label fw-bold text-dark" th:for="'checkAllTruyen_' + ${truyen.id}">
+                                    Chọn tất cả
+                                </label>
+                            </div>
+                            <div th:if="${currentUser != null}" class="text-muted small">
+                                Ví: <b class="text-primary"><span th:text="${currentUser.token}"></span> Token</b>
+                            </div>
+                        </div>
+
+                        <ul class="list-group list-group-flush" style="max-height: 40vh; overflow-y: auto;">
+                            <th:block th:each="chap : ${tatCaChuong}">
+                                
+                                <th:block th:with="giaThucTe=${chap.giaToken != null && chap.giaToken > 0 ? chap.giaToken : T(com.fpoly.config.GiaChuongKhoa).gia_chuong}">
+                                    
+                                    <li class="list-group-item d-flex justify-content-between align-items-center" 
+                                        th:if="${chap.khoa and !@permissionService.canReadChuong(chap, currentUser)}">
+                                        
+                                        <div class="form-check text-truncate pe-2">
+                                            <input class="form-check-input chap-cb-truyen border-secondary" type="checkbox" name="chuongIds" 
+                                                   th:value="${chap.id}" 
+                                                   th:data-price="${giaThucTe}"
+                                                   th:data-truyen-id="${truyen.id}"
+                                                   th:id="'cb_truyen_' + ${chap.id}"
+                                                   th:onchange="'updateCartTotalTruyen(' + ${truyen.id} + ')'">
+                                            <label class="form-check-label user-select-none text-dark" th:for="'cb_truyen_' + ${chap.id}">
+                                                Chương [[${chap.soChuong}]]: [[${chap.tieuDe}]]
+                                            </label>
+                                        </div>
+                                        <span class="text-danger fw-bold text-nowrap">[[${giaThucTe}]] 🪙</span>
+                                    </li>
+                                    
+                                </th:block>
+                            </th:block>
+                        </ul>                    </div>
+
+                    <div class="modal-footer d-flex justify-content-between align-items-center bg-light">
+                        <div>
+                            <span class="text-muted small">Tổng thanh toán:</span><br>
+                            <h4 class="text-danger fw-bold mb-0">
+                                <span th:id="'totalPriceTruyen_' + ${truyen.id}">0</span> Token
+                            </h4>
+                        </div>
+                        
+                        <div>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-warning px-3 fw-bold" th:onclick="'buyAllCartTruyen(' + ${truyen.id} + ')'">⚡ Mua tất cả</button>
+                            <button type="submit" class="btn btn-danger px-3 fw-bold" th:id="'btnBuyBulkTruyen_' + ${truyen.id}" disabled>Thanh toán</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+   <script type="text/javascript">
+        if (typeof window.bulkCartTruyenInitialized === 'undefined') {
+            window.bulkCartTruyenInitialized = true;
+
+            function updateCartTotalTruyen(truyenId) {
+                let checkboxes = document.querySelectorAll('input.chap-cb-truyen[data-truyen-id="' + truyenId + '"]:checked');
+                let total = 0;
+                checkboxes.forEach(function(cb) { total += parseInt(cb.getAttribute('data-price') || 0); });
+                document.getElementById('totalPriceTruyen_' + truyenId).innerText = total;
+                const btnBuy = document.getElementById('btnBuyBulkTruyen_' + truyenId);
+                
+                // MẤU CHỐT: Chỉ cần số lượng tick > 0 là cho phép bấm Thanh toán!
+                if (checkboxes.length > 0) {
+                    btnBuy.removeAttribute('disabled'); 
+                } else {
+                    btnBuy.setAttribute('disabled', 'true');
+                }
+            }
+
+            function toggleAllCartTruyen(truyenId, isChecked) {
+                let checkboxes = document.querySelectorAll('input.chap-cb-truyen[data-truyen-id="' + truyenId + '"]');
+                checkboxes.forEach(function(cb) { cb.checked = isChecked; });
+                updateCartTotalTruyen(truyenId);
+            }
+
+            function buyAllCartTruyen(truyenId) {
+                let checkboxes = document.querySelectorAll('input.chap-cb-truyen[data-truyen-id="' + truyenId + '"]');
+                if(checkboxes.length === 0) { alert("Bạn đã sở hữu toàn bộ chương rồi!"); return; }
+                checkboxes.forEach(function(cb) { cb.checked = true; });
+                updateCartTotalTruyen(truyenId);
+                if(confirm("Xác nhận mua toàn bộ chương đang khóa?")) { 
+                    document.getElementById('formMuaHangLoatTruyen_' + truyenId).submit(); 
+                }
+            }
+        }
+    </script>
 </div>

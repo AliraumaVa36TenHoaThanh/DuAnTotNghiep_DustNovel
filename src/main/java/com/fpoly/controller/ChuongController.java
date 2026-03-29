@@ -392,23 +392,71 @@ public class ChuongController {
          chuongService.save(chuongDB);
          return "redirect:/DustNovel/truyen/" + chuongDB.getTruyen().getId();
     }
+//    @PostMapping("/{id}/mua")
+//    public String muaChuong(@PathVariable Long id, Model model) {
+//
+//        NguoiDung user = securityUtil.getCurrentUserFromDB();
+//        if (user == null) return "redirect:/DustNovel/login";
+//
+//        Chuong chuong = chuongRepo.findById(id).orElseThrow();
+//
+//        PhieuThuong phieu = user.getPhieuThuong();
+//        if (phieu != null && phieu.getSoLuong() > 0) {
+//            model.addAttribute("chuong", chuong);
+//            model.addAttribute("soPhieu", phieu.getSoLuong());
+//            model.addAttribute("content", "chuong/hoi-dung-phieu");
+//            return "layout/main";
+//        }
+//        return "redirect:/DustNovel/chuong/" + id + "/mua-token";
+//    }
+    
     @PostMapping("/{id}/mua")
-    public String muaChuong(@PathVariable Long id, Model model) {
+    @Transactional
+    public String muaChuong(@PathVariable Long id) { // Không cần truyền Model vào nữa
 
         NguoiDung user = securityUtil.getCurrentUserFromDB();
         if (user == null) return "redirect:/DustNovel/login";
 
         Chuong chuong = chuongRepo.findById(id).orElseThrow();
 
-        PhieuThuong phieu = user.getPhieuThuong();
-        if (phieu != null && phieu.getSoLuong() > 0) {
-            model.addAttribute("chuong", chuong);
-            model.addAttribute("soPhieu", phieu.getSoLuong());
-            model.addAttribute("content", "chuong/hoi-dung-phieu");
-            return "layout/main";
+        // 1. Kiểm tra xem người này đã mua chương này trước đó chưa
+        if (moKhoaChuongRepo.existsByNguoiDung_IdAndChuong_Id(user.getId(), id)) {
+            return "redirect:/DustNovel/chuong/" + id;
         }
-        return "redirect:/DustNovel/chuong/" + id + "/mua-token";
+
+        // ========================================================
+        // 2. XỬ LÝ MUA BẰNG TOKEN (Bỏ qua vụ kiểm tra Phiếu vì Modal đã lo việc đó)
+        // ========================================================
+        long gia = com.fpoly.config.GiaChuongKhoa.gia_chuong;
+        
+        // Kiểm tra ví
+        if (user.getToken() < gia) {
+            return "redirect:/DustNovel/nap-tien";
+        }
+
+        // Trừ tiền người mua
+        user.setToken(user.getToken() - gia);
+        nguoiDungRepo.save(user);
+        
+        // Cộng tiền cho người đăng truyện
+        NguoiDung nguoiDang = chuong.getNguoiDang();
+        if (nguoiDang != null) {
+            long tokenHienTai = (nguoiDang.getToken() != null) ? nguoiDang.getToken() : 0L;
+            nguoiDang.setToken(tokenHienTai + gia);
+            nguoiDungRepo.save(nguoiDang);
+        }
+        
+        // Lưu lịch sử mở khóa
+        MoKhoaChuong mk = new MoKhoaChuong();
+        mk.setNguoiDung(user);
+        mk.setChuong(chuong);
+        mk.setGiaToken(gia);
+        // mk.setLoaiThanhToan("TOKEN"); 
+        moKhoaChuongRepo.save(mk);
+
+        return "redirect:/DustNovel/chuong/" + id;
     }
+    
     
     @PostMapping("/{id}/mua-phieu")
     @Transactional
@@ -512,5 +560,26 @@ public class ChuongController {
         binhLuanService.deleteReply(replyId, user.getId());
 
         return "redirect:/DustNovel/chuong/" + chuongId;
+    }
+    
+    @PostMapping("/mua-hang-loat")
+    public String muaHangLoat(@RequestParam(value = "chuongIds", required = false) List<Long> chuongIds, HttpServletRequest request) {
+        
+        NguoiDung user = securityUtil.getCurrentUserFromDB();
+        if (user == null) {
+            return "redirect:/DustNovel/login";
+        }
+
+        try {
+            // Ném mảng ID chương và User qua cho Service tính toán tiền bạc
+            chuongService.muaHangLoat(chuongIds, user);
+            
+            // Xong xuôi thì F5 lại đúng trang hiện tại
+            return "redirect:" + request.getHeader("Referer");
+            
+        } catch (Exception e) {
+            // Bắt lỗi: Nếu Service quăng lỗi (Không đủ tiền), đá thẳng sang trang nạp thẻ
+            return "redirect:/DustNovel/nap-tien";
+        }
     }
 }

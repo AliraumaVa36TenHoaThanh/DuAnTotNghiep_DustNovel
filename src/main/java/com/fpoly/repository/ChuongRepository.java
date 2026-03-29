@@ -67,4 +67,7 @@ public interface ChuongRepository extends JpaRepository<Chuong, Long> {
     		ORDER BY c.tap.soTap DESC, c.soChuong DESC
     		""")
     		List<Chuong> findTatCaChuongTheoThuTuDesc(Long truyenId);
+    		
+    		
+    		List<Chuong> findByTruyenId(Long truyenId);
 }

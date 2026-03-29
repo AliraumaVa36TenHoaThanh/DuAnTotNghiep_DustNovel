@@ -15,6 +15,7 @@ import com.fpoly.service.BinhLuanService;
 import com.fpoly.service.ChuongService;
 import com.fpoly.service.TapService;
 import com.fpoly.service.TheLoaiService;
+import com.fpoly.repository.ChuongRepository;
 import com.fpoly.repository.NguoiDungRepository;
 import com.fpoly.repository.TheLoaiRepository;
 import com.fpoly.repository.TruyenRepository;
@@ -57,7 +58,8 @@ public class TruyenController {
 	    TapService tapService;
 	    @Autowired
 	    BinhLuanService binhLuanService;
-
+	    @Autowired 
+	    ChuongRepository chuongRepo;
 	    @GetMapping("/truyen/{id:\\d+}")
 	    public String detail(@PathVariable Long id, Model model) {
 	    	NguoiDung user = securityUtil.getCurrentUserFromDB();
@@ -71,6 +73,8 @@ public class TruyenController {
 //	        model.addAttribute("chuongMoi", chuongMoi);
 	        Chuong chuongDau = chuongService.layChuongDauCoTheDoc(id, user);
 	        Chuong chuongMoi = chuongService.layChuongMoiCoTheDoc(id, user);
+	        List<Chuong> tatCaChuong = chuongRepo.findByTruyenId(id);
+	        model.addAttribute("tatCaChuong", tatCaChuong);
 	        model.addAttribute("chuongDau", chuongDau);
 	        model.addAttribute("chuongMoi", chuongMoi);
 	        model.addAttribute("truyen", truyen);
