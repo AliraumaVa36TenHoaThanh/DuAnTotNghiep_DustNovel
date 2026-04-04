@@ -182,7 +182,6 @@ th {
 					<th>Ngân hàng</th>
 					<th>Trạng thái</th>
 					<th>Ngày tạo</th>
-					<th class="text-center">Xử lý</th>
 				</tr>
 			</thead>
 
@@ -214,28 +213,6 @@ th {
 
 					<td th:text="${#temporals.format(rut.ngayTao,'dd/MM/yyyy HH:mm')}">
 						01/02/2026
-					</td>
-
-					<td class="text-center">
-
-						<div th:if="${rut.trangThai == 'CHO_DUYET'}">
-
-							<a href="#"
-							   class="action-btn btn-approve"
-							   th:data-url="@{/dba/rut-tien/duyet/{id}(id=${rut.id})}"
-							   onclick="return duyet(this)">✔</a>
-
-							<a href="#"
-							   class="action-btn btn-reject"
-							   th:data-url="@{/dba/rut-tien/tu-choi/{id}(id=${rut.id})}"
-							   onclick="return tuChoi(this)">✖</a>
-
-						</div>
-
-						<div th:if="${rut.trangThai != 'CHO_DUYET'}">
-							<span style="color:#999;">—</span>
-						</div>
-
 					</td>
 				</tr>
 
