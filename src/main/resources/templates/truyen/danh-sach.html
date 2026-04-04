@@ -24,7 +24,11 @@
 
                     <div class="card-body d-flex flex-column">
 
-                        <h6 class="card-title fw-bold text-truncate" th:text="${truyen.tenTruyen}" th:title="${truyen.tenTruyen}"></h6>
+                       <h6 class="card-title fw-bold"
+    th:text="${#strings.length(truyen.tenTruyen) > 50 
+        ? #strings.substring(truyen.tenTruyen, 0, 50) + '...' 
+        : truyen.tenTruyen}">
+</h6>
 
                         <div th:if="${chuongMoi != null}" class="mb-2 text-truncate" style="font-size: 0.85rem;">
                             <span class="badge bg-danger me-1">New!</span>
@@ -41,12 +45,21 @@
                         <small class="text-muted mb-2" th:text="'Tác giả: ' + ${truyen.tenTacGia}"></small>
                         
                         <div class="mb-2 d-flex flex-wrap gap-1">
-                            <a th:each="tl : ${truyen.theLoais}" 
-                               th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}" 
-                               th:text="${tl.tenTheLoai}" 
-                               class="badge bg-secondary text-decoration-none">
-                            </a>
-                        </div>
+
+    <!-- Lấy tối đa 4 phần tử -->
+    <a th:each="tl : ${truyen.theLoais != null ? truyen.theLoais.subList(0, T(java.lang.Math).min(4, truyen.theLoais.size())) : {}}"
+       th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
+       th:text="${tl.tenTheLoai}"
+       class="badge bg-secondary text-decoration-none">
+    </a>
+
+    <!-- +x -->
+    <span th:if="${truyen.theLoais != null and truyen.theLoais.size() > 4}"
+          class="badge bg-dark">
+        +<span th:text="${truyen.theLoais.size() - 4}"></span>
+    </span>
+
+</div>
                         
                         <small class="text-danger mb-2 fw-bold" th:if="${truyen.tag18}">🔞 Nội dung 18+</small>
 

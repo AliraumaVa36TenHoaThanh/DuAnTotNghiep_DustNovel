@@ -571,20 +571,20 @@ public class ChuongController {
         }
 
         try {
-            // Ném mảng ID chương và User qua cho Service tính toán tiền bạc
+          
             chuongService.muaHangLoat(chuongIds, user);
             
             // Xong xuôi thì F5 lại đúng trang hiện tại
             return "redirect:" + request.getHeader("Referer");
             
         } catch (Exception e) {
-            // Bắt lỗi: Nếu Service quăng lỗi (Không đủ tiền), đá thẳng sang trang nạp thẻ
+           
             return "redirect:/DustNovel/nap-tien";
         }
     }
     
     @PostMapping("/quan-ly-khoa")
-    @PreAuthorize("@permissionService.canEditTruyen(#truyenId)") // Khóa bảo mật: Chỉ tác giả/admin mới được chạy hàm này
+    @PreAuthorize("@permissionService.canEditTruyen(#truyenId)") 
     public String quanLyKhoa(
             @RequestParam("truyenId") Long truyenId,
             @RequestParam(value = "chuongKhoaIds", required = false) List<Long> chuongKhoaIds,

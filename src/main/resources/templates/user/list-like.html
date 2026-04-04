@@ -1,0 +1,47 @@
+<div th:fragment="content">
+
+    <div class="d-flex align-items-center mb-3">
+        <span
+            style="
+                width:10px;
+                height:10px;
+                border-radius:50%;               
+                display:inline-block;
+                margin-right:8px;
+                background:#dc3545
+            ">
+        </span>
+        <h5 class="mb-0 fw-semibold">Truyện đã thích</h5>
+    </div>
+
+    <div th:if="${#lists.isEmpty(dsTruyenLike)}" class="border rounded p-3 text-muted small bg-light">
+        Bạn chưa thích truyện nào. Hãy thả tim cho các truyện bạn yêu thích nhé!
+    </div>
+
+    <div th:unless="${#lists.isEmpty(dsTruyenLike)}" class="row g-3">
+        <div class="col-md-6 col-lg-4" th:each="truyen : ${dsTruyenLike}">
+            
+            <div class="card h-100 shadow-sm border-0 bg-light flex-row p-2 align-items-center">
+                
+                <img th:src="${truyen.tag18} 
+                            ? 'https://i.pinimg.com/1200x/69/05/e3/6905e37f8ca8a420fd303393921ecec0.jpg' 
+                            : (${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)} ? ${truyen.anhBia} : @{/images/aria.jpg})"
+                     class="rounded" 
+                     style="width: 65px; height: 90px; object-fit: cover;">
+                     
+                <div class="ms-3 flex-grow-1 overflow-hidden">
+                    <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}" 
+                       class="text-decoration-none text-dark fw-bold d-block text-truncate" 
+                       th:title="${truyen.tenTruyen}"
+                       th:text="${truyen.tenTruyen}">
+                    </a>
+                    <small class="text-muted d-block text-truncate" th:text="${truyen.tenTacGia}"></small>
+                    <small class="text-danger fw-bold"><i class="bi bi-heart-fill"></i> Đã thích</small>
+                </div>
+                
+            </div>
+            
+        </div>
+    </div>
+
+</div>

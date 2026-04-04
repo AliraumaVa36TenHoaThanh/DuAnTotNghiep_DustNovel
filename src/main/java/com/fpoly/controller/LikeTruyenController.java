@@ -38,4 +38,24 @@ public class LikeTruyenController {
 
         return res;
     }
+    
+    @GetMapping("/user/list-like")
+    public String listLike(org.springframework.ui.Model model) {
+        NguoiDung user = securityUtil.getCurrentUserFromDB();
+        
+        // Nếu chưa đăng nhập thì đá văng ra trang login
+        if (user == null) {
+            return "redirect:/DustNovel/login";
+        }
+
+        // Lấy danh sách truyện đã like ném ra ngoài View
+        java.util.List<com.fpoly.model.Truyen> dsTruyenLike = service.getTruyenDaLike(user);
+        model.addAttribute("dsTruyenLike", dsTruyenLike);
+        
+        model.addAttribute("title", "DustNovel | Truyện đã thích");
+        // Giả sử ông tạo file HTML trong thư mục templates/user/list-like.html
+        model.addAttribute("content", "user/list-like"); 
+
+        return "layout/main";
+    }
 }

@@ -24,13 +24,21 @@
 	                <small class="text-muted mb-1"
 	                       th:text="'Tác giả: ' + ${truyen.tenTacGia}">
 	                </small>
-					<div class="mb-2 d-flex flex-wrap gap-1">
-					    <a th:each="tl : ${truyen.theLoais}"
-					       th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
-					       th:text="${tl.tenTheLoai}"
-					       class="badge bg-secondary text-decoration-none">
-					    </a>
-					</div>
+					<div class="mb-2 d-flex flex-wrap gap-1" th:if="${truyen.theLoais != null}">
+	    
+	    <a th:each="tl, stat : ${truyen.theLoais}"
+	       th:if="${stat.index < 5}"
+	       th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
+	       th:text="${tl.tenTheLoai}"
+	       class="badge bg-secondary text-decoration-none">
+	    </a>
+
+	    <span th:if="${truyen.theLoais.size() > 5}" 
+	          class="badge bg-dark text-decoration-none"
+	          th:text="|+${truyen.theLoais.size() - 5}|">
+	    </span>
+        
+	</div>
 	                <small class="text-danger mb-2"
 	                       th:if="${truyen.tag18}">
 	                    🔞 Nội dung 18+
