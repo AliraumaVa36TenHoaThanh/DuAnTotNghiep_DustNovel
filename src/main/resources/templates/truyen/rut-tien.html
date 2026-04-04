@@ -32,19 +32,22 @@
                name="nganHang"
                class="form-control mb-2"
                placeholder="Tên ngân hàng (VD: Vietcombank)"
-               required>
+               required
+               th:value="${nganHang}">
 
         <input type="text"
                name="soTaiKhoan"
                class="form-control mb-2"
                placeholder="Số tài khoản"
-               required>
+               required
+               th:value="${soTaiKhoan}">
 
         <input type="text"
                name="tenChuTaiKhoan"
                class="form-control mb-2"
                placeholder="Tên chủ tài khoản"
-               required>
+               required
+               th:value="${tenChuTaiKhoan}">
 
         <input type="number"
                name="soToken"
@@ -59,9 +62,43 @@
                required>
 
         <button class="btn btn-danger">Gửi yêu cầu rút tiền</button>
-    </form>
+    </form>   
+   <hr>
 
+
+<h5>Danh sách yêu cầu rút tiền của bạn</h5>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Ngân hàng</th>
+                <th>Số tài khoản</th>
+                <th>Tên chủ tài khoản</th>
+                <th>Sử dụng hồ sơ này ?</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="rutTien : ${listRutTien}">
+                <td th:text="${rutTien.nganHang}">Ngân hàng</td>
+                <td th:text="${rutTien.soTaiKhoan}">123456789</td>
+                <td th:text="${rutTien.tenChuTaiKhoan}">Người dùng</td>
+                <td class="text-center">
+                    <!-- Button chỉ icon, trỏ đến trang chi tiết -->
+                    <a th:href="@{'/DustNovel/rut-tien/' + ${rutTien.id}}" 
+   class="btn btn-outline-primary btn-sm" 
+   title="Xem chi tiết">
+   <i class="bi bi-eye"></i>
+</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(listRutTien)}">
+                <td colspan="8" class="text-center text-muted">Chưa có yêu cầu rút tiền nào</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
+
+</div>
 </body>
 </html>
