@@ -26,4 +26,6 @@ public interface NapTienRepository extends JpaRepository<NapTien, Long> {
     	    ORDER BY SUM(n.soTienThuc) DESC
     	""")
     	List<Object[]> topNapNhieu();
+    	
+    	List<NapTien> findByNguoiDungId(Long nguoiDungId);
 }
