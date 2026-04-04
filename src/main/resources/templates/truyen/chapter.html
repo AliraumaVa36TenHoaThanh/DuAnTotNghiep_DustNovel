@@ -311,6 +311,10 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
 .scroll-show{
     opacity:0.6;
 }
+
+#reader-content {
+    white-space: pre-line;
+}
 </style>
 	
     <h4 class="text-center fw-bold"
@@ -395,7 +399,7 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
 <div id="scrollDownBtn" class="scroll-btn">▼</div>
     
 <input type="hidden" id="chuongIdCurrent" th:value="${chuong.id}">
-    <div id="reader-content" class="fs-5 lh-lg my-4" th:if="${canRead}" th:utext="${chuong.noiDung}"></div>
+    <div id="reader-content" class="fs-5 lh-lg my-4" th:if="${canRead}" th:text="${chuong.noiDung}"></div>
            
 
     <div id="reader-setting-btn">⚙️</div>
