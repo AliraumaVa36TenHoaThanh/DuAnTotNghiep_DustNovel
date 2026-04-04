@@ -29,4 +29,6 @@ public interface RutTienRepository extends JpaRepository<RutTien, Long> {
 
     List<RutTien> findByNguoiDung_TenDangNhapContainingIgnoreCaseAndTrangThai(
             String username, String trangThai);
+    
+    List<RutTien> findByNguoiDungId(Long nguoiDungId);
 }
