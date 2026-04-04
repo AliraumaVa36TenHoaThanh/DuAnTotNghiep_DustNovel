@@ -12,6 +12,10 @@ import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -28,14 +32,53 @@ public class RutTienController {
     private final NapTienService napTienService;
     private final RutTienRepository rutTienRepository;
     
+//    @GetMapping("/rut-tien")
+//    public String rutTien(Model model, Authentication auth) {
+//
+//        var user = napTienService.getByTenDangNhap(auth.getName());
+//
+//        model.addAttribute("title", "DustNovel | Rút tiền");
+//        model.addAttribute("content", "truyen/rut-tien"); // fragment path
+//
+//        model.addAttribute("user", user);
+//
+//        return "layout/main";
+//    }
+    
     @GetMapping("/rut-tien")
     public String rutTien(Model model, Authentication auth) {
 
+        // Lấy người dùng hiện tại
         var user = napTienService.getByTenDangNhap(auth.getName());
+        
+        // Lấy danh sách yêu cầu rút tiền của người dùng
+        var listRutTien = rutTienRepository.findByNguoiDungId(user.getId());
+
+        // Gộp các yêu cầu theo ngân hàng + số tài khoản + tên chủ tài khoản
+        Map<String, RutTien> grouped = new LinkedHashMap<>();
+        for (RutTien rt : listRutTien) {
+        	
+            // key gồm ngân hàng + số tài khoản + tên chủ
+            String key = rt.getNganHang() + "|" + rt.getSoTaiKhoan() + "|" + rt.getTenChuTaiKhoan();
+            if (grouped.containsKey(key)) {
+            	
+                // Cộng dồn số token, thuế, token thực nhận
+                RutTien existing = grouped.get(key);
+                existing.setSoToken(existing.getSoToken() + rt.getSoToken());
+                existing.setThue(existing.getThue() + rt.getThue());
+                existing.setTokenThucNhan(existing.getTokenThucNhan() + rt.getTokenThucNhan());
+                // Có thể update trạng thái nếu muốn, hoặc giữ trạng thái đầu tiên
+                
+            } else {
+                grouped.put(key, rt);
+            }
+        }
+
+        List<RutTien> listRutTienGop = new ArrayList<>(grouped.values());
 
         model.addAttribute("title", "DustNovel | Rút tiền");
         model.addAttribute("content", "truyen/rut-tien"); // fragment path
-
+        model.addAttribute("listRutTien", listRutTienGop);
         model.addAttribute("user", user);
 
         return "layout/main";
@@ -79,6 +122,27 @@ public class RutTienController {
         rutTienRepository.save(rutTien);
 
         redirectAttributes.addFlashAttribute("success", "Đã gửi yêu cầu rút tiền!");
+        return "redirect:/DustNovel/rut-tien";
+    }
+    
+    
+    @GetMapping("/rut-tien/{id}")
+    public String xemChiTietRutTien(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes,
+            Authentication auth) {
+
+        var user = napTienService.getByTenDangNhap(auth.getName());
+
+        RutTien rutTien = rutTienRepository.findById(id)
+            .filter(rt -> rt.getNguoiDung().getId().equals(user.getId()))
+            .orElseThrow(() -> new IllegalArgumentException("Yêu cầu rút tiền không tồn tại"));
+
+        // Thêm dữ liệu vào redirect
+        redirectAttributes.addFlashAttribute("nganHang", rutTien.getNganHang());
+        redirectAttributes.addFlashAttribute("soTaiKhoan", rutTien.getSoTaiKhoan());
+        redirectAttributes.addFlashAttribute("tenChuTaiKhoan", rutTien.getTenChuTaiKhoan());
+
         return "redirect:/DustNovel/rut-tien";
     }
 }
