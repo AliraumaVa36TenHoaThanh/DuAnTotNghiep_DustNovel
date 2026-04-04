@@ -17,6 +17,7 @@ import com.fpoly.service.TapService;
 import com.fpoly.service.TheLoaiService;
 import com.fpoly.repository.ChuongRepository;
 import com.fpoly.repository.NguoiDungRepository;
+import com.fpoly.repository.NhomDichRepository;
 import com.fpoly.repository.TheLoaiRepository;
 import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.CustomUserDetails;
@@ -60,6 +61,8 @@ public class TruyenController {
 	    BinhLuanService binhLuanService;
 	    @Autowired 
 	    ChuongRepository chuongRepo;
+	    @Autowired
+	    NhomDichRepository nhomDichRepo;
 	    @GetMapping("/truyen/{id:\\d+}")
 	    public String detail(@PathVariable Long id, Model model) {
 	    	NguoiDung user = securityUtil.getCurrentUserFromDB();
@@ -74,6 +77,15 @@ public class TruyenController {
 	        Chuong chuongDau = chuongService.layChuongDauCoTheDoc(id, user);
 	        Chuong chuongMoi = chuongService.layChuongMoiCoTheDoc(id, user);
 	        List<Chuong> tatCaChuong = chuongRepo.findByTruyenId(id);
+	        String tenNhom = null;
+	        if (truyen.getNguoiDang() != null) {
+	            // Lấy danh sách nhóm mà user này tham gia (hoặc làm trưởng nhóm)
+	            List<com.fpoly.model.NhomDich> dsNhom = nhomDichRepo.findNhomByUserId(truyen.getNguoiDang().getId());
+	            if (dsNhom != null && !dsNhom.isEmpty()) {
+	                tenNhom = dsNhom.get(0).getTenNhom(); // Lấy tên nhóm đầu tiên tìm thấy
+	            }
+	        }
+	        model.addAttribute("tenNhom", tenNhom);
 	        model.addAttribute("tatCaChuong", tatCaChuong);
 	        model.addAttribute("chuongDau", chuongDau);
 	        model.addAttribute("chuongMoi", chuongMoi);
@@ -282,14 +294,14 @@ public class TruyenController {
 	            model.addAttribute("title", "Sửa truyện");
 	            return "layout/main";
 	        }
-	        // 2. Chỉ cập nhật những trường được phép sửa từ form
+	    
 	        truyenDB.setTenTruyen(truyenForm.getTenTruyen());
 	        truyenDB.setMoTa(truyenForm.getMoTa());
 	        truyenDB.setTenTacGia(truyenForm.getTenTacGia());
 	        truyenDB.setLoaiTruyen(truyenForm.getLoaiTruyen());
 	        truyenDB.setTag18(truyenForm.getTag18());
 	        
-	        // Nếu có upload ảnh bìa mới thì mới cập nhật, không thì giữ ảnh cũ
+	        
 	        if (truyenForm.getAnhBia() != null && !truyenForm.getAnhBia().isBlank()) {
 	            truyenDB.setAnhBia(truyenForm.getAnhBia());
 	        }
