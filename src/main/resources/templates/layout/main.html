@@ -416,7 +416,7 @@
 					<li class="nav-item dropdown position-static"><a class="nav-link dropdown-toggle" href="#"
 							data-bs-toggle="dropdown">📚 Thể loại</a>
 						<ul class="dropdown-menu theloai-dropdown">
-							<li th:each="tl : ${theLoais}" th:if="${tl.statusTheLoai.name() == 'ON'}"><a
+							<li th:each="tl : ${theLoais}" th:if="${tl.statusTheLoai?.name() == 'ON'}"><a
 									class="dropdown-item" th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
 									th:text="${tl.tenTheLoai}"></a>
 							</li>
@@ -437,12 +437,6 @@
 									Quảng cáo truyện ở trang chính
 								</a>
 							</li>
-
-							<li><a class="dropdown-item" th:href="@{/quang-cao/thueQuangCao}"> <i
-										class="bi bi-rocket-takeoff me-2"></i> Quảng cáo trong truyện
-								</a>
-							</li>
-
 							<li>
 								<hr class="dropdown-divider">
 							</li>
@@ -452,11 +446,6 @@
 
 							<li><a class="dropdown-item" th:href="@{/quang-cao/LichSu/QuangCao}"> <i
 										class="bi bi-clock-history me-2"></i> Lịch sử quảng cáo trang chính
-								</a>
-							</li>
-
-							<li><a class="dropdown-item" th:href="@{/quang-cao/LichSu/ThueQuangCao}"> <i
-										class="bi bi-journal-text me-2"></i> Lịch sử quảng cáo trong truyện
 								</a>
 							</li>
 						</ul>

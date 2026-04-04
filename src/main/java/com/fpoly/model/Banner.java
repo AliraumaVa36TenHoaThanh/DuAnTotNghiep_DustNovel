@@ -49,7 +49,9 @@ public class Banner {
     @Column(name = "last_update_time")
     private LocalDateTime lastUpdateTime;
     
-    
+    @Column(name = "so_ngay_chay")
+    private Long soNgayChay;
+       
     @ManyToOne
     @JoinColumn(name = "truyen_id")
     private Truyen truyen;

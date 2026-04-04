@@ -94,18 +94,6 @@ public class QuangCaoController {
 	        hasError = true;
 	    }
 
-	    if(tokenMoiNgay == null){
-	        model.addAttribute("errorToken","Vui lòng nhập token mỗi ngày");
-	        hasError = true;
-	    }
-	    else if(tokenMoiNgay < 1000){
-	        model.addAttribute("errorToken","Token phải lớn hơn hoặc bằng 1000");
-	        hasError = true;
-	    }
-	    else if(tokenMoiNgay > 50000000){
-	        model.addAttribute("errorToken","Chỉ được chạy quảng cáo với số token nhỏ hơn hoặc bằng 50000000");
-	        hasError = true;
-	    }
 
 	    if(startDate == null || startDate.isEmpty()){
 	        model.addAttribute("errorStartDate","Vui lòng chọn ngày bắt đầu");
@@ -113,7 +101,6 @@ public class QuangCaoController {
 	    }
 
 	    if(startDate != null && !startDate.isEmpty()){
-
 	        LocalDate start = LocalDate.parse(startDate);
 	        LocalDate today = LocalDate.now();
 
@@ -121,7 +108,6 @@ public class QuangCaoController {
 	            model.addAttribute("errorStartDate","Ngày bắt đầu phải từ hôm nay trở đi");
 	            hasError = true;
 	        }
-
 	    }
 
 	    if(soNgayChay == null){
@@ -161,6 +147,20 @@ public class QuangCaoController {
 	        return "/layout/main";
 	    }
 
+	    long tongToken = soNgayChay * tokenMoiNgay;
+
+	    if(user.getToken() < tongToken){
+	        model.addAttribute("errorToken","Bạn không đủ token");
+
+	        model.addAttribute("listTruyen", listTruyen);
+	        model.addAttribute("listBanner", bannerRepository.findAll());
+	        model.addAttribute("content", "/QuangCao/QuangCao");
+
+	        return "/layout/main";
+	    }
+
+	    user.setToken(user.getToken() - tongToken);
+	    nguoiDungRepository.save(user);
 
 	    String fileName = System.currentTimeMillis() + "_banner_" + file.getOriginalFilename();
 
@@ -183,7 +183,6 @@ public class QuangCaoController {
 	    banner.setAnhBanner("/uploads/banner/" + fileName);
 	    banner.setTokenMoiNgay(tokenMoiNgay);
 
-
 	    LocalDate startDateParsed = LocalDate.parse(startDate);
 
 	    LocalDateTime start;
@@ -191,7 +190,7 @@ public class QuangCaoController {
 	    if (startDateParsed.equals(LocalDate.now())) {
 	        start = LocalDateTime.now();
 	    } else {
-	    	start = startDateParsed.atTime(LocalDateTime.now().toLocalTime());
+	        start = startDateParsed.atTime(LocalDateTime.now().toLocalTime());
 	    }
 
 	    LocalDateTime end = start.plusDays(soNgayChay);
@@ -199,6 +198,7 @@ public class QuangCaoController {
 	    banner.setNgayBatDau(start);
 	    banner.setNgayKetThuc(end);
 	    banner.setGioTao(start.toLocalTime());
+	    banner.setTokenDaDung(tongToken);
 
 	    LocalDateTime now = LocalDateTime.now();
 
@@ -211,7 +211,7 @@ public class QuangCaoController {
 	    else {
 	        banner.setTrangThai("HOAT_DONG");
 	    }
-	    
+
 	    bannerRepository.save(banner);
 	    redirectAttributes.addFlashAttribute("successMessage", "Bạn đã tạo quảng cáo thành công !");
 
@@ -253,53 +253,33 @@ public class QuangCaoController {
 
 	        long tokenDaDung = (b.getTokenDaDung() == null) ? 0 : b.getTokenDaDung();
 
+	        long tongToken = 0;
+	        if(b.getSoNgayChay() != null){
+	            tongToken = b.getSoNgayChay() * b.getTokenMoiNgay();
+	        }
+
 	        if (b.getNgayBatDau() != null) {
 
-	            /* =========================
-	                HOAT_DONG (REALTIME)
-	               ========================= */
-	        	if ("HOAT_DONG".equals(b.getTrangThai())) {
+	            if ("HOAT_DONG".equals(b.getTrangThai())) {
 
-	        	    LocalDateTime start = b.getNgayBatDau(); 
-	        	    LocalDateTime end = b.getNgayKetThuc();
-	        	    LocalDateTime current = now.isAfter(end) ? end : now;
+	                LocalDateTime start = b.getNgayBatDau(); 
+	                LocalDateTime end = b.getNgayKetThuc();
+	                LocalDateTime current = now.isAfter(end) ? end : now;
 
-	        	    long seconds = Duration.between(start, current).getSeconds();
-	        	    if (seconds < 0) seconds = 0;
+	                long seconds = Duration.between(start, current).getSeconds();
+	                if (seconds < 0) seconds = 0;
 
-	        	    phutDaChay = seconds / 60;
+	                phutDaChay = seconds / 60;
 
-	        	    long totalMinutes = (long) Math.ceil(Duration.between(start, end).getSeconds() / 60.0);
-	        	    phutConLai = totalMinutes - phutDaChay;
-	        	    if (phutConLai < 0) phutConLai = 0;
+	                long totalMinutes = (long) Math.ceil(Duration.between(start, end).getSeconds() / 60.0);
+	                phutConLai = totalMinutes - phutDaChay;
+	                if (phutConLai < 0) phutConLai = 0;
 
-	        	    /* =========================
-	        	       TOKEN REALTIME 
-	        	       ========================= */
+	                tokenDaTru = tokenDaDung;
+	            }
 
-	        	    LocalDateTime last = b.getLastUpdateTime();
-
-	        	    if(last == null){
-	        	        last = b.getNgayBatDau();
-	        	    }
-
-	        	    long secondsChuaLuu = Duration.between(last, now).getSeconds();
-	        	    if(secondsChuaLuu < 0) secondsChuaLuu = 0;
-
-	        	    double tokenPerSecond = b.getTokenMoiNgay() / 86400.0;
-
-	        	    long tokenRealtime = (long) (secondsChuaLuu * tokenPerSecond);
-
-	        	    // tổng token 
-	        	    tokenDaTru = b.getTokenDaDung() + tokenRealtime;
-	        	}
-
-	            /* =========================
-	                TAM_DUNG
-	               ========================= */
 	            else if ("TAM_DUNG".equals(b.getTrangThai())) {
 
-	                // giữ token đã dùng trước đó
 	                tokenDaTru = tokenDaDung;
 
 	                if (b.getThoiGianConLai() != null) {
@@ -309,49 +289,42 @@ public class QuangCaoController {
 	                phutDaChay = 0;
 	            }
 
-	        	/* =========================
-	        	   CHO_CHAY (chưa chạy)
-	        	   ========================= */
-	        	else if ("CHO_CHAY".equals(b.getTrangThai())) {
+	            else if ("CHO_CHAY".equals(b.getTrangThai())) {
 
-	        	    phutDaChay = 0;
+	                phutDaChay = 0;
 
-	        	    phutConLai = Duration
-	        	            .between(b.getNgayBatDau(), b.getNgayKetThuc())
-	        	            .toMinutes();
+	                phutConLai = Duration
+	                        .between(b.getNgayBatDau(), b.getNgayKetThuc())
+	                        .toMinutes();
 
-	        	    if (phutConLai < 0) phutConLai = 0;
+	                if (phutConLai < 0) phutConLai = 0;
 
-	        	    tokenDaTru = 0;
-	        	}
+//	                tokenDaTru = 0;
+	                tokenDaTru = b.getTokenDaDung() == null ? 0 : b.getTokenDaDung();
+	            }
 
-	        	/* =========================
-	        	   HET_HAN (đã chạy xong)
-	        	   ========================= */        	
-	        	
-	        	else if ("HET_HAN".equals(b.getTrangThai())) {
+	            else if ("HET_HAN".equals(b.getTrangThai())) {
 
-	        	    long seconds = Duration
-	        	            .between(b.getNgayBatDau(), b.getNgayKetThuc())
-	        	            .getSeconds();
+	                long seconds = Duration
+	                        .between(b.getNgayBatDau(), b.getNgayKetThuc())
+	                        .getSeconds();
 
-	        	    if (seconds < 0) seconds = 0;
+	                if (seconds < 0) seconds = 0;
 
-	        	    phutDaChay = seconds / 60;
+	                phutDaChay = seconds / 60;
 
-	        	    //  Ưu tiên lấy token đã lưu trong DB
-	        	    tokenDaTru = (b.getTokenDaDung() == null)
-	        	            ? b.getTokenMoiNgay() 
-	        	            : b.getTokenDaDung();
+	                tokenDaTru = (b.getTokenDaDung() == null)
+	                        ? tongToken
+	                        : b.getTokenDaDung();
 
-	        	    phutConLai = 0;
-	        	}
-	        	
+	                phutConLai = 0;
+	            }
 	        }
 
 	        model.addAttribute("tokenDaTru_" + b.getId(), tokenDaTru);
 	        model.addAttribute("phutDaChay_" + b.getId(), phutDaChay);
 	        model.addAttribute("phutConLai_" + b.getId(), phutConLai);
+	        model.addAttribute("tongToken_" + b.getId(), tongToken);
 	    }
 
 	    model.addAttribute("listBanner", listBanner);
@@ -383,7 +356,7 @@ public class QuangCaoController {
 	
 	
 	
-
+	
 	
 	@PostMapping("/update")
 	public String updateQuangCao(
@@ -391,8 +364,8 @@ public class QuangCaoController {
 	        @RequestParam(required = false) Long tokenMoiNgay,
 	        @RequestParam(required = false) String viTri,
 	        @RequestParam(required = false) String viTriSelect,
-	        @RequestParam(required = false) String ngayBatDau, 
-	        @RequestParam(required = false) String ngayKetThuc,
+	        @RequestParam(required = false) String ngayBatDau,
+	        @RequestParam(required = false) Long soNgayChay, 
 	        @RequestParam(required = false) String trangThai,
 	        @RequestParam(required = false) Long truyenId,
 	        Authentication authentication,
@@ -423,12 +396,17 @@ public class QuangCaoController {
 	        }
 
 	        banner.setThoiGianConLai(phutConLai);
-	        banner.setNgayKetThuc(now);
+//	        banner.setNgayKetThuc(now);
 
 	        banner.setTrangThai("TAM_DUNG");
 	        banner.setLastUpdateTime(now);
 
 	        bannerRepository.save(banner);
+	        
+	        redirectAttributes.addFlashAttribute(
+	                "successMessage",
+	                "Đã tạm dừng quảng cáo"
+	            );
 
 	        return "redirect:/quang-cao/LichSu/QuangCao";
 	    }
@@ -453,6 +431,11 @@ public class QuangCaoController {
 	        banner.setLastUpdateTime(now);
 
 	        bannerRepository.save(banner);
+	        
+	        redirectAttributes.addFlashAttribute(
+	                "successMessage",
+	                "Đã chạy lại quảng cáo"
+	            );
 
 	        return "redirect:/quang-cao/LichSu/QuangCao";
 	    }
@@ -461,108 +444,39 @@ public class QuangCaoController {
 	        UPDATE THÔNG TIN
 	       ========================= */
 
-
-	    
 	    boolean hasError = false;
 
-	 // =====  VALIDATE RỖNG =====
-	 if(tokenMoiNgay == null){
-	     model.addAttribute("errorToken","Vui lòng nhập token");
-	     hasError = true;
-	 }
+	    if(tokenMoiNgay == null){
+	        model.addAttribute("errorToken","Vui lòng nhập token");
+	        hasError = true;
+	    }
 
-	 if(ngayBatDau == null || ngayBatDau.isEmpty()){
-	     model.addAttribute("errorStart","Vui lòng chọn ngày bắt đầu");
-	     hasError = true;
-	 }
+	    if(ngayBatDau == null || ngayBatDau.isEmpty()){
+	        model.addAttribute("errorStart","Vui lòng chọn ngày bắt đầu");
+	        hasError = true;
+	    }
 
-	 if(ngayKetThuc == null || ngayKetThuc.isEmpty()){
-	     model.addAttribute("errorNgay","Vui lòng chọn ngày kết thúc");
-	     hasError = true;
-	 }
-     
-	 // =====  PARSE NGÀY (KHÔNG phụ thuộc hasError) =====
-	 LocalDateTime startDate = null;
-	 LocalDateTime endDate = null;
+	    if(soNgayChay == null || soNgayChay <= 0){
+	        model.addAttribute("errorNgay","Số ngày chạy phải >= 1");
+	        hasError = true;
+	    }
 
-	// ===== START DATE =====
-	 if (ngayBatDau != null && !ngayBatDau.isEmpty()) {
-	     LocalDate startDateParsed = LocalDate.parse(ngayBatDau);
+	    // ===== PARSE START DATE =====
+	    LocalDateTime startDate = banner.getNgayBatDau();
 
-	     if (startDateParsed.isEqual(LocalDate.now())) {
-	         //  chạy ngay
-	         startDate = LocalDateTime.now();
-	     } else {
-	         //  giữ giờ cũ của banner (không dùng thoiGianCapNhat)
-	         LocalTime time = banner.getNgayBatDau() != null
-	                 ? banner.getNgayBatDau().toLocalTime()
-	                 : LocalTime.now();
+	    if (ngayBatDau != null && !ngayBatDau.isEmpty()) {
+	        LocalDate d = LocalDate.parse(ngayBatDau);
+	        startDate = d.atTime(startDate.toLocalTime());
+	    }
 
-	         startDate = startDateParsed.atTime(time);
-	     }
-	 }
+	    // ===== TÍNH END DATE TỪ SỐ NGÀY =====
+	    LocalDateTime endDate = startDate.plusDays(soNgayChay);
 
-
-	// ===== END DATE =====
-	 if (ngayKetThuc != null && !ngayKetThuc.isEmpty()) {
-
-		    LocalDate endDateParsed = LocalDate.parse(ngayKetThuc);
-
-		    LocalDate oldEndDate = banner.getNgayKetThuc() != null
-		            ? banner.getNgayKetThuc().toLocalDate()
-		            : null;
-
-		    boolean userChangedEndDate = (oldEndDate == null)
-		            || !endDateParsed.isEqual(oldEndDate);
-
-		    if (!userChangedEndDate) {
-		        // người dùng không sửa ngày kết thúc → giữ duration theo số ngày cũ
-		        long soNgay = ChronoUnit.DAYS.between(
-		                banner.getNgayBatDau().toLocalDate(),
-		                banner.getNgayKetThuc().toLocalDate()
-		        ) + 1;
-
-		        // giữ giờ phút giây của startDate
-		        endDate = startDate.plusDays(soNgay - 1);
-
-		    } else {
-		        // người dùng sửa ngày kết thúc → lấy giờ phút giây hiện tại hoặc giờ cũ
-		        LocalTime time;
-		        if (banner.getNgayKetThuc() != null && "HOAT_DONG".equals(banner.getTrangThai())) {
-		            // đã chạy → giữ giờ cũ
-		            time = banner.getNgayKetThuc().toLocalTime();
-		        } else {
-		            // chưa chạy hoặc tạo mới → lấy giờ phút giây hiện tại
-		            time = LocalTime.now();
-		        }
-
-		        endDate = endDateParsed.atTime(time);
-		    }
-		}
-		
-
-	 // ===== VALIDATE LOGIC =====
-	 LocalDate today = LocalDate.now();
-
-	 if(startDate != null && startDate.toLocalDate().isBefore(today)){
-	     model.addAttribute("errorStart","Ngày bắt đầu phải từ hôm nay trở đi");
-	     hasError = true;
-	 }
-
-	 if(tokenMoiNgay != null && tokenMoiNgay < 1000){
-	     model.addAttribute("errorToken","Token phải >= 1000");
-	     hasError = true;
-	 }
-
-	 if(tokenMoiNgay != null && tokenMoiNgay > 50000000){
-	     model.addAttribute("errorToken","Token không được vượt quá 50,000,000");
-	     hasError = true;
-	 }
-
-	 if(startDate != null && endDate != null && !endDate.isAfter(startDate)){
-	     model.addAttribute("errorNgay","Ngày kết thúc phải sau ngày bắt đầu");
-	     hasError = true;
-	 }
+	    // ===== VALIDATE =====
+	    if(startDate != null && startDate.toLocalDate().isBefore(LocalDate.now())){
+	        model.addAttribute("errorStart","Ngày bắt đầu phải >= hôm nay");
+	        hasError = true;
+	    }
 
 	    String username = authentication.getName();
 	    Optional<NguoiDung> userOpt =
@@ -574,61 +488,75 @@ public class QuangCaoController {
 
 	    NguoiDung user = userOpt.get();
 
-	    long soNgay = 0;
-	    long tokenThem = 0;
-	    long tongToken = 0;
+	    // ===== TÍNH NGÀY =====
+	    long soNgayCu = ChronoUnit.DAYS.between(
+	            banner.getNgayBatDau().toLocalDate(),
+	            banner.getNgayKetThuc().toLocalDate());
 
-	    if(!hasError){
+	    long soNgayMoi = soNgayChay;
 
-	        soNgay = ChronoUnit.DAYS.between(
-	                startDate.toLocalDate(),
-	                endDate.toLocalDate()) + 1;
-
-	        tokenThem = tokenMoiNgay - banner.getTokenMoiNgay();
-	        tongToken = tokenThem * soNgay;
-	    }
+	    long tokenCu = banner.getTokenMoiNgay();
 
 	    if(hasError){
-
-	        String finalViTri = (viTriSelect != null && !viTriSelect.isEmpty())
-	                ? viTriSelect
-	                : viTri;
-
-	        banner.setViTri(finalViTri);
-	        banner.setTokenMoiNgay(tokenMoiNgay);
-	        banner.setNgayBatDau(startDate);
-	        banner.setNgayKetThuc(endDate);
-
-           
-	        model.addAttribute("ngayBatDau", ngayBatDau);
-	        model.addAttribute("ngayKetThuc", ngayKetThuc);
 	        model.addAttribute("banner", banner);
 	        model.addAttribute("content","QuangCao/UpdateQuangCao");
-
 	        return "layout/main";
 	    }
 
-	    if(tokenThem > 0){
-	        user.setToken(user.getToken() - tongToken);
-	        nguoiDungRepository.save(user);
+	    // =========================
+	    // LOGIC TIỀN
+	    // =========================
+
+	    // TĂNG NGÀY
+	    if (soNgayMoi > soNgayCu) {
+	        long tienThem = (soNgayMoi - soNgayCu) * tokenMoiNgay;
+
+	        if (user.getToken() < tienThem) {
+	            redirectAttributes.addFlashAttribute(
+	                    "errorMessage",
+	                    "Không đủ token! Cần thêm " + (tienThem - user.getToken())
+	            );
+	            return "redirect:/quang-cao/sua/" + id;
+	        }
+
+	        user.setToken(user.getToken() - tienThem);
 	    }
 
-	    banner.setTokenMoiNgay(tokenMoiNgay);
-	    banner.setNgayBatDau(startDate); 
-	    banner.setNgayKetThuc(endDate);
+	    // GIẢM NGÀY → HOÀN NGAY
+	    if (soNgayMoi < soNgayCu) {
+	        long tienHoan = (soNgayCu - soNgayMoi) * tokenCu;
+	        user.setToken(user.getToken() + tienHoan);
+	    }
 
-	    // vị trí
+	    //  TĂNG TOKEN/NGÀY
+	    if (tokenMoiNgay > tokenCu) {
+	        long tienThem = (tokenMoiNgay - tokenCu) * soNgayMoi;
+
+	        if (user.getToken() < tienThem) {
+	            redirectAttributes.addFlashAttribute(
+	                    "errorMessage",
+	                    "Không đủ token! Cần thêm " + (tienThem - user.getToken())
+	            );
+	            return "redirect:/quang-cao/sua/" + id;
+	        }
+
+	        user.setToken(user.getToken() - tienThem);
+	    }
+
+	    // =========================
+	    // UPDATE DATA
+	    // =========================
+	    banner.setNgayBatDau(startDate);
+	    banner.setNgayKetThuc(endDate);
+	    banner.setTokenMoiNgay(tokenMoiNgay);
+	    banner.setSoNgayChay(soNgayChay);
+
 	    String finalViTri = (viTriSelect != null && !viTriSelect.isEmpty())
 	            ? viTriSelect
 	            : viTri;
 
-	    if(finalViTri != null && finalViTri.contains(",")){
-	        finalViTri = finalViTri.split(",")[0];
-	    }
-
 	    banner.setViTri(finalViTri);
 
-	    // update truyện
 	    if(truyenId != null){
 	        Truyen truyen = truyenRepository.findById(truyenId).orElse(null);
 	        if(truyen != null){
@@ -637,8 +565,12 @@ public class QuangCaoController {
 	    }
 
 	    banner.setLastUpdateTime(now);
+	    
+	    long tongTokenMoi = soNgayChay * tokenMoiNgay;
+	    banner.setTokenDaDung(tongTokenMoi);
 
 	    bannerRepository.save(banner);
+	    nguoiDungRepository.save(user);
 
 	    redirectAttributes.addFlashAttribute(
 	            "successMessage",

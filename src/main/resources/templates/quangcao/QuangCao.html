@@ -324,6 +324,7 @@ input[type="number"]::-webkit-outer-spin-button {
 							<p style="color: red; font-size: 14px; margin-top: 5px;"
 								th:if="${errorTruyen}" th:text="${errorTruyen}"></p>
 						</div>
+						
 
 						<div class="form-group">
 							<label><i class="bi bi-geo-alt"></i> Vị trí banner</label> <select
@@ -355,27 +356,48 @@ input[type="number"]::-webkit-outer-spin-button {
 
 							<small style="color: gray"> Ngày kết thúc sẽ được hệ
 								thống tự tính </small>
-
-
 						</div>
+						
+						
 						<div class="form-group">
 							<label><i class="bi bi-image"></i> Ảnh banner</label>
 
 							<div class="custom-file">
 								<input type="file" name="file" accept="image/*" id="bannerImg"> 
-							</div>
+							</div>							
+							
 							<p style="color: red; font-size: 14px; margin-top: 11px;"
-								th:if="${errorFile}" th:text="${errorFile}"></p>
-
+								th:if="${errorFile}" th:text="${errorFile}">
+						  </p>
 						</div>
 
 						<div class="form-group">
-							<label><i class="bi bi-coin"></i> Token mỗi ngày</label> <input
-								type="number" name="tokenMoiNgay" placeholder="VD: 1000 token / ngày" th:value="${tokenMoiNgay}">
-								
+							<label><i class="bi bi-coin"></i> Token mỗi ngày</label>
+
+							<!-- Hiển thị -->
+							<div
+								style="color: #e8cb76;
+								 font-weight: 700;
+								 padding: 14px;
+								 border: 2px dashed #e8cb76;
+						         border-radius: 10px;
+							     opacity: 0.8;
+							     cursor: not-allowed;
+							     margin-right: 510px;"><i class="bi bi-cash-coin"></i>1000 token / ngày</div>
+
+							<!-- Hidden để gửi về server -->
+							<input type="hidden" name="tokenMoiNgay" value="1000">
+
+							<!-- Mô tả -->
+							<small style="color: gray; display: block; margin-top: 6px; padding-top: 10px;">
+								Ngân sách này được hệ thống thiết lập sẵn để đảm bảo hiệu quả
+								quảng cáo tốt nhất </small>
+
+							<!-- Error -->
 							<p style="color: red; font-size: 14px; margin-top: 5px;"
 								th:if="${errorToken}" th:text="${errorToken}"></p>
 						</div>
+
 
 						<button type="submit">
 							<i class="bi bi-check-circle"></i> Tạo Quảng Cáo 
