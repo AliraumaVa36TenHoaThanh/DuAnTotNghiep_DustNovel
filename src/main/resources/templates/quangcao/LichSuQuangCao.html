@@ -2,201 +2,210 @@
 	<div class="qc-page">
 
 		<style>
-.qc-page {
-	font-family: 'Poppins', sans-serif;
-	padding: 40px 20px;
-}
+			.qc-page {
+				font-family: 'Poppins', sans-serif;
+				padding: 40px 20px;
+			}
 
-.qc-page .container {
-	max-width: 100%;
-	margin: auto;
-}
+			.qc-page .container {
+				max-width: 100%;
+				margin: auto;
+			}
 
-.qc-page .header {
-	text-align: center;
-	color: #2c3e50;
-	margin-bottom: 40px;
-}
+			.qc-page .header {
+				text-align: center;
+				color: #2c3e50;
+				margin-bottom: 40px;
+			}
 
-[data-theme="dark"] .qc-page .header {
-	color: #ffffff;
-}
+			[data-theme="dark"] .qc-page .header {
+				color: #ffffff;
+			}
 
-.qc-page .header h1 {
-	font-size: 2.5rem;
-	font-weight: 800;
-	margin-bottom: 10px;
-}
+			.qc-page .header h1 {
+				font-size: 2.5rem;
+				font-weight: 800;
+				margin-bottom: 10px;
+			}
 
-.qc-page .header p {
-	font-size: 1.1rem;
-	opacity: 0.9;
-}
+			.qc-page .header p {
+				font-size: 1.1rem;
+				opacity: 0.9;
+			}
 
-.qc-page table {
-	width: 100%;
-	border-collapse: collapse;
-}
+			.qc-page table {
+				width: 100%;
+				border-collapse: collapse;
+			}
 
-.qc-page a {
-    text-decoration: none;
-}
+			.qc-page a {
+				text-decoration: none;
+			}
 
-.qc-page thead {
-	border-bottom: 2px solid #667eea;
-}
+			.qc-page thead {
+				border-bottom: 2px solid #667eea;
+			}
 
-.qc-page th {
-	padding: 16px;
-	text-align: left;
-	font-weight: 700;
-	font-size: 14px;
-	color: #2c3e50;
-}
+			.qc-page th {
+				padding: 16px;
+				text-align: left;
+				font-weight: 700;
+				font-size: 14px;
+				color: #2c3e50;
+			}
 
-[data-theme="dark"] .qc-page th {
-	color: #f1f1f1;
-}
+			[data-theme="dark"] .qc-page th {
+				color: #f1f1f1;
+			}
 
-.qc-page tbody tr {
-	border-bottom: 1px solid #e5e7eb;
-	transition: all .2s ease;
-}
+			.qc-page tbody tr {
+				border-bottom: 1px solid #e5e7eb;
+				transition: all .2s ease;
+			}
 
-.qc-page tbody tr:hover {
-	background: #f8fafc;
-}
+			.qc-page tbody tr:hover {
+				background: #f8fafc;
+			}
 
-[data-theme="dark"] .qc-page tbody tr:hover {
-	background: #2a2a2a;
-}
+			[data-theme="dark"] .qc-page tbody tr:hover {
+				background: #2a2a2a;
+			}
 
-.qc-page td {
-	padding: 16px;
-	font-size: 14px;
-	color: #475569;
-}
+			.qc-page td {
+				padding: 16px;
+				font-size: 14px;
+				color: #475569;
+			}
 
-[data-theme="dark"] .qc-page td {
-	color: #d1d1d1;
-}
+			[data-theme="dark"] .qc-page td {
+				color: #d1d1d1;
+			}
 
-.qc-page .status-badge {
-	font-weight: 600;
-	font-size: 13px;
-}
+			.qc-page .status-badge {
+				font-weight: 600;
+				font-size: 13px;
+			}
 
-.qc-page .status-active {
-	color: #10b981;
-}
+			.qc-page .status-active {
+				color: #10b981;
+			}
 
-.qc-page .status-expired {
-	color: #ef4444;
-}
+			.qc-page .status-expired {
+				color: #ef4444;
+			}
 
-@media ( max-width :768px) {
-	.qc-page .header h1 {
-		font-size: 1.8rem;
-	}
-	.qc-page th, .qc-page td {
-		padding: 12px;
-		font-size: 13px;
-	}
-}
+			@media (max-width :768px) {
+				.qc-page .header h1 {
+					font-size: 1.8rem;
+				}
 
-.status-icon {
-    font-size: 18px;
-    margin-right: 6px;
-    vertical-align: middle;
-    cursor: pointer;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-    color: inherit; /* icon lấy màu từ badge */
-}
+				.qc-page th,
+				.qc-page td {
+					padding: 12px;
+					font-size: 13px;
+				}
+			}
 
-/* hover + click */
-.status-icon:hover {
-    transform: scale(1.2);
-    opacity: 0.85;
-}
+			.status-icon {
+				font-size: 18px;
+				margin-right: 6px;
+				vertical-align: middle;
+				cursor: pointer;
+				transition: transform 0.2s ease, opacity 0.2s ease;
+				color: inherit;
+				/* icon lấy màu từ badge */
+			}
 
-.status-icon:active {
-    transform: scale(0.9);
-}
+			/* hover + click */
+			.status-icon:hover {
+				transform: scale(1.2);
+				opacity: 0.85;
+			}
 
-/* badge */
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-weight: 600;
-    transition: all 0.25s ease;
-    animation: fadeScale 0.3s ease;
-}
+			.status-icon:active {
+				transform: scale(0.9);
+			}
 
-/* ===== MÀU TRẠNG THÁI ===== */
-.status-active {
-    color: #10b981;
-    background: rgba(16, 185, 129, 0.1);
-}
+			/* badge */
+			.status-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 4px;
+				padding: 4px 10px;
+				border-radius: 999px;
+				font-weight: 600;
+				transition: all 0.25s ease;
+				animation: fadeScale 0.3s ease;
+			}
 
-.status-paused {
-    color: #f97316;
-    background: rgba(249, 115, 22, 0.1);
-}
+			/* ===== MÀU TRẠNG THÁI ===== */
+			.status-active {
+				color: #10b981;
+				background: rgba(16, 185, 129, 0.1);
+			}
 
-.status-wait {
-    color: #f59e0b;
-    background: rgba(245, 158, 11, 0.1);
-}
+			.status-paused {
+				color: #f97316;
+				background: rgba(249, 115, 22, 0.1);
+			}
 
-.status-expired {
-    color: #ef4444;
-    background: rgba(239, 68, 68, 0.1);
-}
+			.status-wait {
+				color: #f59e0b;
+				background: rgba(245, 158, 11, 0.1);
+			}
 
-/* ép icon theo từng trạng thái (đảm bảo không bị đen) */
-.status-active .status-icon {
-    color: #10b981 !important;
-}
+			.status-expired {
+				color: #ef4444;
+				background: rgba(239, 68, 68, 0.1);
+			}
 
-.status-paused .status-icon {
-    color: #f97316 !important;
-}
+			/* ép icon theo từng trạng thái (đảm bảo không bị đen) */
+			.status-active .status-icon {
+				color: #10b981 !important;
+			}
 
-.status-wait .status-icon {
-    color: #f59e0b !important;
-}
+			.status-paused .status-icon {
+				color: #f97316 !important;
+			}
 
-.status-expired .status-icon {
-    color: #ef4444 !important;
-}
+			.status-wait .status-icon {
+				color: #f59e0b !important;
+			}
 
-/* hiệu ứng xuất hiện */
-@keyframes fadeScale {
-    from {
-        opacity: 0;
-        transform: scale(0.85);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
+			.status-expired .status-icon {
+				color: #ef4444 !important;
+			}
 
-/* quay mượt */
-.spin {
-    display: inline-block;
-    transform-origin: center;
-    animation: spin 1s linear infinite;
-}
+			/* hiệu ứng xuất hiện */
+			@keyframes fadeScale {
+				from {
+					opacity: 0;
+					transform: scale(0.85);
+				}
 
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-</style>
+				to {
+					opacity: 1;
+					transform: scale(1);
+				}
+			}
+
+			/* quay mượt */
+			.spin {
+				display: inline-block;
+				transform-origin: center;
+				animation: spin 1s linear infinite;
+			}
+
+			@keyframes spin {
+				from {
+					transform: rotate(0deg);
+				}
+
+				to {
+					transform: rotate(360deg);
+				}
+			}
+		</style>
 
 		<div class="container">
 
@@ -207,76 +216,76 @@
 
 				<p>Xem các quảng cáo đã tạo và trạng thái của chúng</p>
 			</div>
-			
+
 
 			<table>
-			
-			
 
-    <thead>
 
-        <tr>
-            <th><i class="bi bi-book"></i> Truyện</th>
-            <th><i class="bi bi-geo-alt"></i> Vị Trí</th>
-            <th><i class="bi bi-calendar-event"></i> Ngày Bắt Đầu</th>
-            <th><i class="bi bi-calendar-x"></i> Số Ngày Chạy</th>
-            <th><i class="bi bi-coin"></i> Tổng Token</th>
-            <th><i class="bi bi-toggle2-on"></i> Trạng Thái</th>
-             <th><i class="bi bi-gear"></i> Hành động</th>
-        </tr>
 
-    </thead>
+				<thead>
 
-    <tbody>
+					<tr>
+						<th><i class="bi bi-book"></i> Truyện</th>
+						<th><i class="bi bi-geo-alt"></i> Vị Trí</th>
+						<th><i class="bi bi-calendar-event"></i> Ngày Bắt Đầu</th>
+						<th><i class="bi bi-calendar-x"></i> Số Ngày Chạy</th>
+						<th><i class="bi bi-coin"></i> Tổng Token</th>
+						<th><i class="bi bi-toggle2-on"></i> Trạng Thái</th>
+						<th><i class="bi bi-gear"></i> Hành động</th>
+					</tr>
 
-        <tr th:each="banner : ${listBanner}">
+				</thead>
 
-            <!-- Truyện -->
-            <td>
-                <a th:href="@{/DustNovel/truyen/{id}(id=${banner.truyen.id})}" 
-                   style="font-weight:700; text-decoration:none;">
-                    <span th:text="${banner.truyen.tenTruyen}"></span>
-                </a>
-            </td>
+				<tbody>
 
-            <!-- Vị trí -->
-            <td th:text="${banner.viTri == 'TOP'} ? 'Trang chủ' : (${banner.viTri == 'TRUYEN'} ? 'Trong truyện' : banner.viTri)"></td>
+					<tr th:each="banner : ${listBanner}">
 
-            <!-- Ngày bắt đầu -->
+						<!-- Truyện -->
 						<td>
-							<div
-								th:text="${#temporals.format(banner.ngayBatDau,'dd-MM-yyyy')}"></div>
+							<a th:href="@{/DustNovel/truyen/{id}(id=${banner.truyen.id})}"
+								style="font-weight:700; text-decoration:none;">
+								<span th:text="${banner.truyen.tenTruyen}"></span>
+							</a>
+						</td>
 
-							<small style="color: gray"
-							th:text="${#temporals.format(banner.gioTao,'HH:mm')}"> </small>
+						<!-- Vị trí -->
+						<td
+							th:text="${banner.viTri == 'TOP'} ? 'Trang chủ' : (${banner.viTri == 'TRUYEN'} ? 'Trong truyện' : banner.viTri)">
+						</td>
+
+						<!-- Ngày bắt đầu -->
+						<td>
+							<div th:text="${#temporals.format(banner.ngayBatDau,'dd-MM-yyyy')}"></div>
+
+							<small style="color: gray" th:text="${#temporals.format(banner.gioTao,'HH:mm')}"> </small>
 						</td>
 
 						<!-- Ngày kết thúc -->
 						<td>
 							<div style="margin-bottom:3px;"
-                                 th:text="${banner.trangThai == 'HET_HAN'  ? banner.soNgayChay + ' ngày'
-                                         :T(java.time.temporal.ChronoUnit).DAYS.between(banner.ngayBatDau.toLocalDate(), banner.ngayKetThuc.toLocalDate()) + ' ngày'}"></div>
+								th:text="${banner.trangThai == 'HET_HAN'  ? banner.soNgayChay + ' ngày'
+                                         :T(java.time.temporal.ChronoUnit).DAYS.between(banner.ngayBatDau.toLocalDate(), banner.ngayKetThuc.toLocalDate()) + ' ngày'}">
+							</div>
 
 							<!-- đang chạy -->
-							<div
-								th:if="${banner.trangThai == 'HOAT_DONG' or banner.trangThai == 'TAM_DUNG'}">
+							<div th:if="${banner.trangThai == 'HOAT_DONG' or banner.trangThai == 'TAM_DUNG'}">
 
 								<div style="font-size: 12px; color: #9ca3af"
 									th:text="'Còn: ' + ${#vars['phutConLai_' + banner.id]/60} + ' giờ ' + ${#vars['phutConLai_' + banner.id]%60} + ' phút'">
 								</div>
-							</div> 	
-							
+							</div>
+
 							<!-- chưa chạy -->
-							<div th:if="${banner.trangThai == 'CHO_CHAY'}"
-								style="font-size: 12px; color: #9ca3af">Chưa bắt đầu</div> 
-								
+							<div th:if="${banner.trangThai == 'CHO_CHAY'}" style="font-size: 12px; color: #9ca3af">Chưa
+								bắt đầu</div>
+
 							<!-- hết hạn -->
-							<div th:if="${banner.trangThai == 'HET_HAN'}"
-								style="font-size: 12px; color: #9ca3af">Đã kết thúc</div>
-								
+							<div th:if="${banner.trangThai == 'HET_HAN'}" style="font-size: 12px; color: #9ca3af">Đã kết
+								thúc</div>
+
 						</td>
 
-			           <!-- Token -->
+						<!-- Token -->
 						<td>
 							<div style="margin-bottom:3px;">
 								<b th:text="${#vars['tokenDaTru_' + banner.id] + ' token'}"></b>
@@ -285,89 +294,83 @@
 								<span th:text="${banner.tokenMoiNgay + ' token/ngày'}"></span>
 							</div>
 						</td>
-				
-				
-            <!-- Trạng thái -->
-            <td>
-            
-            <!-- CHỜ CHẠY -->
-            <span th:if="${banner.trangThai == 'CHO_CHAY'}"
-                  class="status-badge status-wait"
-                  style="color: #f59e0b; font-weight: 600;">
-               <i class="bi bi-hourglass-split status-icon" onclick="location.reload()"></i>Chờ chạy
-            </span>
 
-            <!-- ĐANG CHẠY → CLICK = TẠM DỪNG -->
-            <span th:if="${banner.trangThai == 'HOAT_DONG'}"
-                  class="status-badge status-active">
-            <form th:action="@{/quang-cao/update}" method="post" style="display:inline;">
-               <input type="hidden" name="id" th:value="${banner.id}" />
-                 <input type="hidden" name="trangThai" value="TAM_DUNG" />
-                   <button type="submit" style="background:none;border:none;padding:0;">
-                        <i class="bi bi-arrow-repeat spin status-icon"></i>
-                   </button>
-                </form>
-              Đang chạy
-           </span>
 
-           <!-- HẾT HẠN -->
-           <span th:if="${banner.trangThai == 'HET_HAN'}"
-                 class="status-badge status-wait"
-                 style="color: #ef4444; font-weight: 600;">
-              <i class="bi bi-x-circle status-icon" onclick="location.reload()"></i>Hết hạn
-           </span>
+						<!-- Trạng thái -->
+						<td>
 
-           <!-- TẠM DỪNG → CLICK = CHẠY LẠI -->
-           <span th:if="${banner.trangThai == 'TAM_DUNG'}"
-                 class="status-badge status-wait"
-                 style="color:#f97316; font-weight:600;">
-           <form th:action="@{/quang-cao/update}" method="post" style="display:inline;">
-              <input type="hidden" name="id" th:value="${banner.id}" />
-                <input type="hidden" name="trangThai" value="HOAT_DONG" />
-                  <button type="submit" style="background:none;border:none;padding:0;">
-                       <i class="bi bi-pause-circle status-icon"></i>
-                 </button>
-              </form>
-              Tạm dừng
-            </span>
-            
-          </td>                     
+							<!-- CHỜ CHẠY -->
+							<span th:if="${banner.trangThai == 'CHO_CHAY'}" class="status-badge status-wait"
+								style="color: #f59e0b; font-weight: 600;">
+								<i class="bi bi-hourglass-split status-icon" onclick="location.reload()"></i>Chờ chạy
+							</span>
+
+							<!-- ĐANG CHẠY → CLICK = TẠM DỪNG -->
+							<span th:if="${banner.trangThai == 'HOAT_DONG'}" class="status-badge status-active">
+								<form th:action="@{/quang-cao/update}" method="post" style="display:inline;">
+									<input type="hidden" name="id" th:value="${banner.id}" />
+									<input type="hidden" name="trangThai" value="TAM_DUNG" />
+									<button type="submit" style="background:none;border:none;padding:0;">
+										<i class="bi bi-arrow-repeat spin status-icon"></i>
+									</button>
+								</form>
+								Đang chạy
+							</span>
+
+							<!-- HẾT HẠN -->
+							<span th:if="${banner.trangThai == 'HET_HAN'}" class="status-badge status-wait"
+								style="color: #ef4444; font-weight: 600;">
+								<i class="bi bi-x-circle status-icon" onclick="location.reload()"></i>Hết hạn
+							</span>
+
+							<!-- TẠM DỪNG → CLICK = CHẠY LẠI -->
+							<span th:if="${banner.trangThai == 'TAM_DUNG'}" class="status-badge status-wait"
+								style="color:#f97316; font-weight:600;">
+								<form th:action="@{/quang-cao/update}" method="post" style="display:inline;">
+									<input type="hidden" name="id" th:value="${banner.id}" />
+									<input type="hidden" name="trangThai" value="HOAT_DONG" />
+									<button type="submit" style="background:none;border:none;padding:0;">
+										<i class="bi bi-pause-circle status-icon"></i>
+									</button>
+								</form>
+								Tạm dừng
+							</span>
+
+						</td>
 
 
 
 						<td style="padding-left:40px;">
-							<!-- Nút sửa --> 
-							<a							
-							th:if="${banner.trangThai != 'HET_HAN'}"
-							th:href="@{/quang-cao/sua/{id}(id=${banner.id})}"
-							title="Sửa quảng cáo"
-							style="color: #3b82f6; font-size: 18px; margin-right: 10px;">
+							<!-- Nút sửa -->
+							<a th:if="${banner.trangThai != 'HET_HAN'}"
+								th:href="@{/quang-cao/sua/{id}(id=${banner.id})}" title="Sửa quảng cáo"
+								style="color: #3b82f6; font-size: 18px; margin-right: 10px;">
 								<i class="bi bi-pencil-square"></i>
 
-						</a> 
-						<!-- Nút xóa -->
-						 <a
-							th:href="@{/quang-cao/xoa/{id}(id=${banner.id})}"
-							title="Xóa quảng cáo"
-							onclick="return confirm('Bạn có chắc muốn xóa quảng cáo này?')"
-							style="color: #ef4444; font-size: 18px;"> <i
-								class="bi bi-trash"></i>
+							</a>
+							<!-- Nút xóa -->
+							<a th:href="@{/quang-cao/xoa/{id}(id=${banner.id})}" title="Xóa quảng cáo"
+								onclick="return confirm('Bạn có chắc muốn xóa quảng cáo này?')"
+								style="color: #ef4444; font-size: 18px;"> <i class="bi bi-trash"></i>
 
-						</a>
+							</a>
 
 						</td>
 
 					</tr>
-                </tbody>
+					
+				</tbody>
 
-         </table>
-
+			</table>
+			<p style="color:#ef4444; font-weight:1000; margin-top:80px; text-align:center">
+			⚠️ Nếu bạn hủy quảng cáo khi quảng cáo còn hiệu lực hoặc quảng cáo phản cảm, chúng tôi sẽ không trả lại token cho bạn.
+			</p>	
 		</div>
 	</div>
 </div>
 
 <script>
-function reloadPage() {
-    location.reload();
-}
+	function reloadPage() {
+		location.reload();
+	}
 </script>
