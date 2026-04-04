@@ -454,10 +454,12 @@
         </div>
 
     </div>
-    <div  th:replace="~{chuong/mua-modal :: muaHangLoatTruyenModal(${truyen}, ${tatCaChuong}, ${currentUser})}"></div>
-    <div th:replace="~{chuong/mua-modal :: quanLyKhoaModal(${truyen}, ${tatCaChuong})}"></div>
+   
 </div>
-
+	<div>
+	 <div  th:replace="~{chuong/mua-modal :: muaHangLoatTruyenModal(${truyen}, ${tatCaChuong}, ${currentUser})}"></div>
+    <div th:replace="~{chuong/mua-modal :: quanLyKhoaModal(${truyen}, ${tatCaChuong})}"></div>
+	</div>
 <script>
     function likeTruyen(btn) {
         const truyenId = btn.dataset.id;
