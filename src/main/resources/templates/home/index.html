@@ -1,3 +1,10 @@
+<style>
+	.img-blur-18 {
+    filter: blur(12px) brightness(0.8); /* Làm mờ 12px và tối đi 1 chút */
+    transform: scale(1.05); /* Phóng to nhẹ để viền ảnh khi mờ không bị lộ */
+    transition: 0.3s ease-in-out;
+}
+</style>
 <div th:fragment="content">
 
     <div id="mainBanner" class="carousel slide mb-4" data-bs-ride="carousel">
@@ -116,9 +123,15 @@
 
                 <div class="card h-100 shadow-sm border-0 bg-light">
 
-                    <img th:src="${truyen.tag18} ? 'https://i.pinimg.com/1200x/69/05/e3/6905e37f8ca8a420fd303393921ecec0.jpg' : (${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)} ? ${truyen.anhBia} : @{/images/aria.jpg})"
+                   <!--   <img th:src="${truyen.tag18} ? 'https://i.pinimg.com/1200x/69/05/e3/6905e37f8ca8a420fd303393921ecec0.jpg' : (${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)} ? ${truyen.anhBia} : @{/images/aria.jpg})"
                          class="card-img-top rounded-top"
-                         style="aspect-ratio:5/6; object-fit:cover;">
+                         style="aspect-ratio:5/6; object-fit:cover;"> -->
+                         <div style="overflow: hidden; border-radius: 6px 6px 0 0; cursor:pointer;" th:onclick="${truyen.tag18} ? 'requireAgeGate(event, \'/DustNovel/truyen/' + ${truyen.id} + '\')' : 'window.location.href=\'/DustNovel/truyen/' + ${truyen.id} + '\''">
+                            <img th:src="${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)} ? ${truyen.anhBia} : @{/images/aria.jpg}"
+                                 class="card-img-top rounded-top"
+                                 style="aspect-ratio:5/6; object-fit:cover; transition: 0.3s;"
+                                 th:styleappend="${truyen.tag18 != null and truyen.tag18} ? 'filter: blur(12px) brightness(0.85); transform: scale(1.1);' : ''">
+                        </div>
 
                     <div class="card-body d-flex flex-column">
                         <h6 class="card-title fw-bold"
@@ -167,6 +180,7 @@
                         </small>
 
                         <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}"
+                        th:onclick="${truyen.tag18} ? 'requireAgeGate(event, \'/DustNovel/truyen/' + ${truyen.id} + '\')' : ''"
                            class="btn btn-sm btn-outline-primary mt-auto fw-bold">
                             Xem truyện
                         </a>
@@ -263,10 +277,12 @@
 
 	                <div class="card h-100 shadow-sm border-0 bg-light">
 
-	                    <img th:src="${truyen.tag18} ? 'https://i.pinimg.com/1200x/69/05/e3/6905e37f8ca8a420fd303393921ecec0.jpg' : (${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)} ? ${truyen.anhBia} : @{/images/aria.jpg})"
-	                         class="card-img-top rounded-top"
-	                         style="aspect-ratio:5/6; object-fit:cover;">
-
+	                    <div style="overflow: hidden; border-radius: 6px 6px 0 0; cursor:pointer;" th:onclick="${truyen.tag18} ? 'requireAgeGate(event, \'/DustNovel/truyen/' + ${truyen.id} + '\')' : 'window.location.href=\'/DustNovel/truyen/' + ${truyen.id} + '\''">
+                            <img th:src="${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)} ? ${truyen.anhBia} : @{/images/aria.jpg}"
+                                 class="card-img-top rounded-top"
+                                 style="aspect-ratio:5/6; object-fit:cover; transition: 0.3s;"
+                                 th:styleappend="${truyen.tag18 != null and truyen.tag18} ? 'filter: blur(12px) brightness(0.85); transform: scale(1.1);' : ''">
+                        </div>
 	                    <div class="card-body d-flex flex-column">
 	                        <h6 class="card-title fw-bold"
     th:text="${#strings.length(truyen.tenTruyen) > 50 
@@ -308,6 +324,7 @@
 </div>
 
 	                        <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}"
+	                        th:onclick="${truyen.tag18} ? 'requireAgeGate(event, \'/DustNovel/truyen/' + ${truyen.id} + '\')' : ''"
 	                           class="btn btn-sm btn-outline-primary mt-auto fw-bold">
 	                            Xem truyện
 	                        </a>
@@ -337,7 +354,7 @@
 	            <p class="text-muted">Liên hệ với chúng tôi tại: </p>
 	        </div>
 	    </div>
-
+	<div th:replace="~{truyen/XacMinhTuoi :: ageGate(${currentUser})}"></div>
 	</div>
 
 	<style>

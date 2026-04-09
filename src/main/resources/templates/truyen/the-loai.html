@@ -28,16 +28,16 @@
         <div class="col-md-3 mb-3" th:each="truyen : ${truyens}">
             <div class="card h-100">
 
-                <img th:src="${truyen.tag18} 
-                    ? 'https://i.pinimg.com/1200x/69/05/e3/6905e37f8ca8a420fd303393921ecec0.jpg'
-                    : (${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)}
-                        ? ${truyen.anhBia}
-                        : @{/images/default.jpg})"
-                     style="width:100%; aspect-ratio:9/11; object-fit:cover;"
-                     class="rounded shadow">
+               <div style="overflow: hidden; border-radius: 6px 6px 0 0; cursor:pointer;" th:onclick="${truyen.tag18} ? 'requireAgeGate(event, \'/DustNovel/truyen/' + ${truyen.id} + '\')' : 'window.location.href=\'/DustNovel/truyen/' + ${truyen.id} + '\''">
+                            <img th:src="${truyen.anhBia != null && !#strings.isEmpty(truyen.anhBia)} ? ${truyen.anhBia} : @{/images/aria.jpg}"
+                                 class="card-img-top rounded-top"
+                                 style="aspect-ratio:5/6; object-fit:cover; transition: 0.3s;"
+                                 th:styleappend="${truyen.tag18 != null and truyen.tag18} ? 'filter: blur(12px) brightness(0.85); transform: scale(1.1);' : ''">
+                        </div>
+                        
 					 <div class="card-body d-flex flex-column">
 
-					      <h6 class="card-title fw-bold"
+					    <h6 class="card-title fw-bold"
     th:text="${#strings.length(truyen.tenTruyen) > 50 
         ? #strings.substring(truyen.tenTruyen, 0, 50) + '...' 
         : truyen.tenTruyen}">
@@ -69,6 +69,7 @@
 					     </small>
 
 					     <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}"
+					       th:onclick="${truyen.tag18} ? 'requireAgeGate(event, \'/DustNovel/truyen/' + ${truyen.id} + '\')' : ''"
 					        class="btn btn-sm btn-outline-primary mt-auto">
 					         Xem truyện
 					     </a>
@@ -77,7 +78,7 @@
             </div>
         </div>
     </div>
-
+<div th:replace="~{truyen/XacMinhTuoi :: ageGate(${currentUser})}"></div>
 </div>
 
 </body>
