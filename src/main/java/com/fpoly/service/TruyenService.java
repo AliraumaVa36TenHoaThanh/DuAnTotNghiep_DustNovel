@@ -152,6 +152,11 @@ public class TruyenService {
 	            LoaiTruyen.DỊCH
 	    );
 	}
-	
-	
+	public void capNhatChuThich(Long id, String chuThich) {
+        Truyen truyen = truyenRepo.findById(id).orElse(null);
+        if (truyen != null) {
+            truyen.setChuThich(chuThich);
+            truyenRepo.save(truyen);
+        }
+	}	
 }

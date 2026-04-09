@@ -223,14 +223,31 @@
                             </div>
                         </div>
 
-                        <div class="card border-0 shadow-sm mb-3">
-                            <div class="card-body bg-light border rounded">
-                                <h6 class="fw-bold border-bottom pb-2 text-dark">Chú thích thêm</h6>
-                                <div class="small mt-2 text-muted">
-                                    Truyện được đăng tải và quản lý trên hệ thống DustNovel. Mọi thắc mắc xin liên hệ admin.
-                                </div>
-                            </div>
-                        </div>
+                       <div class="card border-0 shadow-sm mb-3">
+    <div class="card-body bg-light border rounded">
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+            <h6 class="fw-bold text-dark mb-0">Chú thích thêm</h6>
+            
+            <div th:if="${currentUser != null and currentUser.tenDangNhap == truyen.nguoiDang.tenDangNhap}">
+                <button class="btn btn-sm btn-outline-primary py-0 px-2 fw-bold" 
+                        data-bs-toggle="modal" data-bs-target="#chuThichModal">
+                    <i class="fa-solid fa-pen"></i> Sửa
+                </button>
+            </div>
+        </div>
+        
+        <div class="small mt-2 text-muted" style="white-space: pre-wrap;">
+            <th:block th:if="${truyen.chuThich != null and !truyen.chuThich.isBlank()}">
+                [[${truyen.chuThich}]]
+            </th:block>
+            
+            <th:block th:unless="${truyen.chuThich != null and !truyen.chuThich.isBlank()}">
+                Truyện được đăng tải và quản lý trên hệ thống DustNovel. Mọi thắc mắc xin liên hệ admin.
+            </th:block>
+        </div>
+    </div>
+</div>
+
 
                         <div class="card border-0 shadow-sm">
                             <div class="card-body bg-light border rounded">
@@ -498,6 +515,7 @@
 	 <div  th:replace="~{chuong/mua-modal :: muaHangLoatTruyenModal(${truyen}, ${tatCaChuong}, ${currentUser})}"></div>
     <div th:replace="~{chuong/mua-modal :: quanLyKhoaModal(${truyen}, ${tatCaChuong})}"></div>
     <div th:replace="~{truyen/BaoCaoTruyen :: reportModal(${truyen})}"></div>
+    <div th:replace="~{truyen/XacMinhTuoi :: chuThichModal(${truyen}, ${currentUser})}"></div>
 	</div>
 <script>
     function likeTruyen(btn) {
