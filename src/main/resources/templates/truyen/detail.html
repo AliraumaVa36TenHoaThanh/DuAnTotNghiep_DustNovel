@@ -47,6 +47,15 @@
                             Tim ❤️
                         </button>
                     </div>
+                    
+                    <div class="text-center mt-2">
+                        <button class="btn btn-outline-danger btn-sm w-100"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#reportModal">
+                            🚩 Báo cáo vi phạm
+                        </button>
+                    </div>
+                    
                     <div class="mt-3 d-grid gap-2">
 
                         <a class="btn btn-success"
@@ -155,7 +164,36 @@
                         <div class="card bg-light mb-4">
                             <div class="card-body">
                                 <h6 class="fw-bold">Mô tả</h6>
-                                <p class="mb-0" th:text="${truyen.moTa}"></p>
+                               <p class="mb-0">
+    
+    <!-- mô tả rút gọn -->
+    <span th:id="'short-desc-' + ${truyen.id}"
+          th:if="${truyen.moTa != null and #strings.length(truyen.moTa) > 100}"
+          th:text="${#strings.substring(truyen.moTa, 0, 100) + '...'}">
+    </span>
+
+    <!-- mô tả full -->
+    <span th:id="'full-desc-' + ${truyen.id}"
+          th:if="${truyen.moTa != null and #strings.length(truyen.moTa) > 100}"
+          th:text="${truyen.moTa}"
+          style="display:none;">
+    </span>
+
+    <!-- nếu ngắn thì hiện luôn -->
+    <span th:if="${truyen.moTa != null and #strings.length(truyen.moTa) <= 100}"
+          th:text="${truyen.moTa}">
+    </span>
+
+    <!-- nút xem thêm -->
+    <a th:if="${truyen.moTa != null and #strings.length(truyen.moTa) > 100}"
+       href="javascript:void(0)"
+       th:id="'toggle-btn-' + ${truyen.id}"
+       th:onclick="'toggleDesc(' + ${truyen.id} + ')'"
+       style="color:#0d6efd; font-weight:500;">
+        Xem thêm
+    </a>
+
+</p>
                             </div>
                         </div>
                     </div> <div class="col-lg-4">
@@ -459,6 +497,7 @@
 	<div>
 	 <div  th:replace="~{chuong/mua-modal :: muaHangLoatTruyenModal(${truyen}, ${tatCaChuong}, ${currentUser})}"></div>
     <div th:replace="~{chuong/mua-modal :: quanLyKhoaModal(${truyen}, ${tatCaChuong})}"></div>
+    <div th:replace="~{truyen/BaoCaoTruyen :: reportModal(${truyen})}"></div>
 	</div>
 <script>
     function likeTruyen(btn) {
@@ -489,5 +528,21 @@
     function toggleEditReply(id) {
         document.getElementById("edit-reply-form-" + id)
                 .classList.toggle("d-none");
+    }
+    
+    function toggleDesc(id) {
+        const shortText = document.getElementById("short-desc-" + id);
+        const fullText = document.getElementById("full-desc-" + id);
+        const btn = document.getElementById("toggle-btn-" + id);
+
+        if (fullText.style.display === "none") {
+            fullText.style.display = "inline";
+            shortText.style.display = "none";
+            btn.innerText = "Thu gọn";
+        } else {
+            fullText.style.display = "none";
+            shortText.style.display = "inline";
+            btn.innerText = "Xem thêm";
+        }
     }
 </script>

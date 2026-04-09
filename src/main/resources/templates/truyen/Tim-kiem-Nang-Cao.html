@@ -312,7 +312,11 @@
 
 				<div class="card-body d-flex flex-column">
 
-					<h6 class="fw-bold" th:text="${truyen.tenTruyen}"></h6>
+					 <h6 class="card-title fw-bold"
+    th:text="${#strings.length(truyen.tenTruyen) > 50 
+        ? #strings.substring(truyen.tenTruyen, 0, 50) + '...' 
+        : truyen.tenTruyen}">
+</h6>
 
 					<p class="mb-1">
 						Tác giả: <span th:text="${truyen.tenTacGia}"></span>
@@ -326,12 +330,22 @@
 					</p>
 
 					<div class="mb-2 d-flex flex-wrap gap-1">
-					    <a th:each="tl : ${truyen.theLoais}"
-					       th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
-					       th:text="${tl.tenTheLoai}"
-					       class="badge bg-secondary text-decoration-none">
-					    </a>
-					</div>
+
+    <!-- chỉ hiện 4 -->
+    <a th:each="tl, stat : ${truyen.theLoais}"
+       th:if="${stat.index < 4}"
+       th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
+       th:text="${tl.tenTheLoai}"
+       class="badge bg-secondary text-decoration-none">
+    </a>
+
+    <!-- nếu >4 thì hiện +x -->
+    <span th:if="${#lists.size(truyen.theLoais) > 4}"
+          class="badge bg-dark">
+        +<span th:text="${#lists.size(truyen.theLoais) - 4}"></span>
+    </span>
+
+</div>
 
 					<p class="text-danger small" th:if="${truyen.tag18}">
 						🔞 Nội dung 18+
