@@ -207,6 +207,24 @@
 				}
 			}
 			
+			/* ===== SEARCH DARK MODE ===== */
+			[data-theme="dark"] .qc-page input[name="keyword"] {
+			    background: #141d2b !important;
+			    border: 1px solid #ededed !important;
+			    color: #f1f1f1 !important;
+			}
+			
+			[data-theme="light"] .qc-page input[name="keyword"] {
+			    border: 1px solid #000000 !important;
+			}
+
+			[data-theme="dark"] .qc-page input[name="keyword"]::placeholder {
+			    color: #888 !important;
+			}
+
+			[data-theme="dark"] .qc-page .bi-search {
+			    color: #aaa !important;
+			}
 			
 		</style>
 
@@ -297,7 +315,8 @@
 				         ">
 				      <strong>📢 Một số lưu ý:</strong>
 					  <ul style="margin: 10px 0 0 20px; padding: 0;">
-					    <li><strong>Cập nhật quảng cáo:</strong> Khi bạn thay đổi thông tin quảng cáo, hệ thống sẽ tự động tính toán lại <strong>số token</strong> dựa trên các thay đổi này, để đảm bảo chi phí phù hợp với thời gian và ngân sách mới.</li>
+					    <li><strong>Trước khi chạy:</strong> Bạn có thể chỉnh sửa tất cả thông tin (trừ trạng thái); nếu thay đổi ngày bắt đầu trùng với ngày hiện tại, hệ thống sẽ tự động chuyển sang <strong>hoạt động</strong>.</li>
+					    <li><strong>Khi đang chạy:</strong> Bạn chỉ có thể chỉnh sửa <strong>số ngày chạy</strong>, hệ thống sẽ tự động tính toán lại <strong>token</strong> tương ứng.</li>
 					    <li><strong>Tăng số ngày chạy hoặc token/ngày:</strong> Nếu bạn muốn chạy quảng cáo lâu hơn hoặc mỗi ngày chi nhiều token hơn, hệ thống sẽ <strong>trừ thêm token</strong> tương ứng, vì quảng cáo tiêu tốn nhiều tài nguyên hơn.</li>
 					    <li><strong>Giảm số ngày chạy:</strong> Nếu bạn giảm số ngày quảng cáo, phần <strong>token chưa sử dụng</strong> sẽ được <strong>hoàn lại</strong> vào tài khoản của bạn, tránh lãng phí token.</li>					    
 					    <li><strong>Xóa quảng cáo:</strong> Khi bạn xóa quảng cáo, toàn bộ <strong>token đã đầu tư</strong> sẽ không được hoàn lại, vì quảng cáo đã được phân phối và hiển thị trên nền tảng.</li>

@@ -63,6 +63,7 @@
 [data-theme="dark"] select[name="viTri"] {
 	background-color: #2a2a2a;
 	color: #f1f1f1;
+	border: 1px solid #444;
 }
 
 /* ===== DISABLED - LIGHT ===== */
@@ -76,6 +77,38 @@
 	background-color: #1b1b1c;
 	color: #888;
 	border-color: #333;
+}
+
+/* ===== SELECT TRUYỆN - LIGHT ===== */
+[data-theme="light"] select[name="truyenId"] {
+    background-color: #ffffff;
+    color: #212529;
+    border: 1px solid #ced4da;
+}
+
+/* ===== SELECT TRUYỆN - DARK ===== */
+[data-theme="dark"] select[name="truyenId"] {
+    background-color: #2a2a2a;
+    color: #f1f1f1;
+    border: 1px solid #444;
+}
+
+/* ===== OPTION (dropdown xổ ra) ===== */
+[data-theme="dark"] select[name="truyenId"] option {
+    background-color: #2a2a2a;
+    color: #f1f1f1;
+}
+
+/* ===== DISABLED ===== */
+[data-theme="light"] select[name="truyenId"]:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+}
+
+[data-theme="dark"] select[name="truyenId"]:disabled {
+    background-color: #1b1b1c;
+    color: #888;
+    border-color: #333;
 }
 
 [data-theme="light"] .form-control[readonly] {
