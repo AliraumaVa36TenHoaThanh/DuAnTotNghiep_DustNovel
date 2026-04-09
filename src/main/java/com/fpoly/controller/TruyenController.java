@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 
 import com.fpoly.service.BinhLuanService;
 import com.fpoly.service.ChuongService;
+import com.fpoly.service.DanhGiaTruyenService;
 import com.fpoly.service.TapService;
 import com.fpoly.service.TheLoaiService;
 import com.fpoly.repository.ChuongRepository;
@@ -65,6 +66,8 @@ public class TruyenController {
 	    ChuongRepository chuongRepo;
 	    @Autowired
 	    NhomDichRepository nhomDichRepo;
+	    @Autowired
+	    DanhGiaTruyenService danhGiaService;
 	    @GetMapping("/truyen/{id:\\d+}")
 	    public String detail(@PathVariable Long id, Model model) {
 	    	NguoiDung user = securityUtil.getCurrentUserFromDB();
@@ -97,7 +100,8 @@ public class TruyenController {
 	        model.addAttribute("luotXem", truyen.getLuotXem());
 	        model.addAttribute("tongSoTu", tongSoTu);
 	        model.addAttribute("ngayCapNhat", ngayCapNhat);
-	        
+	        model.addAttribute("danhGias", danhGiaService.layDanhGiaTheoTruyen(id));
+	        model.addAttribute("trungBinhSao", danhGiaService.layDiemTrungBinh(id));
 	        model.addAttribute("content", "truyen/detail");
 	        return "layout/main";
 	    }
@@ -439,6 +443,27 @@ public class TruyenController {
 	            truyenService.capNhatChuThich(id, chuThich);
 	        }
 	        
+	        return "redirect:/DustNovel/truyen/" + id;
+	    }
+	    
+	    @PostMapping("/truyen/{id}/danh-gia")
+	    @PreAuthorize("isAuthenticated()")
+	    public String guiDanhGia(@PathVariable Long id, 
+	                             @RequestParam("soSao") Integer soSao, 
+	                             @RequestParam("noiDung") String noiDung) {
+	                             
+	        Truyen truyen = truyenService.findById(id);
+	        NguoiDung user = securityUtil.getCurrentUserFromDB();
+	        
+	        // Ràng buộc số sao từ 1 đến 5 để chống hack qua F12 (Inspect Element)
+	        if (soSao < 1) soSao = 1;
+	        if (soSao > 5) soSao = 5;
+
+	        if (truyen != null && user != null) {
+	            danhGiaService.luuDanhGia(user, truyen, soSao, noiDung);
+	        }
+	        
+	        // Gửi xong load lại trang truyện để thấy đánh giá vừa hiện lên
 	        return "redirect:/DustNovel/truyen/" + id;
 	    }
 }
