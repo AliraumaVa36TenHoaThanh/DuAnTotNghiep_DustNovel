@@ -17,10 +17,8 @@ import com.fpoly.model.NguoiDung;
 import com.fpoly.model.Truyen;
 import com.fpoly.repository.BannerRepository;
 import com.fpoly.repository.NguoiDungRepository;
-import com.fpoly.repository.ThueBannerRepository;
 import com.fpoly.repository.TruyenRepository;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import org.springframework.ui.Model;
 import java.io.File;
@@ -36,8 +34,6 @@ public class QuangCaoController {
     NguoiDungRepository nguoiDungRepository;
 	@Autowired
 	BannerRepository bannerRepository;
-	@Autowired
-	ThueBannerRepository thueBannerRepository;
 	
 	
 	
@@ -593,35 +589,4 @@ public class QuangCaoController {
 
 	    return "redirect:/quang-cao/LichSu/QuangCao";
 	}
-	
-	
-	
-	
-	
-	@GetMapping("/thueQuangCao")
-	public String ThueQuangCao(Authentication authentication, Model model) {
-		String username = authentication.getName();
-
-		Optional<NguoiDung> userOpt = nguoiDungRepository.findByTenDangNhap(username);
-
-		if (userOpt.isEmpty()) {
-			return "redirect:/login";
-		}
-
-		NguoiDung user = userOpt.get();
-
-		List<Truyen> listTruyen = truyenRepository.findByNguoiDang_Id(user.getId());
-
-		model.addAttribute("listTruyen", listTruyen);
-		model.addAttribute("content", "quangcao/ThueQuangCao");
-		return "/layout/main";
-	}
-
-	
-	@GetMapping("LichSu/ThueQuangCao")
-	public String LichSuThueQuangCao(Authentication authentication, Model model) {
-		model.addAttribute("content", "/QuangCao/LichSuThueQuangCao");
-		return "/layout/main";
-	}
-
 }
