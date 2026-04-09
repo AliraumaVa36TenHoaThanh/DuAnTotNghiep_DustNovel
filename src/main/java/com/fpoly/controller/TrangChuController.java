@@ -122,7 +122,7 @@ public class TrangChuController {
         Page<Truyen> danhSach = truyenRepo.findByLoaiTruyenOrderByChuongMoiNhatPage(LoaiTruyen.SÁNG_TÁC, pageable);
         
         model.addAttribute("dsTruyen", danhSach);
-        model.addAttribute("pageTitle", "🔥 Tất Cả Truyện Sáng Tác"); 
+        model.addAttribute("pageTitle", "Tất Cả Truyện Sáng Tác"); 
         model.addAttribute("title", "DustNovel | Truyện Sáng Tác");
         model.addAttribute("content", "truyen/danh-sach"); 
         
@@ -136,7 +136,7 @@ public class TrangChuController {
         Page<Truyen> danhSach = truyenRepo.findByLoaiTruyenOrderByChuongMoiNhatPage(LoaiTruyen.DỊCH, pageable);
         
         model.addAttribute("dsTruyen", danhSach);
-        model.addAttribute("pageTitle", "🌍 Tất Cả Truyện Dịch"); 
+        model.addAttribute("pageTitle", "Tất Cả Truyện Dịch"); 
         model.addAttribute("title", "DustNovel | Truyện Dịch");
         model.addAttribute("content", "truyen/danh-sach"); 
         

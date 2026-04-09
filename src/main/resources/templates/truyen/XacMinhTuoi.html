@@ -1,0 +1,134 @@
+<div th:fragment="ageGate(currentUser)">
+    
+    <input type="hidden" id="csrfAgeToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+    <div class="modal fade" id="ageGateLoginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-danger border-2">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold">⚠️ CẢNH BÁO NỘI DUNG 18+</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center text-dark">
+                    <p>Truyện này chứa nội dung nhạy cảm. Bạn cần đăng nhập để xác nhận độ tuổi.</p>
+                    <a th:href="@{/DustNovel/login}" class="btn btn-danger fw-bold px-4">Đăng nhập ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ageGateDobModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-danger border-2">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold">🔞 XÁC NHẬN ĐỘ TUỔI</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-dark">
+                    <p class="text-center text-danger fw-bold">Nội dung này chỉ dành cho người lớn!</p>
+                    <p class="text-center small text-muted">Hệ thống ghi nhận bạn chưa thiết lập Ngày sinh. Vui lòng cung cấp để tiếp tục (Chỉ cần thực hiện 1 lần duy nhất).</p>
+
+                    <div class="mb-3 mt-4">
+                        <label class="form-label fw-bold">Chọn Ngày Sinh của bạn:</label>
+                        <input type="date" id="inputNgaySinh" class="form-control border-danger form-control-lg">
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input border-danger" type="checkbox" id="checkTrachNhiem" onchange="toggleDobSubmitBtn()">
+                        <label class="form-check-label fw-bold text-danger" for="checkTrachNhiem" style="user-select: none; cursor:pointer;">
+                            Tôi đã đủ tuổi và có thể chịu trách nhiệm hình sự.
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light justify-content-end">
+                    <button type="button" id="btnSubmitDob" class="btn btn-danger fw-bold px-4" disabled onclick="xacNhanNgaySinh()">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        // Lấy thông tin user từ Thymeleaf nhúng thẳng vào JS
+        var isLoggedIn = /*[[${currentUser != null}]]*/ false;
+        var hasAge = /*[[${currentUser != null and currentUser.ngaySinh != null}]]*/ false;
+        var pendingUrl = ''; // Biến lưu lại link truyện người dùng muốn vào
+
+        // HÀM NÀY SẼ ĐƯỢC GỌI KHI BẤM VÀO TRUYỆN 18+
+        function requireAgeGate(event, targetUrl) {
+            event.preventDefault(); // Chặn việc chuyển trang ngay lập tức
+            
+            if (!isLoggedIn) {
+                var loginModal = new bootstrap.Modal(document.getElementById('ageGateLoginModal'));
+                loginModal.show();
+            } else if (!hasAge) {
+                pendingUrl = targetUrl; // Lưu lại link để tý nữa chuyển trang
+                var dobModal = new bootstrap.Modal(document.getElementById('ageGateDobModal'));
+                dobModal.show();
+            } else {
+                // Đã login và đã có tuổi -> Cho qua trạm kiểm soát!
+                window.location.href = targetUrl;
+            }
+        }
+
+        // Logic bật/tắt nút Xác nhận
+        function toggleDobSubmitBtn() {
+            var isChecked = document.getElementById('checkTrachNhiem').checked;
+            var dobValue = document.getElementById('inputNgaySinh').value;
+            document.getElementById('btnSubmitDob').disabled = !(isChecked && dobValue !== "");
+        }
+
+        var inputNgaySinh = document.getElementById('inputNgaySinh');
+        if(inputNgaySinh) {
+            inputNgaySinh.addEventListener('change', toggleDobSubmitBtn);
+            var today = new Date().toISOString().split('T')[0];
+            inputNgaySinh.setAttribute('max', today); // Không cho chọn ngày tương lai
+        }
+
+        function calculateAge(dobStr) {
+            var dob = new Date(dobStr);
+            var today = new Date();
+            var age = today.getFullYear() - dob.getFullYear();
+            var m = today.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) { age--; }
+            return age;
+        }
+
+        function xacNhanNgaySinh() {
+            var dobStr = document.getElementById('inputNgaySinh').value;
+            var calculatedAge = calculateAge(dobStr);
+            
+            if (calculatedAge < 18) {
+                alert("Bạn mới " + calculatedAge + " tuổi! Chưa đủ điều kiện truy cập nội dung này.");
+                var dobModal = bootstrap.Modal.getInstance(document.getElementById('ageGateDobModal'));
+                dobModal.hide();
+                return;
+            }
+
+            var tokenValue = document.getElementById('csrfAgeToken').value;
+
+            // Gọi API lưu DB
+            fetch('/DustNovel/api/cap-nhat-ngay-sinh', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRF-TOKEN': tokenValue
+                },
+                body: 'ngaySinh=' + encodeURIComponent(dobStr)
+            })
+            .then(response => {
+                if (response.ok) {
+                    hasAge = true; // Cập nhật biến JS
+                    var dobModal = bootstrap.Modal.getInstance(document.getElementById('ageGateDobModal'));
+                    dobModal.hide();
+                    // Lưu thành công thì tự động bay sang trang truyện đang bị nghẽn
+                    if(pendingUrl !== '') {
+                        window.location.href = pendingUrl;
+                    }
+                } else {
+                    alert("Có lỗi xảy ra, vui lòng thử lại!");
+                }
+            })
+            .catch(err => console.error(err));
+        }
+    </script>
+</div>

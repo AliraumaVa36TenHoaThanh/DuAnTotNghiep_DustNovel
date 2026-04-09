@@ -2,6 +2,9 @@ package com.fpoly.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDate;
+
 import com.fpoly.model.enums.VaiTro;
 @Entity
 @Table(name = "nguoi_dung")
@@ -37,4 +40,7 @@ public class NguoiDung {
     
     @OneToOne(mappedBy = "nguoiDung", cascade = CascadeType.ALL)
     private PhieuThuong phieuThuong;
+    
+    @Column(name = "ngay_sinh")
+    private LocalDate ngaySinh;
 }

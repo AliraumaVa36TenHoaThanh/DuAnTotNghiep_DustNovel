@@ -23,7 +23,9 @@ import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.CustomUserDetails;
 import com.fpoly.security.SecurityUtil;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -397,5 +399,31 @@ public class TruyenController {
 //
 //	        return "layout/main";
 //	    }
+	    
+	    @PostMapping("/api/cap-nhat-ngay-sinh")
+	    @ResponseBody
+	    public org.springframework.http.ResponseEntity<?> capNhatNgaySinh(@RequestParam("ngaySinh") String ngaySinhStr) {
+	        NguoiDung user = securityUtil.getCurrentUserFromDB();
+	        
+	        if (user != null) {
+	            try {
+	                LocalDate ngaySinh = LocalDate.parse(ngaySinhStr);
+	                
+	                // (Tùy chọn) Validation nhẹ ở backend: Không cho phép ngày sinh ở tương lai
+	                if (ngaySinh.isAfter(LocalDate.now())) {
+	                    return org.springframework.http.ResponseEntity.badRequest().body("Ngày sinh không hợp lệ");
+	                }
+	                
+	                user.setNgaySinh(ngaySinh);
+	                nguoiDungRepo.save(user); 
+	                return org.springframework.http.ResponseEntity.ok("Cập nhật ngày sinh thành công");
+	                
+	            } catch (DateTimeParseException e) {
+	                return org.springframework.http.ResponseEntity.badRequest().body("Định dạng ngày không hợp lệ");
+	            }
+	        }
+	        
+	        return org.springframework.http.ResponseEntity.badRequest().body("Bạn chưa đăng nhập");
+	    }
 
 }
