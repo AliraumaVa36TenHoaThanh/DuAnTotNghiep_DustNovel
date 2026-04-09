@@ -132,3 +132,34 @@
         }
     </script>
 </div>
+
+
+<div th:fragment="chuThichModal(truyen, currentUser)">
+    <div th:if="${currentUser != null and currentUser.tenDangNhap == truyen.nguoiDang.tenDangNhap}" 
+         class="modal fade" id="chuThichModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-primary border-2">
+                <form th:action="@{/DustNovel/truyen/{id}/chu-thich(id=${truyen.id})}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title fw-bold text-dark">📝 Chú thích của tác giả</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    
+                    <div class="modal-body text-dark">
+                        <label class="form-label fw-bold small text-muted">Nhập nội dung (Xóa hết chữ để gỡ chú thích):</label>
+                        <textarea class="form-control" name="chuThich" rows="6" 
+                                  placeholder="Nhập thông báo lịch ra chương, lưu ý, hoặc lời tâm tình..."
+                                  th:text="${truyen.chuThich}"></textarea>
+                    </div>
+                    
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary fw-bold px-4">Lưu lại</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -425,5 +425,20 @@ public class TruyenController {
 	        
 	        return org.springframework.http.ResponseEntity.badRequest().body("Bạn chưa đăng nhập");
 	    }
-
+	    @PostMapping("/truyen/{id}/chu-thich")
+	    @PreAuthorize("isAuthenticated()")
+	    public String capNhatChuThich(@PathVariable Long id, 
+	                                  @RequestParam("chuThich") String chuThich) {
+	        Truyen truyen = truyenService.findById(id);
+	        NguoiDung user = securityUtil.getCurrentUserFromDB();
+	        
+	        // Kiểm tra xem người đang đăng nhập có đúng là tác giả không
+	        if (truyen != null && user != null && truyen.getNguoiDang().getId().equals(user.getId())) {
+	            
+	            // GỌI QUA TẦNG SERVICE (Chuẩn bài 3 lớp)
+	            truyenService.capNhatChuThich(id, chuThich);
+	        }
+	        
+	        return "redirect:/DustNovel/truyen/" + id;
+	    }
 }

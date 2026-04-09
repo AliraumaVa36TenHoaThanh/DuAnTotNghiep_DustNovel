@@ -55,6 +55,9 @@ public class Truyen {
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
     
+    @Column(name = "chu_thich", columnDefinition = "NVARCHAR(MAX)")
+    private String chuThich;
+    
     @ManyToMany
     @JoinTable(
         name = "truyen_the_loai",

@@ -129,7 +129,7 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     @Query("UPDATE Truyen t SET t.luotXem = t.luotXem + 1 WHERE t.id = :id")
     void tangLuotXem(@Param("id") Long id);
     
-    @Query("SELECT t FROM Truyen t LEFT JOIN Chuong c ON t.id = c.truyen.id WHERE t.loaiTruyen = :loaiTruyen GROUP BY t.id, t.tenTruyen, t.moTa, t.tenTacGia, t.loaiTruyen, t.trangThai, t.tag18, t.nguoiDang.id, t.anhBia, t.ngayTao, t.tongLike, t.luotXem ORDER BY MAX(c.ngayTao) DESC NULLS LAST, t.ngayTao DESC")
+    @Query("SELECT t FROM Truyen t LEFT JOIN Chuong c ON t.id = c.truyen.id WHERE t.loaiTruyen = :loaiTruyen GROUP BY t ORDER BY MAX(c.ngayTao) DESC NULLS LAST, t.ngayTao DESC")  
     List<Truyen> findByLoaiTruyenOrderByChuongMoiNhat(@Param("loaiTruyen") LoaiTruyen loaiTruyen);
     
 //    @Query("SELECT t FROM Truyen t " +
