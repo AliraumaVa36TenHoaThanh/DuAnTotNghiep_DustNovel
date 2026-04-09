@@ -27,5 +27,8 @@ public interface BannerRepository extends JpaRepository<Banner, Long> {
     );
     
     List<Banner> findByTrangThaiAndViTri(String trangThai, String viTri);
+    
+    List<Banner> findByTruyenIdInAndTruyen_TenTruyenContainingIgnoreCase(
+            List<Long> ids, String keyword);
 
 }
