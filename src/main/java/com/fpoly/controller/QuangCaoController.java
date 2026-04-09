@@ -23,6 +23,8 @@ import java.time.temporal.ChronoUnit;
 import org.springframework.ui.Model;
 import java.io.File;
 import java.io.IOException;
+import java.text.Normalizer;
+
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
@@ -34,6 +36,17 @@ public class QuangCaoController {
     NguoiDungRepository nguoiDungRepository;
 	@Autowired
 	BannerRepository bannerRepository;
+	
+	
+	
+	
+	public static String removeAccent(String input) {
+	    if (input == null) return "";
+	    String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+	    return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+	                     .replace("đ", "d")
+	                     .replace("Đ", "D");
+	}
 	
 	
 	
@@ -221,7 +234,7 @@ public class QuangCaoController {
 	
 	
 	@GetMapping("LichSu/QuangCao")
-	public String LichSuQuangCao(Authentication authentication, Model model) {
+	public String LichSuQuangCao(@RequestParam(required = false) String keyword,Authentication authentication, Model model) {
 
 	    String username = authentication.getName();
 
@@ -238,6 +251,28 @@ public class QuangCaoController {
 	    List<Banner> listBanner = bannerRepository.findByTruyenIdIn(
 	            listTruyen.stream().map(Truyen::getId).toList()
 	    );
+	    
+	    
+	    List<Long> truyenIds = listTruyen.stream()
+	            .map(Truyen::getId)
+	            .toList();
+
+
+	    if(keyword != null && !keyword.trim().isEmpty()){
+
+	        String keywordNoAccent = removeAccent(keyword).toLowerCase();
+
+	        listBanner = bannerRepository.findByTruyenIdIn(truyenIds)
+	                .stream()
+	                .filter(b -> {
+	                    String ten = removeAccent(b.getTruyen().getTenTruyen()).toLowerCase();
+	                    return ten.contains(keywordNoAccent);
+	                })
+	                .toList();
+
+	    } else {	    
+	        listBanner = bannerRepository.findByTruyenIdIn(truyenIds);
+	    }
 
 	    LocalDateTime now = LocalDateTime.now();
 
@@ -335,15 +370,28 @@ public class QuangCaoController {
 	
 	
 	@GetMapping("/sua/{id}")
-	public String suaQuangCao(@PathVariable Long id, Model model){
+	public String suaQuangCao(@PathVariable Long id, Model model, Authentication authentication){
 
 	    Banner banner = bannerRepository.findById(id).orElse(null);
 
 	    if(banner == null){
 	        return "redirect:/quang-cao/LichSu/QuangCao";
 	    }
+	    
+	    String username = authentication.getName();
+	    Optional<NguoiDung> userOpt = nguoiDungRepository.findByTenDangNhap(username);
+	    
+	    if(userOpt.isEmpty()){
+	        return "redirect:/login";
+	    }
+
+	    NguoiDung user = userOpt.get();
+
+	    //  LẤY DANH SÁCH TRUYỆN CỦA USER
+	    List<Truyen> listTruyen = truyenRepository.findByNguoiDang_Id(user.getId());
 
 	    model.addAttribute("banner", banner);
+	    model.addAttribute("listTruyen", listTruyen);
 	    model.addAttribute("content","QuangCao/UpdateQuangCao");
 
 	    return "layout/main";

@@ -178,10 +178,35 @@
 
 								<!-- TRUYEN -->
 								<div class="col-md-6 mb-3">
-									<label class="form-label fw-bold"><i
-										class="bi bi-book text-primary"></i> Truyện</label> <input type="text"
-										class="form-control form-control-lg"
-										th:value="${banner.truyen.tenTruyen}" disabled>
+								    <label class="form-label fw-bold">
+								        <i class="bi bi-book text-primary"></i> Truyện
+								    </label>
+
+								    <!--  CHO_CHAY → cho sửa -->
+								    <select th:if="${banner.trangThai == 'CHO_CHAY'}"
+								            name="truyenId"
+								            class="form-select form-select-lg">
+											
+										<option value="" disabled
+											    th:selected="${banner.truyen == null}">
+											      Chọn truyện
+									    </option>
+
+								        <option th:each="t : ${listTruyen}"
+								                th:value="${t.id}"
+								                th:text="${t.tenTruyen}"
+								                th:selected="${banner.truyen.id == t.id}">
+								        </option>
+
+								    </select>
+
+								    <!-- KHÔNG CHO SỬA -->
+								    <input th:if="${banner.trangThai != 'CHO_CHAY'}"
+								           type="text"
+								           class="form-control form-control-lg"
+								           th:value="${banner.truyen.tenTruyen}"
+								           disabled>
+
 								</div>
 
 								<!-- VỊ TRÍ -->

@@ -1,3 +1,4 @@
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <div th:fragment="content">
 	<div class="qc-page">
 
@@ -205,6 +206,8 @@
 					transform: rotate(360deg);
 				}
 			}
+			
+			
 		</style>
 
 		<div class="container">
@@ -217,13 +220,114 @@
 				<p>Xem các quảng cáo đã tạo và trạng thái của chúng</p>
 			</div>
 
+			<div style="margin-bottom:25px; display:flex; justify-content:center;">
+			    <form method="get" th:action="@{/quang-cao/LichSu/QuangCao}" style="width:100%; max-width:400px; position:relative;">
 
+			        <!-- icon -->
+			        <i class="bi bi-search"
+			           style="position:absolute; top:50%; left:12px; transform:translateY(-50%);
+			                  color:#9ca3af; font-size:16px;"></i>
+
+			        <!-- input -->
+			        <input type="text" name="keyword"
+			               th:value="${keyword}"
+			               placeholder="Tìm Tên Truyện Rồi Enter"
+			               style="
+			                    width:100%;
+			                    padding:10px 12px 10px 36px;
+			                    border-radius:999px;
+			                    border:1px solid #e5e7eb;
+			                    outline:none;
+			                    font-size:14px;
+			                    transition: all 0.25s ease;
+			               "
+			               onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102,126,234,0.2)'"
+			               onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'"
+			        >
+
+			    </form>
+				
+				<!-- Container chứa icon và popup -->
+				<div style="position: relative; display: inline-block; margin-left: 11px; margin-top: 10px;">
+
+				    <!-- NÚT CHÍNH SÁCH -->
+				    <div id="infoBtn"
+				         style="
+				            display: flex;
+				            align-items: center;
+				            justify-content: center;
+				            width: 24px;
+				            height: 24px;
+				            border-radius: 50%;
+				            background: rgb(155 154 154);
+				            color: white;
+				            font-size: 14px;
+				            font-weight: bold;
+				            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+				            cursor: pointer;
+				            transition: transform 0.3s, box-shadow 0.3s;
+				            text-align: center;
+				         "
+				         onmouseover="this.style.transform='scale(1.2)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.3)';"
+				         onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 6px rgba(0,0,0,0.2)';"
+				         title="Xem một số lưu ý">
+				      <i class="bi bi-info-lg"></i>
+				    </div>
+
+				    <!-- Popup thông báo dính vào icon -->
+				    <div id="policyAlert" class="alert alert-warning"
+				         style="
+				            position: absolute;
+				            top: 30px; 
+				            left: 881%;
+				            transform: translateX(-50%);
+				            width: 380px; 
+				            z-index: 9999;
+				            opacity: 0;
+				            pointer-events: none;
+				            transition: opacity 0.3s ease;
+				            font-family: 'Press Start 2P', cursive;
+				            font-size: 9px;
+				            background: #a4e9db;
+				            border: 1px solid #ef4444;
+				            border-radius: 6px;
+				            padding: 10px;
+				            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+							font-size: 12px;
+				         ">
+				      <strong>📢 Một số lưu ý:</strong>
+					  <ul style="margin: 10px 0 0 20px; padding: 0;">
+					    <li><strong>Cập nhật quảng cáo:</strong> Khi bạn thay đổi thông tin quảng cáo, hệ thống sẽ tự động tính toán lại <strong>số token</strong> dựa trên các thay đổi này, để đảm bảo chi phí phù hợp với thời gian và ngân sách mới.</li>
+					    <li><strong>Tăng số ngày chạy hoặc token/ngày:</strong> Nếu bạn muốn chạy quảng cáo lâu hơn hoặc mỗi ngày chi nhiều token hơn, hệ thống sẽ <strong>trừ thêm token</strong> tương ứng, vì quảng cáo tiêu tốn nhiều tài nguyên hơn.</li>
+					    <li><strong>Giảm số ngày chạy:</strong> Nếu bạn giảm số ngày quảng cáo, phần <strong>token chưa sử dụng</strong> sẽ được <strong>hoàn lại</strong> vào tài khoản của bạn, tránh lãng phí token.</li>					    
+					    <li><strong>Xóa quảng cáo:</strong> Khi bạn xóa quảng cáo, toàn bộ <strong>token đã đầu tư</strong> sẽ không được hoàn lại, vì quảng cáo đã được phân phối và hiển thị trên nền tảng.</li>
+					  </ul>
+				      <strong style="display: block; margin-top: 10px;">👉 Cân nhắc kỹ trước khi chỉnh sửa hoặc xóa quảng cáo.</strong>
+				    </div>
+
+				</div>
+
+				<script>
+				  const btn = document.getElementById('infoBtn');
+				  const alertBox = document.getElementById('policyAlert');
+
+				  btn.onclick = () => {
+				    console.log("Info button clicked! Popup hiện tại:", alertBox.style.opacity);
+
+				    if (alertBox.style.opacity === '1') {
+				      alertBox.style.opacity = '0';
+				      alertBox.style.pointerEvents = 'none';
+				    } else {
+				      alertBox.style.opacity = '1';
+				      alertBox.style.pointerEvents = 'auto';
+				    }
+				  }
+				</script>
+			</div>
+			
+			
 			<table>
-
-
-
 				<thead>
-
 					<tr>
 						<th><i class="bi bi-book"></i> Truyện</th>
 						<th><i class="bi bi-geo-alt"></i> Vị Trí</th>
@@ -359,12 +463,18 @@
 
 					</tr>
 					
+					<tr th:if="${#lists.isEmpty(listBanner)}">
+					    <td colspan="7" style="text-align:center; padding:30px; color:#9ca3af; font-weight:600;">
+							<i class="bi bi-exclamation-triangle-fill"></i> Không có truyện nào đang chạy quảng cáo
+					    </td>
+					</tr>
+					
 				</tbody>
 
 			</table>
-			<p style="color:#ef4444; font-weight:1000; margin-top:80px; text-align:center">
-			⚠️ Nếu bạn hủy quảng cáo khi quảng cáo còn hiệu lực hoặc quảng cáo phản cảm, chúng tôi sẽ không trả lại token cho bạn.
-			</p>	
+			<!--<p style="color:#ef4444; font-weight:1000; margin-top:80px; text-align:center">
+					⚠️ Nếu bạn hủy quảng cáo khi quảng cáo còn hiệu lực hoặc quảng cáo phản cảm, chúng tôi sẽ không trả lại token cho bạn.
+				</p>	-->	
 		</div>
 	</div>
 </div>
@@ -373,4 +483,20 @@
 	function reloadPage() {
 		location.reload();
 	}
+</script>
+
+
+
+<script>
+let timeout = null;
+
+document.querySelector("input[name='keyword']").addEventListener("input", function () {
+
+    clearTimeout(timeout);
+
+    timeout = setTimeout(() => {
+        this.form.submit();
+    }, 400);
+
+});
 </script>
