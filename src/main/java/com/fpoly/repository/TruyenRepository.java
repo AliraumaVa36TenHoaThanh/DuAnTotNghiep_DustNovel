@@ -201,5 +201,8 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
 	boolean existsByTenTruyenIgnoreCaseAndIdNot(String tenTruyen, Long id);
 	
 	List<Truyen> findByNguoiDang_Id(Long userId);
-	
+    org.springframework.data.domain.Page<Truyen> findByNguoiDang_IdOrderByNgayTaoDesc(Long userId, Pageable pageable);
+    long countByNguoiDang_Id(Long userId);
+    @org.springframework.data.jpa.repository.Query("SELECT COALESCE(SUM(t.tongLike), 0) FROM Truyen t WHERE t.nguoiDang.id = :userId")
+    long sumTongLikeByUserId(@org.springframework.data.repository.query.Param("userId") Long userId);
 }

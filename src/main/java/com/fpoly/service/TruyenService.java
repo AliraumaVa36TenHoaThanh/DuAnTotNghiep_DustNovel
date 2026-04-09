@@ -159,4 +159,17 @@ public class TruyenService {
             truyenRepo.save(truyen);
         }
 	}	
+	
+	public org.springframework.data.domain.Page<Truyen> layTruyenCuaTacGia(Long userId, Pageable pageable) {
+	    return truyenRepo.findByNguoiDang_IdOrderByNgayTaoDesc(userId, pageable);
+	}
+
+    public long demTongSoTruyenCuaTacGia(Long userId) {
+        return truyenRepo.countByNguoiDang_Id(userId);
+    }
+
+    public long tinhTongLikeCuaTacGia(Long userId) {
+        return truyenRepo.sumTongLikeByUserId(userId);
+    }
+	
 }
