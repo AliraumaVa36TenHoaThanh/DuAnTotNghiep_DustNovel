@@ -57,7 +57,9 @@ public class Truyen {
     
     @Column(name = "chu_thich", columnDefinition = "NVARCHAR(MAX)")
     private String chuThich;
-    
+    @ManyToOne
+    @JoinColumn(name = "nhom_dich_id")
+    private NhomDich nhomDich;
     @ManyToMany
     @JoinTable(
         name = "truyen_the_loai",
@@ -92,5 +94,12 @@ public class Truyen {
 
     public Long getLuotXem() {
         return luotXem == null ? 0 : luotXem;
+    }
+    public NhomDich getNhomDich() {
+        return nhomDich;
+    }
+
+    public void setNhomDich(NhomDich nhomDich) {
+        this.nhomDich = nhomDich;
     }
 }
