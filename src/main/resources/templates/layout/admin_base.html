@@ -58,6 +58,12 @@
 					<ul class="menu">
 						<li class="sidebar-title">Menu</li>
 						<li class="sidebar-item">
+							<a href="/dba/dashboard" class='sidebar-link'>
+								<i class="bi bi-stack"></i>
+								<span>Menu</span>
+							</a>
+						</li>
+						<li class="sidebar-item">
 							<a href="/dba/user" class='sidebar-link'>
 								<i class="bi bi-stack"></i>
 								<span>Quản Lý Người Dùng</span>
@@ -76,7 +82,12 @@
 								<span>Quản Lý Thể Loại</span>
 							</a>
 						</li>
-						
+						<li class="sidebar-item">
+							<a href="/dba/thong-tin-nap" class='sidebar-link'>
+								<i class="bi bi-stack"></i>
+								<span>Quản Lý Doanh Thu</span>
+							</a>
+						</li>
 						<li class="sidebar-item">
                          <a th:href="@{/dba/nhom-dich}" class="sidebar-link">
                              <i class="bi bi-collection-fill"></i>
@@ -103,22 +114,6 @@
 								</li>
 							</ul>
 						</li>
-						<!--  
-						<li class="sidebar-item  has-sub">
-							<a href="#" class='sidebar-link'>
-								<i class="bi bi-collection-fill"></i>
-								<span>Nhóm Dịch</span>
-							</a>
-							<ul class="submenu ">
-								<li class="submenu-item ">
-									<a href="extra-component-avatar.html">List Nhóm Dịch</a>
-								</li>
-								<li class="submenu-item ">
-									<a href="extra-component-sweetalert.html">Quản Lý Nhóm Dịch</a>
-								</li>
-							</ul>
-						</li>
-						-->
 						<li class="sidebar-item  has-sub">
 							<a href="#" class='sidebar-link'>
 								<i class="bi bi-grid-1x2-fill"></i>
@@ -130,9 +125,6 @@
 								</li>
 								<li class="submenu-item ">
 									<a th:href="@{/dba/rut-tien}">Yêu Cầu & Lịch Sử Rút Tiền</a>
-								</li>
-								<li class="submenu-item ">
-									<a th:href="@{/dba/thong-tin-nap}">Quản Lý Doanh Thu</a>
 								</li>
 							</ul>
 						</li>

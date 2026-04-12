@@ -1,0 +1,199 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+<div id="main">
+
+    <div class="page-heading">
+
+        <!-- TITLE -->
+        <div class="page-title mb-4">
+            <h3>Dashboard</h3>
+            <p class="text-muted">Thống kê nhanh hệ thống</p>
+        </div>
+
+        <!-- ================= THỐNG KÊ ================= -->
+        <section class="section">
+            <div class="row">
+
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm text-center p-3">
+                        <h6 class="text-muted">Tổng User</h6>
+                        <h2 th:text="${totalUsers}">0</h2>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm text-center p-3">
+                        <h6 class="text-muted">Tổng Truyện</h6>
+                        <h2 th:text="${totalTruyen}">0</h2>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow-sm text-center p-3">
+                        <h6 class="text-muted">Tổng Chương</h6>
+                        <h2 th:text="${totalChuong}">0</h2>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= CHART + TOP NẠP ================= -->
+        <section class="section mt-3">
+            <div class="row">
+
+                <!-- CHART -->
+                <div class="col-md-8">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h6>Doanh thu gần đây</h6>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="miniChart" height="120"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOP NẠP -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h6>Top nạp tiền</h6>
+                        </div>
+
+                        <div class="card-body p-2">
+
+                            <div th:if="${topNap != null and !#lists.isEmpty(topNap)}">
+
+                                <div th:each="item, iStat : ${topNap}" 
+                                     class="d-flex justify-content-between align-items-center border-bottom py-2">
+
+                                    <div>
+                                        <span class="badge bg-success me-2"
+                                              th:text="${iStat.index + 1}"></span>
+
+                                        <span th:text="${item[0] != null ? item[0] : 'Unknown'}"></span>
+                                    </div>
+
+                                    <div class="fw-bold text-success"
+                                         th:text="${item[1] != null ? #numbers.formatDecimal(item[1],0,'COMMA',0,'POINT') : 0}">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div th:if="${topNap == null or #lists.isEmpty(topNap)}"
+                                 class="text-center text-muted py-3">
+                                Chưa có dữ liệu
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= TOP TOKEN ================= -->
+        <section class="section mt-4">
+
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5>Top User (Token cao)</h5>
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-hover">
+
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Tên</th>
+                                <th>Email</th>
+                                <th class="text-end">Token</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr th:each="u, iStat : ${topUsers}">
+                                <td>
+                                    <span class="badge bg-warning"
+                                          th:text="${iStat.index + 1}"></span>
+                                </td>
+                                <td th:text="${u.tenDangNhap}"></td>
+                                <td th:text="${u.email}"></td>
+                                <td class="text-end fw-bold text-warning"
+                                    th:text="${u.token}"></td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+<!-- ================= CHART ================= -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+    let rawData = /*[[${doanhThuNgay}]]*/ [];
+
+    if (!rawData) rawData = [];
+
+    // Format ngày -> dd/MM
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        return day + '/' + month;
+    }
+
+    const labels = rawData.map(item => formatDate(item[0]));
+    const data = rawData.map(item => Number(item[1]));
+
+    const ctx = document.getElementById('miniChart');
+
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            maxRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 7 // chỉ hiện ~7 ngày cho gọn
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('vi-VN');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+</div>
