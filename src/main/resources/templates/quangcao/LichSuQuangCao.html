@@ -297,9 +297,9 @@
 				         style="
 				            position: absolute;
 				            top: 30px; 
-				            left: 881%;
+				            left: 1091%;
 				            transform: translateX(-50%);
-				            width: 380px; 
+				            width: 480px; 
 				            z-index: 9999;
 				            opacity: 0;
 				            pointer-events: none;
@@ -320,6 +320,8 @@
 					    <li><strong>Tăng số ngày chạy hoặc token/ngày:</strong> Nếu bạn muốn chạy quảng cáo lâu hơn hoặc mỗi ngày chi nhiều token hơn, hệ thống sẽ <strong>trừ thêm token</strong> tương ứng, vì quảng cáo tiêu tốn nhiều tài nguyên hơn.</li>
 					    <li><strong>Giảm số ngày chạy:</strong> Nếu bạn giảm số ngày quảng cáo, phần <strong>token chưa sử dụng</strong> sẽ được <strong>hoàn lại</strong> vào tài khoản của bạn, tránh lãng phí token.</li>					    
 					    <li><strong>Xóa quảng cáo:</strong> Khi bạn xóa quảng cáo, toàn bộ <strong>token đã đầu tư</strong> sẽ không được hoàn lại, vì quảng cáo đã được phân phối và hiển thị trên nền tảng.</li>
+					    <li><strong>Tính công bằng hệ thống:</strong>ADMIN có quyền can thiệp quảng cáo như sửa thông tin quảng cáo hoặc nặng hơn thì sẽ xóa luôn quảng cáo mà không hoàn token khi vi phạm quy định (nội dung không phù hợp, vi phạm bản quyền). Chúng tôi làm vậy để đảm bảo minh bạch và tránh lạm dụng.</li>
+					    <li><strong>Vi phạm bản quyền:</strong> sử dụng hình ảnh, nội dung hoặc tài nguyên của bên thứ ba mà chưa được phép</li>
 					  </ul>
 				      <strong style="display: block; margin-top: 10px;">👉 Cân nhắc kỹ trước khi chỉnh sửa hoặc xóa quảng cáo.</strong>
 				    </div>
@@ -349,6 +351,7 @@
 				<thead>
 					<tr>
 						<th><i class="bi bi-book"></i> Truyện</th>
+						<th><i class="bi bi-person-workspace"></i> Người tạo</th>
 						<th><i class="bi bi-geo-alt"></i> Vị Trí</th>
 						<th><i class="bi bi-calendar-event"></i> Ngày Bắt Đầu</th>
 						<th><i class="bi bi-calendar-x"></i> Số Ngày Chạy</th>
@@ -370,6 +373,11 @@
 								<span th:text="${banner.truyen.tenTruyen}"></span>
 							</a>
 						</td>
+						
+						<td>
+                           <i class="bi bi-person-circle"></i>
+                         <span th:text="${banner.truyen.nguoiDang.tenDangNhap}"></span>
+                        </td>
 
 						<!-- Vị trí -->
 						<td
@@ -483,7 +491,7 @@
 					</tr>
 					
 					<tr th:if="${#lists.isEmpty(listBanner)}">
-					    <td colspan="7" style="text-align:center; padding:30px; color:#9ca3af; font-weight:600;">
+					    <td colspan="8" style="text-align:center; padding:30px; color:#9ca3af; font-weight:600;">
 							<i class="bi bi-exclamation-triangle-fill"></i> Không có truyện nào đang chạy quảng cáo
 					    </td>
 					</tr>

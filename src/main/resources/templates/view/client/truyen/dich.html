@@ -322,9 +322,9 @@ th {
 						<td th:text="${truyen.nguoiDang.tenDangNhap}">Người đăng</td>
 
 						<td>
-							<span th:if="${truyen.trangThai == 'ĐANG_RA'}"
+							<span th:if="${truyen.trangThai.name() == 'ĐANG_RA'}"
 								class="badge badge-dangra">Đang ra</span>
-							<span th:if="${truyen.trangThai == 'HOÀN_THÀNH'}"
+							<span th:if="${truyen.trangThai.name() == 'HOÀN_THÀNH'}"
 								class="badge badge-hoanthanh">Hoàn thành</span>
 						</td>
 
@@ -339,13 +339,14 @@ th {
 							    </a>
 							    
 							<a  class="btn btn-sm btn-info me-1 text-white"
-							    th:href="@{/DustNovel/sua/{id}(id=${truyen.id})}">
+							    th:href="@{/DustNovel/truyen/sua/{id}(id=${truyen.id})}">
 							    <i class="fa-solid fa-pen-to-square"></i>
 							    </a>
 							    
 							<a href="#"class="btn btn-sm btn-danger"
                             onclick="return xoaTruyen(this)"
-                            th:data-url="@{/DustNovel/chuong/xoa/{id}(id=${truyen.id})}">
+                            th:data-id="${truyen.id}"
+                            th:data-url="@{/dbu/truyen-dich/xoa/{id}(id=${truyen.id})}">
                             <i class="fa fa-trash me-1"></i>
                             </a>
 						</td>
@@ -397,14 +398,47 @@ searchInput.addEventListener("keyup", function () {
     });
 });
 
-function xoaTruyen(el) {
+/* function xoaTruyen(el) {
     if (confirm("Bạn chắc chắn muốn xóa truyện này chứ ?")) {
         alert("Bạn đã xóa thành công !");
         window.location.href = el.dataset.url;
     }
     return false;
-}
+} */
 
+
+
+function xoaTruyen(el) {
+
+    const id = el.dataset.id;
+    const url = el.dataset.url;
+
+    fetch('/dbu/truyen/check-quang-cao/' + id)
+        .then(res => res.json())
+        .then(isRunning => {
+
+            let message = "";
+
+            if (isRunning) {
+                message = "Khi xóa truyện này:\n\n"
+                    + "- Quảng cáo mà truyện này đang chạy sẽ bị xóa\n"
+                    + "- Tập, chương sẽ bị xóa\n"
+                    + "- Lịch sử đọc, bình luận, bookmark, AI... sẽ bị xóa toàn bộ\n\n"
+                    + "Bạn có chắc chắn muốn xóa không?";
+            } else {
+                message = "Khi xóa truyện này:\n\n"                   
+                    + "- Tập, chương sẽ bị xóa\n"
+                    + "- Lịch sử đọc, bình luận, bookmark, AI... sẽ bị xóa toàn bộ\n\n"
+                    + "Bạn có chắc chắn muốn xóa không?";
+            }
+
+            if (confirm(message)) {
+                window.location.href = url;
+            }
+        });
+
+    return false;
+}
 
 
 
@@ -416,7 +450,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const pagination = document.getElementById("pagination");
     const rowLimitSelect = document.getElementById("rowLimit");
 
-    function displayTable(page) {
+    /* function displayTable(page)  */  displayTable = function (page){
 
         const limit = parseInt(rowLimitSelect.value);
         const start = (page - 1) * limit;
