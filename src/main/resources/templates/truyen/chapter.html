@@ -775,7 +775,25 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
             })
             .then(response => response.text())
             .then(data => {
-                readerContent.innerHTML = data; // Đắp chữ mới vào
+                // 1. Cắt ngoặc kép thừa ở 2 đầu
+                let cleanData = data.replace(/^"|"$/g, '');
+
+                // 2. Xử lý lỗi ký tự %C4%90 (Giải mã URL Encode)
+                try {
+                    // Cố gắng giải mã, lỡ API trả về text thường không mã hóa thì hàm catch sẽ bỏ qua
+                    cleanData = decodeURIComponent(cleanData);
+                } catch (e) {
+                    console.log("Ký tự không cần giải mã");
+                }
+                
+                // 3. Chuyển đổi tất cả các thể loại \r \n thành thẻ <br> của HTML
+                cleanData = cleanData.replace(/\\r\\n/g, '<br>')
+                                     .replace(/\\n/g, '<br>')
+                                     .replace(/\r\n/g, '<br>')
+                                     .replace(/\n/g, '<br>');
+                
+                // 4. LƯU Ý Ở ĐÂY: Dùng 'cleanData' chứ không phải 'data'
+                readerContent.innerHTML = cleanData; 
             })
             .catch(err => {
                 alert("Lỗi khi gọi bản dịch!");
