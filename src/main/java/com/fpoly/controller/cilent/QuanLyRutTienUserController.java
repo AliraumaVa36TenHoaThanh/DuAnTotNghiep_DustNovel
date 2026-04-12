@@ -43,6 +43,6 @@ public class QuanLyRutTienUserController {
         model.addAttribute("content", "view/client/nap/user-rut-tien");
         model.addAttribute("title", "Quản Lý Rút Tiền");
 
-        return "layout/admin_base";
+        return "layout/cilent_base";
     }
 }

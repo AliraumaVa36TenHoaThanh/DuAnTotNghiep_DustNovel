@@ -28,4 +28,13 @@ public interface NapTienRepository extends JpaRepository<NapTien, Long> {
     	List<Object[]> topNapNhieu();
     	
     	List<NapTien> findByNguoiDungId(Long nguoiDungId);
+    	@Query(value = """
+    		    SELECT nd.ten_dang_nhap, SUM(nt.so_tien) AS tong
+    		    FROM nap_tien nt
+    		    JOIN nguoi_dung nd ON nt.nguoi_dung_id = nd.id
+    		    WHERE CAST(nt.ngay_nap AS DATE) = :date
+    		    GROUP BY nd.ten_dang_nhap
+    		    ORDER BY tong DESC
+    		""", nativeQuery = true)
+    		List<Object[]> topNapTheoNgay(@Param("date") String date);
 }

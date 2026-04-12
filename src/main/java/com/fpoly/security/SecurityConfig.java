@@ -95,6 +95,7 @@ public class SecurityConfig {
             	    ).hasAnyRole("USER", "ADMIN")
 
             	    // ADMIN
+            	    .requestMatchers("/dba/**").hasRole("ADMIN")	
             	    .requestMatchers("/DustNovel/admin/**").hasRole("ADMIN")
             	    
             	    .requestMatchers("/quang-cao/**")
