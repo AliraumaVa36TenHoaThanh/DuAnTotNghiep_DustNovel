@@ -66,10 +66,18 @@ public class TruyenService {
 		return truyenRepo.findByLoaiTruyen(LoaiTruyen.DỊCH);
 	}
 	
+//	public void xoaTruyen(Long id) {
+//		lichSuDocRepo.deleteByTruyenId(id);
+//        chuongRepo.deleteByTruyenId(id);
+//        truyenRepo.deleteById(id);
+//	}
+	
+	@Transactional
 	public void xoaTruyen(Long id) {
-		lichSuDocRepo.deleteByTruyenId(id);
-        chuongRepo.deleteByTruyenId(id);
-        truyenRepo.deleteById(id);
+	    Truyen truyen = truyenRepo.findById(id)
+	        .orElseThrow(() -> new RuntimeException("Không tìm thấy truyện"));
+
+	    truyenRepo.delete(truyen); // 🔥 để Hibernate xử lý cascade
 	}
 
 	public Truyen suaTruyen(Long id, Truyen truyen) {
