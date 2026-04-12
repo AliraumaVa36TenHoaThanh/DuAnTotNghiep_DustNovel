@@ -1,6 +1,7 @@
 package com.fpoly.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -36,5 +37,5 @@ public class Tap {
     }
     @OneToMany(mappedBy = "tap", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Chuong> danhSachChuong;
-   
+
 }

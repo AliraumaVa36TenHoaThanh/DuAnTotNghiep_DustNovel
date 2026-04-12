@@ -68,8 +68,10 @@ public class Truyen {
     )
     private List<TheLoai> theLoais = new ArrayList<>();
     
+//    @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Tap> danhSachTap;
     @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Tap> danhSachTap;
+    private List<Tap> danhSachTap = new ArrayList<>();
     @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikeTruyen> danhSachLike = new ArrayList<>();
     @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -102,4 +104,9 @@ public class Truyen {
     public void setNhomDich(NhomDich nhomDich) {
         this.nhomDich = nhomDich;
     }
+    
+    @OneToMany(mappedBy = "truyenBiBaoCao", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BaoCaoTruyen> danhSachBaoCao = new ArrayList<>();
+    @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DanhGiaTruyen> danhSachDanhGia = new ArrayList<>();
 }

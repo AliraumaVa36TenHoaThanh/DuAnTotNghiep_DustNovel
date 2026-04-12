@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -57,6 +58,15 @@ public class Chuong {
     }
     @OneToMany(mappedBy = "chuong", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MoKhoaChuong> danhSachMoKhoa;
+    @OneToMany(mappedBy = "chuong", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AiDich> danhSachDich = new ArrayList<>();
     @OneToMany(mappedBy = "chuong", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<BinhLuan> binhLuans;
+    private List<BinhLuan> binhLuans = new ArrayList<>();
+    @OneToMany(mappedBy = "chuong",
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
+ private List<Bookmark> danhSachBookmark = new ArrayList<>();
+    
+    @OneToOne(mappedBy = "chuong", cascade = CascadeType.ALL, orphanRemoval = true)
+    private AiTomTat aiTomTat;
 }
