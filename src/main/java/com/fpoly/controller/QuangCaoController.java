@@ -245,8 +245,29 @@ public class QuangCaoController {
 	    }
 
 	    NguoiDung user = userOpt.get();
+	    
+	    
+	    // check ADMIN / USER
+	    boolean isAdmin = authentication.getAuthorities().stream()
+	            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-	    List<Truyen> listTruyen = truyenRepository.findByNguoiDang_Id(user.getId());
+	    model.addAttribute("isAdmin", isAdmin);
+	    model.addAttribute("currentUser", user);
+
+
+	    // PHÂN QUYỀN LIST TRUYỆN
+	    // =========================
+	    List<Truyen> listTruyen;
+
+	    if (isAdmin) {
+	        listTruyen = truyenRepository.findAll(); // ADMIN xem tất cả truyện
+	    } else {
+	        listTruyen = truyenRepository.findByNguoiDang_Id(user.getId()); // USER chỉ xem của mình
+	    }
+
+		/*
+		 * List<Truyen> listTruyen = truyenRepository.findByNguoiDang_Id(user.getId());
+		 */
 
 	    List<Banner> listBanner = bannerRepository.findByTruyenIdIn(
 	            listTruyen.stream().map(Truyen::getId).toList()
@@ -630,10 +651,19 @@ public class QuangCaoController {
 	@GetMapping("/xoa/{id}")
 	public String xoaQuangCao(@PathVariable Long id,
 	                          RedirectAttributes redirectAttributes){
+		
+		Banner banner = bannerRepository.findById(id).orElse(null);
+
+	    if (banner == null) {
+	        redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy quảng cáo");
+	        return "redirect:/quang-cao/LichSu/QuangCao";
+	    }
+	    
+	    String tenTruyen = banner.getTruyen().getTenTruyen();
 
 	    bannerRepository.deleteById(id);
 
-	    redirectAttributes.addFlashAttribute("successMessage","Đã xóa quảng cáo");
+	    redirectAttributes.addFlashAttribute("successMessage","Đã xóa quảng cáo truyện: " + tenTruyen);
 
 	    return "redirect:/quang-cao/LichSu/QuangCao";
 	}

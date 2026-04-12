@@ -99,6 +99,123 @@
     scrollbar-width: thin;
     scrollbar-color: #999 transparent;
 }
+
+.selected-genres {
+    position: absolute;
+    top: 8px;
+    right: 450px;   
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    max-width: 300px;
+}
+
+.selected-genres {
+    position: absolute;
+    cursor: pointer;
+}
+
+.selected-popup {
+    position: absolute;
+    top: 100%;   
+    left: 18px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    display: none;
+    grid-template-columns: repeat(10, auto);
+    gap: 6px;
+    width: max-content;  
+    max-width: 1000px; 
+    z-index: 999;
+}
+
+.selected-popup.show {
+    display: grid;
+}
+
+.genre-badge {
+    color: #000000;
+    padding: 4px 20px;
+    border-radius: 6px;
+    font-size: 10px;
+}
+
+[data-theme="dark"] .filter-header {
+    background: #2b2b2b;
+    border: 1px solid #444;
+    color: #eee;
+}
+
+[data-theme="dark"] .filter-header span {
+    color: #aaa;
+}
+
+[data-theme="dark"] .filter-list {
+    background: #1f1f1f;
+    border: 1px solid #444;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+}
+
+[data-theme="dark"] .filter-item {
+    background: #2a2a2a;
+    color: #ddd;
+}
+
+[data-theme="dark"] .filter-item:hover {
+    background: #3a3a3a;
+}
+
+[data-theme="dark"] .filter-item.active {
+    background: #4f6ef7;
+    color: #fff;
+}
+
+[data-theme="dark"] .filter-list::-webkit-scrollbar-thumb {
+    background: #555;
+}
+
+[data-theme="dark"] .card {
+    background: #1f1f1f;
+    color: #eee;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background: #2b2b2b;
+    color: #eee;
+    border: 1px solid #444;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: #888;
+}
+
+[data-theme="dark"] .border {
+    background: #2a2a2a !important;
+}
+
+[data-theme="dark"] input[type="file"]::file-selector-button {
+    background: #444;
+    color: #7c7c7c;
+}
+
+[data-theme="dark"] .selected-popup {
+    background: #1f1f1f;
+}
+
+/* LIGHT */
+[data-theme="light"] .genre-badge {
+    color: #000000;
+}
+
+/* DARK */
+[data-theme="dark"] .genre-badge {
+    color: #fff;
+}
 </style>
 
 
@@ -185,6 +302,11 @@
 							<span id="filterText">Thể loại</span> <i
 								class="fa-solid fa-chevron-down"></i>
 						</div>
+						
+						<div id="selectedGenres" class="selected-genres" onclick="toggleSelectedPopup()">
+						 <i class="bi bi-tags"></i>
+						 <div id="selectedPopup" class="selected-popup"></div>
+						  </div>
 
 						<div class="filter-list" id="filterList">
 
@@ -318,6 +440,16 @@ function chonTheLoai(element) {
     element.classList.toggle("active");
 
     updateFilterText();
+    renderSelectedGenres();
+    
+    const popup = document.getElementById("selectedPopup");
+    const checked = document.querySelectorAll("input[name='theLoaiIds']:checked");
+
+    if (checked.length > 0) {
+        popup.classList.add("show"); // có chọn → hiện
+    } else {
+        popup.classList.remove("show"); // bỏ hết → ẩn
+    }
 }
 
 
@@ -341,6 +473,16 @@ function locTatCa(element) {
     element.classList.toggle("active");
 
     updateFilterText();
+    renderSelectedGenres();
+    
+    const popup = document.getElementById("selectedPopup");
+    const checked = document.querySelectorAll("input[name='theLoaiIds']:checked");
+
+    if (checked.length > 0) {
+        popup.classList.add("show");
+    } else {
+        popup.classList.remove("show");
+    }
 }
 
 
@@ -359,22 +501,61 @@ function updateFilterText() {
 
     if (checked.length === 0) {
         text.innerText = "Thể loại";
-        text.style.color = "#9ca3af";
+        text.style.color = "";
         tatCaBtn.classList.remove("active");
         return;
     }
 
     if (checked.length === total) {
         text.innerText = "Tất cả";
-        text.style.color = "#111";
+        text.style.color = "";
         tatCaBtn.classList.add("active");
         return;
     }
 
     text.innerText = checked.length + " thể loại";
-    text.style.color = "#111";
+    text.style.color = "";
     tatCaBtn.classList.remove("active");
 }
     
+</script>
+
+
+
+<script>
+function renderSelectedGenres() {
+    const popup = document.getElementById("selectedPopup");
+
+    popup.innerHTML = "";
+
+    const checked = document.querySelectorAll(
+        "input[name='theLoaiIds']:checked"
+    );
+
+    if (checked.length === 0) {
+    	popup.classList.remove("show");
+        popup.innerHTML = "<span style='color:#888'>Chưa chọn</span>";
+        return;
+    }
+
+    checked.forEach(cb => {
+        const text = cb.nextElementSibling.innerText;
+
+        const badge = document.createElement("span");
+        badge.className = "genre-badge";
+        badge.innerText = text;
+
+        popup.appendChild(badge);
+    });
+}
+
+
+function toggleSelectedPopup() {
+    const popup = document.getElementById("selectedPopup");
+
+    popup.classList.toggle("show");
+
+    renderSelectedGenres(); 
+}
 </script>
 </div>

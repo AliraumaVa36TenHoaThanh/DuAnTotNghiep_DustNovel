@@ -322,9 +322,9 @@ th {
 					</td>
 
 					<td>
-						<span th:if="${truyen.trangThai == 'ĐANG_RA'}"
+						<span th:if="${truyen.trangThai.name() == 'ĐANG_RA'}"
 							class="badge badge-dangra">Đang ra</span>
-						<span th:if="${truyen.trangThai == 'HOÀN_THÀNH'}"
+						<span th:if="${truyen.trangThai.name() == 'HOÀN_THÀNH'}"
 							class="badge badge-hoanthanh">Hoàn thành</span>
 					</td>
 
@@ -338,7 +338,7 @@ th {
 							class="action-btn btn-view">
 							<i class="fa-solid fa-eye"></i>
 							</a>
-						<a th:href="@{/DustNovel/sua/{id}(id=${truyen.id})}"
+						<a th:href="@{/DustNovel/truyen/sua/{id}(id=${truyen.id})}"
 							class="action-btn btn-edit">
 							<i class="fa-solid fa-pen"></i>
 							</a>
@@ -410,7 +410,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* ===================== PHÂN TRANG ===================== */
 
-    function displayTable(page) {
+    /* function displayTable(page) */ displayTable = function (page) {
 
         const limit = parseInt(rowLimitSelect.value);
         const start = (page - 1) * limit;
@@ -485,7 +485,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.xoaTruyen = function (el) {
         if (confirm("Bạn chắc chắn muốn xóa truyện này chứ ?")) {
-            alert("Xóa truyện thành công!");
+            /* alert("Xóa truyện thành công!"); */
             window.location.href = el.dataset.url;
         }
         return false;

@@ -59,6 +59,46 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     background: #4f6ef7;
     color: #fff;
 }
+
+.selected-genres {
+    position: absolute;
+    top: 10px;
+    right: 370px;   
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 300px;
+    cursor: pointer; 
+}
+
+
+.selected-popup {
+    position: absolute;
+    top: 100%;   
+    left: 18px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    display: none;
+    grid-template-columns: repeat(8, auto);
+    gap: 6px;
+    width: max-content;  
+    max-width: 1000px; 
+    z-index: 999;
+}
+
+.selected-popup.show {
+    display: grid;
+}
+
+.genre-badge {
+    color: #000000;
+    padding: 4px 20px;
+    border-radius: 6px;
+    font-size: 10px;
+}
+
 </style>
 
 
@@ -125,6 +165,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 								<span id="filterText">Thể loại</span> <i
 									class="fa-solid fa-chevron-down" id="arrowIcon"></i>
 							</div>
+							
+							<div id="selectedGenres" class="selected-genres" onclick="toggleSelectedPopup()">
+						      <i class="bi bi-tags"></i>
+						    <div id="selectedPopup" class="selected-popup"></div>
+						  </div>
 
 							<div class="filter-list" id="filterList">
 
@@ -249,6 +294,16 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         element.classList.toggle("active");
 
         updateFilterText();
+        renderSelectedGenres();
+        
+        const popup = document.getElementById("selectedPopup");
+        const checked = document.querySelectorAll("input[name='theLoaiIds']:checked");
+
+        if (checked.length > 0) {
+            popup.classList.add("show"); // có chọn → hiện
+        } else {
+            popup.classList.remove("show"); // bỏ hết → ẩn
+        }
     }
 
     function locTatCa(element) {
@@ -274,6 +329,16 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         }
 
         updateFilterText();
+        renderSelectedGenres();
+        
+        const popup = document.getElementById("selectedPopup");
+        const checked = document.querySelectorAll("input[name='theLoaiIds']:checked");
+
+        if (checked.length > 0) {
+            popup.classList.add("show"); // có chọn → hiện
+        } else {
+            popup.classList.remove("show"); // bỏ hết → ẩn
+        }
     }
 
     function updateFilterText() {
@@ -309,4 +374,44 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
             list.classList.remove("show");
         }
     });
+</script>
+
+
+
+
+<script>
+function renderSelectedGenres() {
+    const popup = document.getElementById("selectedPopup");
+
+    popup.innerHTML = "";
+
+    const checked = document.querySelectorAll(
+        "input[name='theLoaiIds']:checked"
+    );
+
+    if (checked.length === 0) {
+    	popup.classList.remove("show");
+        popup.innerHTML = "<span style='color:#888'>Chưa chọn</span>";
+        return;
+    }
+
+    checked.forEach(cb => {
+        const text = cb.nextElementSibling.innerText;
+
+        const badge = document.createElement("span");
+        badge.className = "genre-badge";
+        badge.innerText = text;
+
+        popup.appendChild(badge);
+    });
+}
+
+
+function toggleSelectedPopup() {
+    const popup = document.getElementById("selectedPopup");
+
+    popup.classList.toggle("show");
+
+    renderSelectedGenres(); 
+}
 </script>
