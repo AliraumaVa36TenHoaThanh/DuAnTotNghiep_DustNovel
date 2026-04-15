@@ -38,6 +38,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -122,7 +124,8 @@ public class TruyenController {
 	            BindingResult result,
 	            @RequestParam (value = "theLoaiIds", required = false) List<Long> theLoaiIds,
 	            @RequestParam(value = "file", required = false) MultipartFile file,
-	            Model model
+	            Model model,
+	            RedirectAttributes redirectAttributes
 	    )  throws IOException {
 	    	    	
 	        CustomUserDetails cud =
@@ -189,6 +192,10 @@ public class TruyenController {
 	        }
 
 	        truyenService.save(truyen, theLoaiIds);
+	        redirectAttributes.addFlashAttribute(
+	        	    "successMessage",
+	        	    "Thêm truyện \"" + truyen.getTenTruyen() + "\" thành công!"
+	        	);
 	        return "redirect:/DustNovel/home";
 	    }
 
@@ -214,8 +221,17 @@ public class TruyenController {
 	    
 	    @PreAuthorize("@permissionService.canDeleteTruyen(#id)")
 	    @PostMapping("/truyen/{ten_truyen}/xoa/{id}")
-	    public String xoaTruyen(@PathVariable Long id) {
+	    public String xoaTruyen(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+	    	
+	    	Truyen truyen = truyenService.findById(id);
+	        String tenTruyen = (truyen != null) ? truyen.getTenTruyen() : "";
+	        
 	        truyenService.xoaTruyen(id);
+	        
+	        redirectAttributes.addFlashAttribute(
+	                "successMessage",
+	                "Bạn đã xóa truyện \"" + tenTruyen + "\" thành công!"
+	            );
 	        return "redirect:/DustNovel/home";
 	    }
 	    
@@ -277,7 +293,8 @@ public class TruyenController {
 	            @Valid @ModelAttribute("truyen") Truyen truyenForm,
 	            BindingResult result,
 	            @RequestParam(required = false) List<Long> theLoaiIds,
-	            Model model
+	            Model model,
+	            RedirectAttributes redirectAttributes 
 	    ) {
 	        // 1. Lấy truyện CŨ từ database lên (để giữ nguyên lượt xem, ngày tạo, ds chương...)
 	        Truyen truyenDB = truyenService.findById(id);
@@ -293,18 +310,68 @@ public class TruyenController {
 	                    "Tên truyện đã tồn tại"
 	            );
 	        }
-	        if (result.hasErrors()) {
+	        if (result.hasErrors() || theLoaiIds == null || theLoaiIds.isEmpty()) {
+	        	
+	        	if (theLoaiIds == null || theLoaiIds.isEmpty()) {
+	                model.addAttribute("error", "Vui lòng chọn ít nhất một thể loại!");
+	            }
+	        	
+	        	if (theLoaiIds != null) {
+	                List<TheLoai> selected = theLoaiRepo.findAllById(theLoaiIds);
+	                truyenForm.setTheLoais(selected);
+	            }
+	        	
 	            model.addAttribute("truyen", truyenForm);
 	            model.addAttribute("dsTheLoai", theLoaiRepo.findAll());
 	            model.addAttribute("content", "truyen/edit");
 	            model.addAttribute("title", "Sửa truyện");
 	            return "layout/main";
 	        }
+	        
+	        // CHECK CÓ THAY ĐỔI HAY KHÔNG
+	        boolean isChanged = false;
+
+	        if (!truyenDB.getTenTruyen().equals(truyenForm.getTenTruyen())) {
+	            isChanged = true;
+	        }
+
+	        if (!java.util.Objects.equals(truyenDB.getMoTa(), truyenForm.getMoTa())) {
+	            isChanged = true;
+	        }
+
+	        if (!java.util.Objects.equals(truyenDB.getTenTacGia(), truyenForm.getTenTacGia())) {
+	            isChanged = true;
+	        }
+
+	        if (truyenDB.getLoaiTruyen() != truyenForm.getLoaiTruyen()) {
+	            isChanged = true;
+	        }
+	        
+	        if (truyenDB.getTrangThai() != truyenForm.getTrangThai()) {
+	            isChanged = true;
+	        }
+
+	        if (!java.util.Objects.equals(truyenDB.getTag18(), truyenForm.getTag18())) {
+	            isChanged = true;
+	        }
+
+	        if (truyenForm.getAnhBia() != null && !truyenForm.getAnhBia().isBlank() &&
+	            !truyenForm.getAnhBia().equals(truyenDB.getAnhBia())) {
+	            isChanged = true;
+	        }
+
+	        if (theLoaiIds != null) {
+	            List<TheLoai> newList = theLoaiRepo.findAllById(theLoaiIds);
+	            if (!newList.equals(truyenDB.getTheLoais())) {
+	                isChanged = true;
+	            }
+	        }
 	    
 	        truyenDB.setTenTruyen(truyenForm.getTenTruyen());
 	        truyenDB.setMoTa(truyenForm.getMoTa());
 	        truyenDB.setTenTacGia(truyenForm.getTenTacGia());
 	        truyenDB.setLoaiTruyen(truyenForm.getLoaiTruyen());
+	        truyenDB.setTrangThai(truyenForm.getTrangThai());
 	        truyenDB.setTag18(truyenForm.getTag18());
 	        
 	        
@@ -320,6 +387,14 @@ public class TruyenController {
 
 	        // 4. Lưu lại vào DB
 	        truyenRepo.save(truyenDB);
+	        
+	        // CHỈ HIỆN THÔNG BÁO KHI CÓ THAY ĐỔI
+	        if (isChanged) {
+	            redirectAttributes.addFlashAttribute(
+	                "successMessage",
+	                "Cập nhật truyện \"" + truyenDB.getTenTruyen() + "\" thành công!"
+	            );
+	        }
 
 	        return "redirect:/DustNovel/truyen/" + id;
 	    }
