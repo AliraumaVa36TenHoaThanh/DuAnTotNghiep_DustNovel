@@ -23,9 +23,9 @@ public class QuangCaoScheduler {
     NguoiDungRepository nguoiDungRepository;
     
     /* =========================
-       CHẠY MỖI 0.1 GIÂY
+       CHẠY MỖI 1 GIÂY
        ========================= */
-    @Scheduled(fixedRate = 100) 
+    @Scheduled(fixedRate = 1000) 
     public void capNhatQuangCao(){
 
         List<Banner> banners = bannerRepository.findAll();

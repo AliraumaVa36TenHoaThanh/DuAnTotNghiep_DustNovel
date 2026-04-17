@@ -177,7 +177,200 @@
 	margin-top: 22px;
 	margin-left: 20px;
 }
+
+/* ===== DROPDOWN SEARCH TRUYỆN ===== */
+.dropdown-list {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+    background: white;
+    display: none;
+    position: absolute;
+    width: 98%;
+    z-index: 999;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* item */
+.page-heading .dropdown-item {
+    padding: 12px 14px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+/* hover */
+.dropdown-item:hover {
+    background: #eef2ff;
+}
+
+/* ===== DARK MODE ===== */
+[data-theme="dark"] .dropdown-list {
+    background: #2b2b2b;
+    border: 1px solid #444;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+[data-theme="dark"] .dropdown-item {
+    color: #ddd;
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+    background: #3b3b3b;
+    color: #212529;
+}
+
+/* ===== SCROLLBAR ===== */
+.dropdown-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb:hover {
+    background: #667eea;
+}
+
+/* DARK scrollbar */
+[data-theme="dark"] .dropdown-list::-webkit-scrollbar-thumb {
+    background: #555;
+}
+
+[data-theme="dark"] .dropdown-list::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
+.truyen-wrapper.has-error .dropdown-list {
+    top: auto;
+    bottom: calc(100% + 6px);
+}
+
+.col-md-6.mb-3:has(p.text-danger) #dropdownListUpdate {
+    top: calc(44% + 24px);
+    width: 98%;
+    margin-left: -1px;
+}
+
 </style>
+
+
+<script th:inline="javascript">
+document.addEventListener("DOMContentLoaded", function () {
+
+    let truyenList = [];
+
+    const options = document.querySelectorAll("#hiddenSelectUpdate option");
+    const input = document.getElementById("searchTruyenUpdate");
+    const dropdown = document.getElementById("dropdownListUpdate");
+    const hiddenInput = document.getElementById("truyenIdUpdate");
+
+    if (!input) return;
+
+    // ===== load data =====
+    options.forEach(opt => {
+        if (opt.value !== "") {
+            truyenList.push({
+                id: opt.value,
+                name: opt.text
+            });
+        }
+    });
+
+    // ===== restore dữ liệu =====
+    let selectedId = /*[[${truyenId}]]*/ null;
+    let oldId = /*[[${banner.truyen.id}]]*/ null;
+
+    let finalId = selectedId != null ? selectedId : oldId;
+    let selectedName = "";
+
+    if (finalId != null) {
+        hiddenInput.value = finalId;
+        options.forEach(opt => {
+            if (opt.value == finalId) {
+                input.value = opt.text;
+                selectedName = opt.text;
+            }
+        });
+    }
+
+    // ===== render =====
+    function renderList(list) {
+        dropdown.innerHTML = "";
+
+        if (list.length === 0) {
+            dropdown.style.display = "none";
+            return;
+        }
+
+        list.forEach(truyen => {
+            const item = document.createElement("div");
+            item.className = "dropdown-item";
+            item.textContent = truyen.name;
+
+            item.onclick = function () {
+                input.value = truyen.name;
+                hiddenInput.value = truyen.id;
+                selectedName = truyen.name;
+                dropdown.style.display = "none";
+            };
+
+            dropdown.appendChild(item);
+        });
+
+        dropdown.style.display = "block";
+    }
+
+    // ===== focus =====
+    input.addEventListener("focus", function () {
+        renderList(truyenList);
+    });
+
+    // ===== click =====
+    input.addEventListener("click", function () {
+        renderList(truyenList);
+    });
+
+    // ===== search =====
+    input.addEventListener("input", function () {
+        const keyword = input.value.toLowerCase().trim();
+
+        if (input.value !== selectedName) {
+            hiddenInput.value = "";
+        }
+
+        if (!keyword) {
+            renderList(truyenList);
+            return;
+        }
+
+        const filtered = truyenList.filter(t =>
+            t.name.toLowerCase().includes(keyword)
+        );
+
+        renderList(filtered);
+    });
+
+    // ===== click ngoài =====
+    document.addEventListener("click", function (e) {
+        if (!e.target.closest("#searchTruyenUpdate") &&
+            !e.target.closest("#dropdownListUpdate")) {
+            dropdown.style.display = "none";
+        }
+    });
+});
+</script>
+
+
+
 	<div id="main">
 
 		<div class="page-heading">
@@ -210,12 +403,12 @@
 							<div class="row g-3">
 
 								<!-- TRUYEN -->
-								<div class="col-md-6 mb-3">
+								<!-- <div class="col-md-6 mb-3">
 								    <label class="form-label fw-bold">
 								        <i class="bi bi-book text-primary"></i> Truyện
 								    </label>
 
-								    <!--  CHO_CHAY → cho sửa -->
+								     CHO_CHAY → cho sửa
 								    <select th:if="${banner.trangThai == 'CHO_CHAY'}"
 								            name="truyenId"
 								            class="form-select form-select-lg">
@@ -233,13 +426,46 @@
 
 								    </select>
 
-								    <!-- KHÔNG CHO SỬA -->
+								    KHÔNG CHO SỬA
 								    <input th:if="${banner.trangThai != 'CHO_CHAY'}"
 								           type="text"
 								           class="form-control form-control-lg"
 								           th:value="${banner.truyen.tenTruyen}"
 								           disabled>
 
+								</div> -->
+
+
+								<div class="col-md-6 mb-3" style="position: relative;">
+									<label class="form-label fw-bold"> <i
+										class="bi bi-book text-primary"></i> Truyện
+									</label>
+
+									<div th:if="${banner.trangThai == 'CHO_CHAY'}">
+										<input type="text" id="searchTruyenUpdate"
+											class="form-control form-control-lg"
+											placeholder="Tìm truyện..." autocomplete="off">
+
+										<p class="text-danger small mt-2" th:if="${errorTruyen}"
+											th:text="${errorTruyen}"></p>
+
+										<div id="dropdownListUpdate" class="dropdown-list"></div>
+										
+										<small class="text-muted d-block mt-1">
+                                               Nếu để rỗng không chọn, hệ thống sẽ giữ nguyên truyện đã dùng trước đó cho quảng cáo này.
+                                        </small>
+
+										<input type="hidden" name="truyenId" id="truyenIdUpdate">
+
+										<select id="hiddenSelectUpdate" style="display: none;">
+											<option th:each="t : ${listTruyen}" th:value="${t.id}"
+												th:text="${t.tenTruyen}"></option>
+										</select>
+									</div>
+
+									<input th:if="${banner.trangThai != 'CHO_CHAY'}" type="text"
+										class="form-control form-control-lg"
+										th:value="${banner.truyen.tenTruyen}" disabled>
 								</div>
 
 								<!-- VỊ TRÍ -->
@@ -247,8 +473,8 @@
 									<label class="form-label fw-bold"> <i
 										class="bi bi-geo-alt text-success"></i> Vị trí
 									</label> <select name="viTri" class="form-select form-select-lg"
-										th:readonly="${banner.trangThai == 'HOAT_DONG'}"
-										th:classappend="${banner.trangThai == 'HOAT_DONG'} ? 'readonly-select' : ''">
+										th:readonly="${banner.trangThai == 'HOAT_DONG' or banner.trangThai == 'TAM_DUNG'}"
+										th:classappend="${banner.trangThai == 'HOAT_DONG' or banner.trangThai == 'TAM_DUNG'} ? 'readonly-select' : ''">
 
 										<option value="" disabled
 											th:selected="${banner.viTri == null}">Chọn vị trí</option>
@@ -303,6 +529,7 @@
 										class="bi bi-calendar-range text-primary"></i> Số ngày chạy
 									</label> <input type="number" class="form-control form-control-lg"
 										name="soNgayChay" min="1"
+										th:readonly="${banner.trangThai == 'HOAT_DONG' or banner.trangThai == 'TAM_DUNG'}"
 										th:value="${soNgayChay != null ? soNgayChay : 
                                                   T(java.time.temporal.ChronoUnit).DAYS.between(
                                                   banner.ngayBatDau.toLocalDate(), 
@@ -313,8 +540,9 @@
 									<p class="text-danger small mt-2" th:if="${errorNgay}"
 										th:text="${errorNgay}"></p>
 
-									<small class="text-muted"> Số ngày sẽ được tính từ ngày
-										bắt đầu </small>
+									<small class="text-muted"
+									       th:if="${banner.trangThai != null and banner.trangThai == 'CHO_CHAY'}">
+									 Số ngày sẽ được tính từ ngày bắt đầu </small>
 								</div>
 
 								<!-- TRẠNG THÁI -->

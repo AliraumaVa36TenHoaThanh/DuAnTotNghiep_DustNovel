@@ -45,5 +45,11 @@ public interface BannerRepository extends JpaRepository<Banner, Long> {
     
     @Query("SELECT b FROM Banner b WHERE b.truyen.id = :truyenId")
     List<Banner> findByTruyenId(@Param("truyenId") Long truyenId);
+    
+    boolean existsByTruyen_IdAndViTriAndTrangThaiIn(
+    	    Long truyenId,
+    	    String viTri,
+    	    List<String> trangThai
+    	);
 
 }

@@ -92,6 +92,21 @@ public class QuangCaoController {
 	        model.addAttribute("errorTruyen","Vui lòng chọn truyện");
 	        hasError = true;
 	    }
+	    
+	    if(truyenId != null && viTri != null){
+
+	        boolean daTonTai = bannerRepository
+	            .existsByTruyen_IdAndViTriAndTrangThaiIn(
+	                truyenId,
+	                viTri,
+	                List.of("CHO_CHAY", "HOAT_DONG", "TAM_DUNG")
+	            );
+
+	        if(daTonTai){
+	            model.addAttribute("errorViTri","Truyện bạn đang chọn đã có quảng cáo ở vị trí này");
+	            hasError = true;
+	        }
+	    }
 
 	    if(viTri == null || viTri.isEmpty()){
 	        model.addAttribute("errorViTri","Vui lòng chọn vị trí");
@@ -208,6 +223,7 @@ public class QuangCaoController {
 	    banner.setNgayKetThuc(end);
 	    banner.setGioTao(start.toLocalTime());
 	    banner.setTokenDaDung(tongToken);
+	    banner.setSoNgayChay(soNgayChay.longValue());
 
 	    LocalDateTime now = LocalDateTime.now();
 
@@ -517,12 +533,12 @@ public class QuangCaoController {
 	    }
 
 	    if(ngayBatDau == null || ngayBatDau.isEmpty()){
-	        model.addAttribute("errorStart","Vui lòng chọn ngày bắt đầu");
+	        model.addAttribute("errorMessage","Vui lòng chọn ngày bắt đầu");
 	        hasError = true;
 	    }
 
 	    if(soNgayChay == null || soNgayChay <= 0){
-	        model.addAttribute("errorNgay","Số ngày chạy phải >= 1");
+	        model.addAttribute("errorMessage","Số ngày chạy phải >= 1");
 	        hasError = true;
 	    }
 
@@ -539,8 +555,35 @@ public class QuangCaoController {
 
 	    // ===== VALIDATE =====
 	    if(startDate != null && startDate.toLocalDate().isBefore(LocalDate.now())){
-	        model.addAttribute("errorStart","Ngày bắt đầu phải >= hôm nay");
+	        model.addAttribute("errorMessage","Ngày bắt đầu phải >= hôm nay");
 	        hasError = true;
+	    }
+	    
+	    String viTriCheck = (viTriSelect != null && !viTriSelect.isEmpty())
+	            ? viTriSelect
+	            : viTri;
+
+	    Long finalTruyenId = (truyenId != null) ? truyenId : banner.getTruyen().getId();
+
+	    if(finalTruyenId != null && viTriCheck != null){
+
+	        boolean daTonTai = bannerRepository
+	            .findAll()
+	            .stream()
+	            .anyMatch(b -> 
+	                !b.getId().equals(banner.getId()) &&
+	                b.getTruyen().getId().equals(finalTruyenId) &&
+	                b.getViTri().equals(viTriCheck) &&
+	                !b.getTrangThai().equals("HET_HAN")
+	            );
+
+	        if(daTonTai){
+	            redirectAttributes.addFlashAttribute(
+	                "errorMessage",
+	                "Truyện bạn đang chọn đã có quảng cáo ở vị trí này"
+	            );
+	            return "redirect:/quang-cao/sua/" + id;
+	        }
 	    }
 
 	    String username = authentication.getName();
@@ -563,9 +606,53 @@ public class QuangCaoController {
 	    long tokenCu = banner.getTokenMoiNgay();
 
 	    if(hasError){
+	    	
+	    	List<Truyen> listTruyen =
+	                truyenRepository.findByNguoiDang_Id(user.getId());
+	    	
 	        model.addAttribute("banner", banner);
+	        model.addAttribute("listTruyen", listTruyen);
+	        model.addAttribute("tokenMoiNgay", tokenMoiNgay);
+
 	        model.addAttribute("content","QuangCao/UpdateQuangCao");
 	        return "layout/main";
+	    }
+	    
+	 // giá trị cũ
+	    Long tokenCuCheck = banner.getTokenMoiNgay();
+
+	    long soNgayCuCheck = ChronoUnit.DAYS.between(
+	            banner.getNgayBatDau().toLocalDate(),
+	            banner.getNgayKetThuc().toLocalDate()
+	    );
+
+	    // parse lại start date mới để so sánh
+	    LocalDateTime startDateCheck = banner.getNgayBatDau();
+	    if (ngayBatDau != null && !ngayBatDau.isEmpty()) {
+	        LocalDate d = LocalDate.parse(ngayBatDau);
+	        startDateCheck = d.atTime(startDateCheck.toLocalTime());
+	    }
+
+	    // vị trí cuối
+	    String finalViTriCheck = (viTriSelect != null && !viTriSelect.isEmpty())
+	            ? viTriSelect
+	            : viTri;
+
+	    // truyện cuối
+	    Long finalTruyenIdCheck = (truyenId != null)
+	            ? truyenId
+	            : banner.getTruyen().getId();
+
+	    // CHECK tất cả nếu không đổi
+	    boolean isSame =
+	            tokenMoiNgay.equals(tokenCuCheck)
+	            && soNgayChay == soNgayCuCheck
+	            && startDateCheck.toLocalDate().equals(banner.getNgayBatDau().toLocalDate())
+	            && finalViTriCheck.equals(banner.getViTri())
+	            && finalTruyenIdCheck.equals(banner.getTruyen().getId());
+
+	    if(isSame){
+	    	return "redirect:/quang-cao/LichSu/QuangCao";     
 	    }
 
 	    // =========================
