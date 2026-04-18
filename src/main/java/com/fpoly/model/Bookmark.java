@@ -38,4 +38,5 @@ public class Bookmark {
     public void prePersist() {
         this.ngayCapNhat = LocalDateTime.now();
     }
+    
 }
