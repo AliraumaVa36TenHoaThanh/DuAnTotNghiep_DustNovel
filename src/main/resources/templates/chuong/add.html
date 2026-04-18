@@ -30,7 +30,12 @@
 <div class="invalid-feedback">
     Nội dung chương ít nhất phải 1 ký tự
 </div>
-
+	<div class="form-check mt-3">
+    <input class="form-check-input" type="checkbox" th:field="*{khoa}" id="khoa">
+    <label class="form-check-label fw-bold" for="khoa">
+        🔒 Khóa chương
+    </label>
+</div>
         <div class="mt-4">
             <button type="submit" class="btn btn-success px-4">💾 Lưu chương</button>
             <a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}" class="btn btn-secondary px-4">Hủy</a>
