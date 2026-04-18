@@ -17,10 +17,13 @@
         <div class="row g-4">
 
             <!-- ================= LEFT COLUMN ================= -->
-            <div class="col-lg-3">
-            <div class="card border-0 shadow-sm">
-                <img th:src="${truyen.anhBia}" class="img-fluid rounded" alt="Ảnh bìa">
-            </div>
+           <div class="col-lg-3">
+    <div class="card border-0 shadow-sm">
+        <img th:src="${truyen.anhBia}" 
+             class="img-fluid rounded w-100" 
+             alt="Ảnh bìa" 
+             style="aspect-ratio: 2/3; object-fit: cover; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    </div>
 			
 			<div class="mt-3 d-grid gap-2">
                 

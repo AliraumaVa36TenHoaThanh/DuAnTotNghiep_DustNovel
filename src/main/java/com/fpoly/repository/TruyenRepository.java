@@ -205,4 +205,6 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     long countByNguoiDang_Id(Long userId);
     @org.springframework.data.jpa.repository.Query("SELECT COALESCE(SUM(t.tongLike), 0) FROM Truyen t WHERE t.nguoiDang.id = :userId")
     long sumTongLikeByUserId(@org.springframework.data.repository.query.Param("userId") Long userId);
+    
+    List<Truyen> findTop10ByOrderByLuotXemDesc();
 }

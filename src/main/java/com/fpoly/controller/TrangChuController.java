@@ -62,6 +62,8 @@ public class TrangChuController {
             truyenRepo.findByLoaiTruyenOrderByChuongMoiNhat(LoaiTruyen.DỊCH)
         );
         
+        model.addAttribute("topTruyenViews", truyenService.layTop10TruyenNoiBat());
+        
         LocalDateTime now = LocalDateTime.now();
         List<Banner> bannerDangChay = bannerRepo
                 .findByViTriAndTrangThaiAndNgayBatDauLessThanEqualAndNgayKetThucGreaterThanEqualOrderByTokenMoiNgayDesc(

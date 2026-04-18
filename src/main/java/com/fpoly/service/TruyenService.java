@@ -179,5 +179,8 @@ public class TruyenService {
     public long tinhTongLikeCuaTacGia(Long userId) {
         return truyenRepo.sumTongLikeByUserId(userId);
     }
-	
+    
+    public List<Truyen> layTop10TruyenNoiBat() {
+        return truyenRepo.findTop10ByOrderByLuotXemDesc();
+    }
 }
