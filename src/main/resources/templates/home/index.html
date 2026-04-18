@@ -206,57 +206,57 @@
         </div>
     </div>
 	<div class="col-md-3">
-	    <div class="p-3 sidebar-box rounded shadow-sm h-100">
+    <div class="p-3 sidebar-box rounded shadow-sm h-100">
 
-	        <h5 class="fw-bold">✨ Truyện nổi bật</h5>
+        <h5 class="fw-bold text-danger mb-3"><i class=""></i>Truyện HOT !</h5>
 
-	        <div th:each="truyen, iterStat : ${truyenSangTac}"
-	             th:if="${iterStat.index < 10}"
-	             class="mb-3 border-bottom pb-2 d-flex align-items-start">
+        <div th:each="truyen : ${topTruyenViews}"
+             class="mb-3 border-bottom pb-2 d-flex align-items-start">
 
-	            <!-- ẢNH -->
-	            <img th:src="@{${truyen.anhBia}}"
-	                 th:onclick="'window.location.href=\'/DustNovel/truyen/' + ${truyen.id} + '\''"
-	                 class="featured-thumb me-2">
+            <div style="width: 60px; height: 80px; overflow: hidden; border-radius: 4px; flex-shrink: 0; cursor: pointer;" 
+                 class="me-2"
+                 th:onclick="${truyen.tag18} ? 'requireAgeGate(event, \'/DustNovel/truyen/' + ${truyen.id} + '\')' : 'window.location.href=\'/DustNovel/truyen/' + ${truyen.id} + '\''">
+                 
+                <img th:src="${truyen.anhBia != null and !truyen.anhBia.isEmpty() ? truyen.anhBia : '/images/aria.jpg'}"
+                     style="width: 100%; height: 100%; object-fit: cover; transition: 0.3s;"
+                     th:styleappend="${truyen.tag18 != null and truyen.tag18} ? 'filter: blur(8px) brightness(0.85); transform: scale(1.15);' : ''">
+            </div>
 
-	            <!-- NỘI DUNG -->
-	            <div class="flex-grow-1">
+            <div class="flex-grow-1 overflow-hidden">
 
-	                <!-- TÊN -->
-	               <h6 class="card-title fw-bold"
-    th:text="${#strings.length(truyen.tenTruyen) > 50 
-        ? #strings.substring(truyen.tenTruyen, 0, 50) + '...' 
-        : truyen.tenTruyen}">
-</h6>
+                <h6 class="card-title fw-bold text-truncate mb-1" style="cursor: pointer;"
+                    th:onclick="${truyen.tag18} ? 'requireAgeGate(event, \'/DustNovel/truyen/' + ${truyen.id} + '\')' : 'window.location.href=\'/DustNovel/truyen/' + ${truyen.id} + '\''"
+                    th:text="${truyen.tenTruyen}" th:title="${truyen.tenTruyen}">
+                </h6>
 
-	                <!-- TÁC GIẢ -->
-	                <small class="text-muted d-block"
-	                       th:text="${truyen.tenTacGia}">
-	                </small>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <small class="text-muted text-truncate" style="max-width: 60%;" th:text="${truyen.tenTacGia != null ? truyen.tenTacGia : 'Đang cập nhật'}"></small>
+                    <small class="text-primary fw-bold">
+                        <i class="bi bi-eye-fill"></i> <span th:text="${truyen.luotXem != null ? #numbers.formatInteger(truyen.luotXem, 1, 'POINT') : '0'}"></span>
+                    </small>
+                </div>
 
-	                <!-- TAG -->
-	                <div class="mt-1 d-flex flex-wrap gap-1">
+                <div class="mt-1 d-flex flex-wrap gap-1" th:if="${(truyen.theLoais != null and !#lists.isEmpty(truyen.theLoais)) or (truyen.tag18 != null and truyen.tag18)}">
+                    
+                    <span th:if="${truyen.tag18 != null and truyen.tag18}" class="badge bg-danger tag-mini" style="font-size: 0.7rem;">18+</span>
+                    
+                    <span th:each="tl, stat : ${truyen.theLoais}"
+                          th:if="${stat.index < 2}"
+                          th:text="${tl.tenTheLoai}"
+                          class="badge bg-secondary tag-mini" style="font-size: 0.7rem;">
+                    </span>
 
-	                    <span th:each="tl, stat : ${truyen.theLoais}"
-	                          th:if="${stat.index < 2}"
-	                          th:text="${tl.tenTheLoai}"
-	                          class="badge bg-secondary tag-mini">
-	                    </span>
+                    <span th:if="${#lists.size(truyen.theLoais) > 2}"
+                          class="badge bg-dark tag-mini" style="font-size: 0.7rem;">
+                        +<span th:text="${#lists.size(truyen.theLoais) - 2}"></span>
+                    </span>
+                </div>
 
-	                    <!-- nếu nhiều hơn -->
-	                    <span th:if="${#lists.size(truyen.theLoais) > 2}"
-	                          class="badge bg-dark tag-mini">
-	                        +<span th:text="${#lists.size(truyen.theLoais) - 2}"></span>
-	                    </span>
+            </div>
+        </div>
 
-	                </div>
-
-	            </div>
-
-	        </div>
-
-	    </div>
-	</div>
+    </div>
+</div>
 
 </div>
 
