@@ -583,7 +583,7 @@
     <div th:replace="~{truyen/BaoCaoTruyen :: reportModal(${truyen})}"></div>
     <div th:replace="~{truyen/XacMinhTuoi :: chuThichModal(${truyen}, ${currentUser})}"></div>
     <div th:replace="~{truyen/DanhGiaTruyen :: vietDanhGiaModal(${truyen}, ${currentUser})}"></div>
-<div th:replace="~{truyen/DanhGiaTruyen :: xemTatCaDanhGiaModal(${danhGias}, ${trungBinhSao})}"></div>
+	<div th:replace="~{truyen/DanhGiaTruyen :: xemTatCaDanhGiaModal(${danhGias}, ${trungBinhSao}, ${currentUser}, ${truyen})}"></div>
 	</div>
 	
 <script>
