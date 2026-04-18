@@ -69,4 +69,6 @@ public class Chuong {
     
     @OneToOne(mappedBy = "chuong", cascade = CascadeType.ALL, orphanRemoval = true)
     private AiTomTat aiTomTat;
+    @OneToMany(mappedBy = "chuong", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LichSuDoc> lichSuDocs = new ArrayList<>();
 }
