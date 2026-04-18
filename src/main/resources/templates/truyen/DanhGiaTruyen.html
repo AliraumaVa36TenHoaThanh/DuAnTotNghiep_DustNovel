@@ -39,7 +39,6 @@
     </div>
     
     <script>
-        // Chạy thẳng Script không qua DOMContentLoaded để đảm bảo ăn click 100%
         (function() {
             const container = document.getElementById('star-rating-container');
             if(!container) return;
@@ -47,7 +46,7 @@
             const stars = container.querySelectorAll('.star-btn');
             const inputSoSao = document.getElementById('inputSoSao');
             const starText = document.getElementById('star-text');
-            const texts = ["Ko đọc nổi", "Không hay", "Bình thường", "Hay", "5 sao michelin"];
+            const texts = ["Ko đọc nổi", "Không hay", "Bình thường", "Hay", "5 sao michelin"];
 
             stars.forEach(star => {
                 star.onclick = function() {
@@ -55,7 +54,6 @@
                     inputSoSao.value = val;
                     starText.innerText = texts[val - 1];
                     
-                    // Tô màu sao
                     stars.forEach(s => {
                         const sVal = parseInt(s.getAttribute('data-val'));
                         if(sVal <= val) {
@@ -72,41 +70,101 @@
     </script>
 </div>
 
-<div th:fragment="xemTatCaDanhGiaModal(danhGias, trungBinhSao)">
+<div th:fragment="xemTatCaDanhGiaModal(danhGias, trungBinhSao, currentUser, truyen)">
     <div class="modal fade" id="xemTatCaDanhGiaModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-light d-flex justify-content-between">
                     <h5 class="modal-title fw-bold text-dark">
-                        Tất cả đánh giá 
+                        Đánh giá 
                         <span class="text-warning ms-2">★ [[${trungBinhSao != null ? trungBinhSao : '0.0'}]]</span>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 
                 <div class="modal-body text-dark">
+                    
+                    <div class="d-flex justify-content-center gap-2 mb-4" th:if="${currentUser != null and not #lists.isEmpty(danhGias)}">
+                        <input type="radio" class="btn-check" name="filterReview" id="btnAllReviews" autocomplete="off" checked onchange="filterReviews('all')">
+                        <label class="btn btn-outline-warning btn-sm text-dark fw-bold px-3" for="btnAllReviews">Tất cả</label>
+
+                        <input type="radio" class="btn-check" name="filterReview" id="btnMyReviews" autocomplete="off" onchange="filterReviews('mine')">
+                        <label class="btn btn-outline-warning btn-sm text-dark fw-bold px-3" for="btnMyReviews">Của tôi</label>
+                    </div>
+
                     <div th:if="${#lists.isEmpty(danhGias)}" class="text-center text-muted py-4">
                         Chưa có đánh giá nào.
                     </div>
                     
-                    <div th:each="dg : ${danhGias}" class="border-bottom mb-3 pb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="fw-bold" th:text="${dg.nguoiDung.tenDangNhap}">User</span>
-                            <span class="text-warning small">
-    <th:block th:if="${dg.soSao > 0}">
-        <th:block th:each="i : ${#numbers.sequence(1, dg.soSao)}">★</th:block>
-    </th:block>
-    
-    <th:block th:if="${dg.soSao < 5}">
-        <th:block th:each="i : ${#numbers.sequence(1, 5 - dg.soSao)}">☆</th:block>
-    </th:block>
-</span>
+                    <div id="review-list-container">
+                        <div th:each="dg : ${danhGias}" 
+                             class="review-item border-bottom mb-3 pb-3"
+                             th:data-is-mine="${currentUser != null and currentUser.id == dg.nguoiDung.id ? 'true' : 'false'}">
+                             
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <div>
+                                    <span class="fw-bold" th:text="${dg.nguoiDung.tenDangNhap}">User</span>
+                                    
+                                    <form th:if="${currentUser != null and currentUser.id == dg.nguoiDung.id}"
+                                          th:action="@{/DustNovel/truyen/{truyenId}/danh-gia/xoa/{dgId}(truyenId=${truyen.id}, dgId=${dg.id})}" 
+                                          method="post" class="d-inline ms-2"
+                                          onsubmit="return confirm('Bạn có chắc muốn xóa đánh giá này?');">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <button type="submit" class="btn btn-sm text-danger p-0 border-0 bg-transparent" title="Xóa">
+                                            <i class="fa-solid fa-trash-can"></i> Xóa
+                                        </button>
+                                    </form>
+                                </div>
+                                
+                                <span class="text-warning small">
+                                    <th:block th:if="${dg.soSao > 0}">
+                                        <th:block th:each="i : ${#numbers.sequence(1, dg.soSao)}">★</th:block>
+                                    </th:block>
+                                    <th:block th:if="${dg.soSao < 5}">
+                                        <th:block th:each="i : ${#numbers.sequence(1, 5 - dg.soSao)}">☆</th:block>
+                                    </th:block>
+                                </span>
+                            </div>
+                            <div class="small text-muted mb-2" th:text="${#temporals.format(dg.ngayDanhGia, 'dd/MM/yyyy HH:mm')}"></div>
+                            <div style="white-space: pre-wrap; font-size: 0.95rem;" th:text="${dg.noiDung}"></div>
                         </div>
-                        <div class="small text-muted mb-2" th:text="${#temporals.format(dg.ngayDanhGia, 'dd/MM/yyyy')}"></div>
-                        <div style="white-space: pre-wrap; font-size: 0.95rem;" th:text="${dg.noiDung}"></div>
                     </div>
+
+                    <div id="no-my-reviews-msg" class="text-center text-muted py-4 d-none">
+                        Bạn chưa có đánh giá nào cho truyện này.
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        function filterReviews(type) {
+            const reviews = document.querySelectorAll('.review-item');
+            const noMsg = document.getElementById('no-my-reviews-msg');
+            let myReviewCount = 0;
+
+            reviews.forEach(review => {
+                if (type === 'all') {
+                    review.style.display = 'block';
+                } else if (type === 'mine') {
+                    const isMine = review.getAttribute('data-is-mine');
+                    if (isMine === 'true') {
+                        review.style.display = 'block';
+                        myReviewCount++;
+                    } else {
+                        review.style.display = 'none';
+                    }
+                }
+            });
+
+            // Hiện thông báo nếu chọn "Của tôi" mà không có cái nào
+            if (type === 'mine' && myReviewCount === 0) {
+                noMsg.classList.remove('d-none');
+            } else {
+                noMsg.classList.add('d-none');
+            }
+        }
+    </script>
 </div>

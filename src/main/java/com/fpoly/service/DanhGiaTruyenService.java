@@ -4,6 +4,9 @@ import com.fpoly.model.DanhGiaTruyen;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.model.Truyen;
 import com.fpoly.repository.DanhGiaTruyenRepository;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -47,5 +50,15 @@ public class DanhGiaTruyenService {
             newReview.setNgayDanhGia(LocalDateTime.now());
             danhGiaRepo.save(newReview);
         }
+    }
+    
+    @Transactional
+    public void xoaDanhGia(Long idDanhGia, Long nguoiDungId) {
+        DanhGiaTruyen danhGia = danhGiaRepo.findById(idDanhGia)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đánh giá này!"));
+        if (!danhGia.getNguoiDung().getId().equals(nguoiDungId)) {
+            throw new RuntimeException("Lỗi bảo mật: Bạn không có quyền xóa đánh giá của người khác!");
+        }
+        danhGiaRepo.delete(danhGia);
     }
 }

@@ -541,4 +541,17 @@ public class TruyenController {
 	        // Gửi xong load lại trang truyện để thấy đánh giá vừa hiện lên
 	        return "redirect:/DustNovel/truyen/" + id;
 	    }
+	    
+	    @PostMapping("/truyen/{truyenId}/danh-gia/xoa/{dgId}")
+	    @PreAuthorize("isAuthenticated()") // Bắt buộc đăng nhập
+	    public String xoaDanhGia(@PathVariable Long truyenId, @PathVariable Long dgId) {
+	        
+	        NguoiDung currentUser = securityUtil.getCurrentUserFromDB();
+	        
+	        // Gọi xuống Service để xóa (Nhớ viết thêm logic check xem đánh giá đó có đúng là của currentUser không ở Service nhé để chống hack)
+	        danhGiaService.xoaDanhGia(dgId, currentUser.getId());
+	        
+	        // Xóa xong thì load lại trang truyện đó
+	        return "redirect:/DustNovel/truyen/" + truyenId;
+	    }
 }

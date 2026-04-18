@@ -11,8 +11,8 @@
             <div class="page-title">
                 <div class="row">
                     <div class="col-12 col-md-6 order-md-1 order-last">
-                        <h3>Đát Bót</h3>
-                        <p class="text-subtitle text-muted">Nơi admin lạm dụng quyền hạn</p>
+                        <h3>Dashboard</h3>
+                        <p class="text-subtitle text-muted">Quản lý người dùng</p>
                     </div>
                     <div class="col-12 col-md-6 order-md-2 order-first">
                         <nav aria-label="breadcrumb"
@@ -53,7 +53,7 @@
                             </thead>
 
                             <tbody>
-                            <tr th:each="user : ${users}">
+                         <tr th:each="user : ${users}" th:if="${user.vaiTro.name() != 'ADMIN'}">
                                 <td th:text="${user.tenDangNhap}"></td>
                                 <td th:text="${user.email}"></td>
                                 <td th:text="${user.vaiTro}"></td>
@@ -72,11 +72,11 @@
                                         Edit
                                     </a>
 
-                                    <a th:href="@{/dba/user/delete/{id}(id=${user.id})}"
+                         <!--        <a th:href="@{/dba/user/delete/{id}(id=${user.id})}"
                                        onclick="return confirm('Xóa user?')"
                                        class="btn btn-danger btn-sm">
-                                        Delete
-                                    </a>
+                                        Delete 
+                                    </a>  -->   
                                 </td>
                             </tr>
                             </tbody>
