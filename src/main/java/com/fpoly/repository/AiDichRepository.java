@@ -10,5 +10,5 @@ import com.fpoly.model.Chuong;
 public interface AiDichRepository extends JpaRepository<AiDich, Long> {
 
     Optional<AiDich> findByChuongAndNgonNgu(Chuong chuong, String ngonNgu);
-    void deleteByChuong(Chuong chuong);
+
 }
