@@ -3,7 +3,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import java.util.*;
 
+import com.fpoly.dto.ChiTietMuaChuongDTO;
 import com.fpoly.model.MoKhoaChuong;
 
 import jakarta.transaction.Transactional;
@@ -24,4 +26,16 @@ public interface MoKhoaChuongRepository extends JpaRepository<MoKhoaChuong, Long
         )
     """)
     void deleteByTruyenId(@Param("truyenId") Long truyenId);
+	
+	@Query("""
+		    SELECT new com.fpoly.dto.ChiTietMuaChuongDTO(
+		        u.tenDangNhap, c.tieuDe, mk.giaToken, mk.ngayMo
+		    )
+		    FROM MoKhoaChuong mk
+		    JOIN mk.chuong c
+		    JOIN mk.nguoiDung u
+		    WHERE c.truyen.id = :truyenId
+		    ORDER BY mk.ngayMo DESC
+		""")
+		List<ChiTietMuaChuongDTO> layChiTietMuaChuongCuaTruyen(@Param("truyenId") Long truyenId);
 }

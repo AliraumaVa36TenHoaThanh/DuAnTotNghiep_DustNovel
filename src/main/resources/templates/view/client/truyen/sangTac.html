@@ -350,12 +350,17 @@ th {
 							<i class="fa-solid fa-pen-to-square"></i>
 						</a>
 							
-						<a href="#"class="btn btn-sm btn-danger"
-                            onclick="return xoaTruyen(this)"
-                            th:data-id="${truyen.id}"
-                            th:data-url="@{/dbu/truyen-sang-tac/xoa/{id}(id=${truyen.id})}">
-                            <i class="fa fa-trash me-1"></i>
-                          </a>
+						<form th:action="@{/DustNovel/dbu/truyen/xoa/{id}(id=${truyen.id})}" 
+      method="post"
+      style="display:inline;"
+      onsubmit="return confirm('Bạn chắc chắn muốn xóa?')">
+
+    <input type="hidden" name="type" value="sangtac">
+
+    <button class="btn btn-sm btn-danger">
+        <i class="fa fa-trash"></i>
+    </button>
+</form>
                        </td>
 					</tr>
 
@@ -415,32 +420,17 @@ searchInput.addEventListener("keyup", function () {
 
 function xoaTruyen(el) {
 
-    const id = el.dataset.id;
     const url = el.dataset.url;
 
-    fetch('/dbu/truyen/check-quang-cao/' + id)
-        .then(res => res.json())
-        .then(isRunning => {
+    if (confirm("Bạn chắc chắn muốn xóa truyện này chứ?")) {
 
-            let message = "";
-
-            if (isRunning) {
-                message = "Khi xóa truyện này:\n\n"
-                    + "- Quảng cáo mà truyện này đang chạy sẽ bị xóa\n"
-                    + "- Tập, chương sẽ bị xóa\n"
-                    + "- Lịch sử đọc, bình luận, bookmark, AI... sẽ bị xóa toàn bộ\n\n"
-                    + "Bạn có chắc chắn muốn xóa không?";
-            } else {
-                message = "Khi xóa truyện này:\n\n"                   
-                    + "- Tập, chương sẽ bị xóa\n"
-                    + "- Lịch sử đọc, bình luận, bookmark, AI... sẽ bị xóa toàn bộ\n\n"
-                    + "Bạn có chắc chắn muốn xóa không?";
-            }
-
-            if (confirm(message)) {
-                window.location.href = url;
-            }
+        fetch(url, {
+            method: "POST"
+        })
+        .then(() => {
+            window.location.reload();
         });
+    }
 
     return false;
 }

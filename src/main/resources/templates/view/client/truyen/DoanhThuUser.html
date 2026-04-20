@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Doanh Thu</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+.main-content {
+    margin-left: 260px;
+    padding: 30px;
+}
+
+.card-custom {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    padding: 20px;
+}
+
+.page-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.filter-box {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #f8f9fa;
+}
+
+.filter-btn.active {
+    background: #4f6ef7;
+    color: #fff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f1f3f5;
+}
+
+th, td {
+    padding: 14px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.ten-truyen {
+    max-width: 250px;      /* chỉnh tùy layout */
+    white-space: nowrap;   /* không xuống dòng */
+    overflow: hidden;      
+    text-overflow: ellipsis; /* hiện ... */
+}
+</style>
+</head>
+
+<body>
+
+<div class="main-content">
+<div class="card-custom">
+
+    <!-- TITLE -->
+    <div class="page-title">Quản Lý Doanh Thu</div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <span>Danh sách doanh thu</span>
+
+        <div class="filter-box">
+            <div class="filter-btn active" onclick="filterLoai('ALL', this)">Tất cả</div>
+            <div class="filter-btn" onclick="filterLoai('SÁNG_TÁC', this)">Sáng tác</div>
+            <div class="filter-btn" onclick="filterLoai('DỊCH', this)">Dịch</div>
+        </div>
+    </div>
+
+    <!-- CARD -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="card bg-success text-white text-center p-3">
+                <h5>Tổng tất cả</h5>
+                <h4 th:text="${tongTatCa} + ' Token'"></h4>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-primary text-white text-center p-3">
+                <h5>Sáng tác</h5>
+                <h4 th:text="${tongSangTac} + ' Token'"></h4>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-warning text-white text-center p-3">
+                <h5>Dịch</h5>
+                <h4 th:text="${tongDich} + ' Token'"></h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-2 mb-2">
+    <label>Hiển thị:</label>
+    <select id="rowLimitSelect" class="form-select form-select-sm" style="width:80px;">
+        <option value="5">5</option>
+        <option value="10" selected>10</option>
+        <option value="15">15</option>
+        <option value="20">20</option>
+    </select>
+</div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Tên truyện</th>
+                <th>Loại</th>
+                <th>Doanh thu</th>
+                <th class="text-center">Chi tiết</th>
+            </tr>
+        </thead>
+
+        <tbody id="tableBody">
+            <tr th:each="dt : ${danhSachDoanhThu}"
+                th:attr="data-loai=${dt.loaiTruyen.name()}">
+
+                <td class="ten-truyen" th:text="${dt.tenTruyen}"></td>
+
+                <td>
+                    <span class="badge bg-info text-dark"
+                          th:text="${dt.loaiTruyen}"></span>
+                </td>
+
+                <td class="text-success fw-bold"
+                    th:text="${dt.tongDoanhThu}"></td>
+
+                <td class="text-center">
+                    <a class="btn btn-sm btn-primary"
+                       th:href="@{/dbu/doanh-thu/{id}(id=${dt.truyenId})}">
+                        Xem
+                    </a>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(danhSachDoanhThu)}">
+                <td colspan="4" class="text-center text-muted">
+                    Chưa có doanh thu
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- PAGINATION -->
+    <div class="d-flex justify-content-center mt-3">
+        <ul class="pagination" id="pagination"></ul>
+    </div>
+
+</div>
+</div>
+
+<script>
+let currentPage = 1;
+let rowLimit = 10; // mặc định
+
+const rows = document.querySelectorAll("#tableBody tr");
+const pagination = document.getElementById("pagination");
+const rowLimitSelect = document.getElementById("rowLimitSelect");
+
+function displayTable(page) {
+    const start = (page - 1) * rowLimit;
+    const end = start + rowLimit;
+
+    rows.forEach((row, index) => {
+        row.style.display = (index >= start && index < end) ? "" : "none";
+    });
+
+    currentPage = page;
+    setupPagination();
+}
+
+function setupPagination() {
+    pagination.innerHTML = "";
+    const pageCount = Math.ceil(rows.length / rowLimit);
+
+    for (let i = 1; i <= pageCount; i++) {
+        const li = document.createElement("li");
+        li.className = "page-item " + (i === currentPage ? "active" : "");
+        li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+
+        li.onclick = function () {
+            displayTable(i);
+        };
+
+        pagination.appendChild(li);
+    }
+}
+
+// 👇 Khi đổi số dòng
+rowLimitSelect.addEventListener("change", function () {
+    rowLimit = parseInt(this.value);
+    currentPage = 1;
+    displayTable(1);
+});
+
+// load lần đầu
+displayTable(1);
+
+/* FILTER */
+function filterLoai(loai, el) {
+
+    document.querySelectorAll(".filter-btn")
+        .forEach(btn => btn.classList.remove("active"));
+
+    el.classList.add("active");
+
+    rows.forEach(row => {
+        const rowLoai = row.dataset.loai;
+
+        if (loai === "ALL" || rowLoai === loai) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+</script>
+
+</body>
+</html>
