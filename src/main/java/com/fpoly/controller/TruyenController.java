@@ -554,4 +554,31 @@ public class TruyenController {
 	        // Xóa xong thì load lại trang truyện đó
 	        return "redirect:/DustNovel/truyen/" + truyenId;
 	    }
+	    @PostMapping("/dbu/truyen/xoa/{id}")
+	    @PreAuthorize("@permissionService.canDeleteTruyen(#id)")
+	    public String xoaTruyenDBU(
+	            @PathVariable Long id,
+	            @RequestParam("type") String type,
+	            RedirectAttributes redirectAttributes
+	    ) {
+
+	        Truyen truyen = truyenService.findById(id);
+	        String tenTruyen = (truyen != null) ? truyen.getTenTruyen() : "";
+
+	        truyenService.xoaTruyen(id);
+
+	        redirectAttributes.addFlashAttribute(
+	            "successMessage",
+	            "Bạn đã xóa truyện \"" + tenTruyen + "\" thành công!"
+	        );
+
+	        // 🔥 redirect theo loại
+	        if ("dich".equals(type)) {
+	            return "redirect:/dbu/truyen-dich";
+	        } else {
+	            return "redirect:/dbu/truyen-sang-tac";
+	        }
+	    }
+	    
+	    
 }

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Chi Tiết Doanh Thu</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+.main-content {
+    margin-left: 260px;
+    padding: 30px;
+}
+
+.card-custom {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    padding: 20px;
+}
+
+.page-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+thead {
+    background: #f1f3f5;
+}
+
+th, td {
+    padding: 14px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* fix lệch */
+.text-ellipsis {
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-center {
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="main-content">
+<div class="card-custom">
+
+    <!-- TITLE -->
+    <div class="page-title mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h3>Chi Tiết Doanh Thu</h3>
+            <p class="text-muted mb-0">
+                Truyện:
+                <strong th:text="${truyen.tenTruyen}"></strong>
+            </p>
+        </div>
+
+        <a th:href="@{/dbu/doanh-thu}" class="btn btn-secondary">
+            ← Quay lại
+        </a>
+    </div>
+
+    <!-- CARD -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="card bg-success text-white text-center p-3">
+                <h5>Tổng doanh thu</h5>
+                <h4 th:text="${tongDoanhThuBoNay} + ' Token'"></h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <table>
+        <thead>
+            <tr>
+                <th>Người mua</th>
+                <th>Chương</th>
+                <th>Token</th>
+                <th>Ngày</th>
+            </tr>
+        </thead>
+
+        <tbody id="tableBody">
+            <tr th:each="mua : ${chiTiet}">
+                <td class="fw-bold text-primary"
+                    th:text="${mua.tenNguoiMua}"></td>
+
+                <td class="text-ellipsis"
+                    th:text="${mua.tenChuong}"
+                    th:title="${mua.tenChuong}"></td>
+
+                <td class="text-danger fw-bold"
+                    th:text="'+ ' + ${mua.soToken}"></td>
+
+                <td th:text="${#temporals.format(mua.ngayMua,'dd/MM/yyyy HH:mm')}"></td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(chiTiet)}">
+                <td colspan="4" class="text-center text-muted">
+                    Chưa có dữ liệu
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- PAGINATION -->
+    <div class="d-flex justify-content-center mt-3">
+        <ul class="pagination" id="pagination"></ul>
+    </div>
+
+</div>
+</div>
+
+<script>
+let currentPage = 1;
+let rowLimit = 5;
+
+const rows = document.querySelectorAll("#tableBody tr");
+const pagination = document.getElementById("pagination");
+
+function displayTable(page) {
+    const start = (page - 1) * rowLimit;
+    const end = start + rowLimit;
+
+    rows.forEach((row, index) => {
+        row.style.display = (index >= start && index < end) ? "" : "none";
+    });
+
+    currentPage = page;
+    setupPagination();
+}
+
+function setupPagination() {
+    pagination.innerHTML = "";
+    const pageCount = Math.ceil(rows.length / rowLimit);
+
+    for (let i = 1; i <= pageCount; i++) {
+        const li = document.createElement("li");
+        li.className = "page-item " + (i === currentPage ? "active" : "");
+        li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+
+        li.onclick = function () {
+            displayTable(i);
+        };
+
+        pagination.appendChild(li);
+    }
+}
+
+displayTable(1);
+</script>
+
+</body>
+</html>

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.fpoly.dto.DoanhThuTruyenDTO;
 import com.fpoly.model.Truyen;
 import com.fpoly.model.enums.LoaiTruyen;
 
@@ -207,4 +208,17 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     long sumTongLikeByUserId(@org.springframework.data.repository.query.Param("userId") Long userId);
     
     List<Truyen> findTop10ByOrderByLuotXemDesc();
+    
+    @Query("""
+    	    SELECT new com.fpoly.dto.DoanhThuTruyenDTO(
+    	        t.id, t.tenTruyen, t.loaiTruyen, t.trangThai, COALESCE(SUM(mk.giaToken), 0L)
+    	    )
+    	    FROM Truyen t
+    	    LEFT JOIN Chuong c ON c.truyen.id = t.id
+    	    LEFT JOIN MoKhoaChuong mk ON mk.chuong.id = c.id
+    	    WHERE t.nguoiDang.id = :userId
+    	    GROUP BY t.id, t.tenTruyen, t.loaiTruyen, t.trangThai
+    	    ORDER BY COALESCE(SUM(mk.giaToken), 0L) DESC
+    	""")
+    	List<DoanhThuTruyenDTO> layDoanhThuCacTruyenCuaUser(@Param("userId") Long userId);
 }
