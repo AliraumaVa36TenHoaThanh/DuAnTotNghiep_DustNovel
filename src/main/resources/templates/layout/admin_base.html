@@ -128,7 +128,14 @@
 								</li>
 							</ul>
 						</li>
-
+						<li class="sidebar-item mt-5">
+    <form th:action="@{/DustNovel/logout}" method="post">
+        <button type="submit" class="sidebar-link w-100 text-start border-0 bg-transparent">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Đăng xuất</span>
+        </button>
+    </form>
+</li>
 					</ul>
 				</div>
 				<button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
