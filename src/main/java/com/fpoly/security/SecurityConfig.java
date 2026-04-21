@@ -114,7 +114,19 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/DustNovel/login")
                 .loginProcessingUrl("/DustNovel/login")
-                .defaultSuccessUrl("/DustNovel/home", true)
+//                .defaultSuccessUrl("/DustNovel/home", true)
+                .successHandler((request, response, authentication) -> {
+                    var authorities = authentication.getAuthorities();
+
+                    boolean isAdmin = authorities.stream()
+                            .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+                    if (isAdmin) {
+                        response.sendRedirect("/dba/dashboard");
+                    } else {
+                        response.sendRedirect("/DustNovel/home");
+                    }
+                })
                 
                 .failureHandler((request, response, exception) -> {
                     if (exception instanceof org.springframework.security.authentication.LockedException) {
