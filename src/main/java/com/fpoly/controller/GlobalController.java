@@ -64,4 +64,11 @@ public class GlobalController {
 
         return likeService.getTruyenDaLike(user);
     }
+    
+    @ModelAttribute("user")
+    public NguoiDung getCurrentUser(Authentication auth) {
+        if (auth == null) return null;
+
+        return nguoiDungService.findByTenDangNhap(auth.getName());
+    }
 }
