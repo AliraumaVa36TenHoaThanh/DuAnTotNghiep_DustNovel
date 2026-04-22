@@ -1,10 +1,278 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <body>
 
-<div th:fragment="content" class="container mt-4">
+<div th:fragment="content" class="container mt-4 withdraw-page">
 
-    <h3>Rút tiền</h3>
+<style>
+
+.withdraw-page {
+	padding: 20px;
+	border-radius: 16px;
+}
+
+.withdraw-page h3,
+.withdraw-page h5 {
+	font-weight: 800;
+	color: #4f46e5;
+	letter-spacing: 0.5px;
+	margin-bottom: 18px;
+}
+
+.withdraw-page .form-control {
+	border-radius: 12px;
+	border: 1.5px solid #c7d2fe;
+	transition: 0.2s;
+	font-size: 1.08rem;
+}
+
+.withdraw-page .form-control:focus {
+	border-color: #6366f1;
+	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.18);
+}
+
+.withdraw-page .btn-danger {
+	border-radius: 12px;
+	font-weight: 700;
+	padding: 12px 22px;
+	font-size: 1.rem;
+	background: linear-gradient(90deg, #f43f5e 0%, #f59e42 100%);
+	border: none;
+	box-shadow: 0 2px 8px rgba(244, 63, 94, 0.10);
+	transition: 0.18s;
+	margin-top: 26px;
+}
+
+.withdraw-page .btn-danger:hover {
+	filter: brightness(1.08);
+	transform: translateY(-2px) scale(1.03);
+	box-shadow: 0 6px 18px rgba(244, 63, 94, 0.13);
+}
+
+.withdraw-page .table-responsive {
+	margin-top: 18px;
+	border-radius: 16px;
+	overflow: hidden;
+	box-shadow: 0 4px 24px rgba(99, 102, 241, 0.07);
+	background: #fff;
+}
+
+.withdraw-page .table {
+	margin-bottom: 0;
+	border-radius: 16px;
+	background: #fff;
+	font-size: 1.04rem;
+}
+
+.withdraw-page .table thead {
+	background: linear-gradient(90deg, #6366f1 0%, #f472b6 100%);
+	color: #fff;
+}
+
+.withdraw-page .table thead th {
+	border: none;
+	text-align: center;
+	font-weight: 700;
+	padding: 14px 0;
+}
+
+.withdraw-page .table tbody td {
+	text-align: center;
+	border-color: #f1f5f9;
+	padding: 12px 0;
+}
+
+.withdraw-page .table tbody tr:nth-child(even) {
+	background: #f9fafb;
+}
+
+.withdraw-page .table tbody tr:hover {
+	background: #e0e7ff33;
+}
+
+.withdraw-page .btn-outline-primary.btn-sm {
+	border-radius: 8px;
+	border: 1.5px solid #6366f1;
+	color: #6366f1;
+	font-weight: 600;
+	padding: 4px 10px;
+}
+
+.withdraw-page .btn-outline-primary.btn-sm:hover {
+	background: #6366f1;
+	color: #fff;
+}
+
+.withdraw-page .text-warning {
+	background: #fff7ed;
+	padding: 10px 14px;
+	border-radius: 12px;
+	border-left: 5px solid #f59e0b;
+	margin-bottom: 10px;
+}
+
+.withdraw-page .text-warning b {
+	color: #e67e22 !important;
+}
+
+.withdraw-page .bi-exclamation-triangle-fill {
+	color: #e67e22;
+	font-size: 1.3em;
+}
+
+.withdraw-page .bi-journal-text {
+	color: #6366f1;
+	font-size: 1.2em;
+}
+
+.withdraw-page hr {
+	margin: 28px 0;
+	opacity: 0.13;
+}
+
+[data-theme="dark"] .withdraw-page .withdraw-box {
+    background: #141d2b;
+    color: #e5e5e5;
+}
+
+[data-theme="dark"] .withdraw-page .withdraw-box h3,
+[data-theme="dark"] .withdraw-page .withdraw-box h5 {
+    color: #818cf8;
+}
+
+[data-theme="dark"] .withdraw-page .withdraw-box .form-control {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    color: #fff;
+}
+
+[data-theme="dark"] .withdraw-page .withdraw-box .table {
+    background: #1e1e1e;
+    color: #e5e5e5;
+}
+
+[data-theme="dark"] .withdraw-page .withdraw-box .table thead {
+    background: #4f46e5;
+}
+
+[data-theme="dark"] .withdraw-page .withdraw-box .table tbody tr:nth-child(even) {
+    background: #2a2a2a;
+}
+
+[data-theme="dark"] .withdraw-page .withdraw-box .table tbody tr:hover {
+    background: #3730a3;
+}
+
+[data-theme="dark"] .withdraw-page .withdraw-box .text-warning {
+    background: #3a2e1f;
+    color: #fbbf24;
+}
+
+[data-theme="dark"] .withdraw-page .withdraw-box .btn-outline-primary {
+    border-color: #818cf8;
+    color: #818cf8;
+}
+
+[data-theme="dark"] .withdraw-page .withdraw-box .btn-outline-primary:hover {
+    background: #818cf8;
+    color: #000;
+}
+
+[data-theme="dark"] .withdraw-page,
+[data-theme="dark"] .withdraw-page * {
+    color: #e5e5e5 !important;
+}
+
+[data-theme="dark"] .withdraw-page h3,
+[data-theme="dark"] .withdraw-page h5 {
+    color: #818cf8 !important;
+}
+
+[data-theme="dark"] .withdraw-page input {
+    color: #fff !important;
+    background: #2a2a2a !important;
+}
+
+[data-theme="dark"] .withdraw-page input::placeholder {
+    color: #9ca3af !important;
+}
+
+[data-theme="dark"] .withdraw-page .table-light,
+[data-theme="dark"] .withdraw-page thead {
+    background: #4f46e5 !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .withdraw-page tbody,
+[data-theme="dark"] .withdraw-page tr,
+[data-theme="dark"] .withdraw-page td {
+    color: #e5e5e5 !important;
+}
+
+[data-theme="dark"] .withdraw-page .text-muted {
+    color: #9ca3af !important;
+}
+
+[data-theme="dark"] .custom-dark-table {
+    background: #1e1e1e !important;
+    color: #e5e5e5 !important;
+}
+
+[data-theme="dark"] .custom-dark-table thead {
+    background: #4f46e5 !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .custom-dark-table th {
+    color: #fff !important;
+    border-color: #333 !important;
+}
+
+[data-theme="dark"] .custom-dark-table td {
+    background: #1e1e1e !important;
+    color: #e5e5e5 !important;
+    border-color: #333 !important;
+}
+
+[data-theme="dark"] .custom-dark-table.table-striped tbody tr:nth-of-type(odd) {
+    background: #252525 !important;
+}
+
+[data-theme="dark"] .custom-dark-table tbody tr:hover {
+    background: #3730a3 !important;
+}
+
+[data-theme="dark"] .withdraw-page .table,
+[data-theme="dark"] .withdraw-page .table-responsive {
+    background: #141d2b !important;
+}
+
+[data-theme="dark"] .withdraw-page table,
+[data-theme="dark"] .withdraw-page thead,
+[data-theme="dark"] .withdraw-page tbody,
+[data-theme="dark"] .withdraw-page tr,
+[data-theme="dark"] .withdraw-page td,
+[data-theme="dark"] .withdraw-page th {
+    background: #1e1e1e !important;
+    color: #e5e5e5 !important;
+    border-color: #333 !important;
+}
+
+[data-theme="dark"] .withdraw-page .alert-success {
+    background: rgba(34, 197, 94, 0.12) !important; 
+    border: 1px solid rgba(34, 197, 94, 0.35);
+    color: #86efac !important; 
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+</style>
+
+<div class="withdraw-box">
+
+
+		<h3>Rút tiền</h3>
 
     <p><b>Tên người dùng:</b> 
         <span th:text="${user.tenDangNhap}"></span>
@@ -13,8 +281,17 @@
     <p><b>Số token hiện có:</b> 
         <span th:text="${user.token}"></span>
     </p>
-	<p><b>Lưu ý: Chúng tôi 100% không chịu trách nghiệm nếu bạn nhập sai thông tin.</b> 
+	<p class="text-warning d-flex align-items-center gap-2">
+	<i class="bi bi-exclamation-triangle-fill"></i>
+	<b>Lưu ý: Chúng tôi 100% không chịu trách nghiệm nếu bạn nhập sai thông tin.</b> 
 	</p>
+	<p class="text-warning d-flex align-items-center gap-2">
+	<i class="bi bi-journal-text"></i>
+    <b>
+        Quy định: Mỗi lần rút sẽ tính thuế 10%. 
+        Số token thực nhận = token rút - 10%.
+    </b>
+    </p>
     <hr>
     <!-- ===== THÔNG BÁO ===== -->
     <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
@@ -66,15 +343,17 @@
    <hr>
 
 
-<h5>Danh sách yêu cầu rút tiền của bạn</h5>
+<!-- <h5>Danh sách yêu cầu rút tiền của bạn</h5> -->
+<h5>Danh sách các tài khoản ngân hàng của bạn</h5>
 <div class="table-responsive">
-    <table class="table table-bordered table-striped align-middle">
+    <table class="table table-bordered table-striped align-middle custom-dark-table">
         <thead class="table-light">
             <tr>
                 <th>Ngân hàng</th>
                 <th>Số tài khoản</th>
                 <th>Tên chủ tài khoản</th>
-                <th>Sử dụng hồ sơ này ?</th>
+                <!-- <th>Sử dụng hồ sơ này ?</th> -->
+                <th>Sử dụng tài khoản ngân hàng này</th>
             </tr>
         </thead>
         <tbody>
@@ -87,7 +366,7 @@
                     <a th:href="@{'/DustNovel/rut-tien/' + ${rutTien.id}}" 
    class="btn btn-outline-primary btn-sm" 
    title="Xem chi tiết">
-   <i class="bi bi-eye"></i>
+   <i class="bi bi-hand-index-thumb"></i>
 </a>
                 </td>
             </tr>
@@ -99,6 +378,7 @@
 </div>
 
 
+</div>
 </div>
 </body>
 </html>

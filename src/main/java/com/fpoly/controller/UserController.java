@@ -2,6 +2,7 @@ package com.fpoly.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -12,9 +13,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fpoly.model.BinhLuan;
 import com.fpoly.model.NguoiDung;
+import com.fpoly.model.NhomDich;
+import com.fpoly.model.Truyen;
+import com.fpoly.repository.BinhLuanRepository;
 import com.fpoly.repository.NguoiDungRepository;
+import com.fpoly.repository.NhomDichRepository;
+import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.CustomUserDetails;
+import com.fpoly.security.SecurityUtil;
 import com.fpoly.service.NguoiDungService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +37,18 @@ public class UserController {
 	
 	@Autowired
 	private NguoiDungRepository nguoiDungRepository;
+	
+	@Autowired
+	private TruyenRepository truyenRepo;
+	
+	@Autowired
+	private BinhLuanRepository binhLuanRepo;
+	
+	@Autowired
+	private NhomDichRepository nhomDichRepo;
+	
+	@Autowired
+	SecurityUtil securityUtil;
 
 	private final NguoiDungRepository nguoiDungRepo;
 	private final PasswordEncoder passwordEncoder;
@@ -49,6 +69,29 @@ public class UserController {
 	// ================= PROFILE PAGE =================
 	@GetMapping("/profile")
 	public String profile(Model model) {
+		NguoiDung user = securityUtil.getCurrentUserFromDB();
+
+	    if (user == null) {
+	        return "redirect:/login";
+	    }
+
+	    List<Truyen> listTruyen = truyenRepo.findByNguoiDang_Id(user.getId());
+	    int soTruyen = listTruyen.size();
+	    
+	    List<BinhLuan> listBinhLuan =
+	            binhLuanRepo.findByNguoiDung_Id(user.getId());
+	    int soBinhLuan = listBinhLuan.size();
+	    
+	    List<NhomDich> listNhom =
+	            nhomDichRepo.findNhomByUserId(user.getId());
+	    int soNhomDich = listNhom.size();
+	    
+	
+	    model.addAttribute("user", user);
+	    model.addAttribute("soTruyen", soTruyen);
+	    model.addAttribute("soBinhLuan", soBinhLuan);
+	    model.addAttribute("soNhomDich", soNhomDich);
+
 		model.addAttribute("content", "user/profile");
 		return "layout/main";
 	}

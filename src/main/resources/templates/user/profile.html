@@ -686,6 +686,29 @@ body {
 	
 </script>
 
+<script>
+function formatNumber(num) {
+    num = parseInt(num);
+
+    if (num >= 1000000000) {
+        return (num / 1000000000).toFixed(1).replace('.0','') + 'B';
+    }
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1).replace('.0','') + 'M';
+    }
+    if (num >= 1000) {
+        return (num / 1000).toFixed(1).replace('.0','') + 'K';
+    }
+    return num;
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".format-number").forEach(el => {
+        el.innerText = formatNumber(el.innerText);
+    });
+});
+</script>
+
 		<!-- ================= BANNER ================= -->
 
 		<div class="bg-dark text-white text-center py-5"
@@ -761,13 +784,13 @@ body {
 
 							<div class="row border-top pt-3">
 								<div class="col text-center">
-									<strong>0</strong><br> <small>Truyện</small>
+									<strong class="format-number" th:text="${soTruyen}">0</strong><br> <small>Truyện</small>
 								</div>
 								<div class="col text-center">
-									<strong>0</strong><br> <small>Theo dõi</small>
+									<strong class="format-number" th:text="${soBinhLuan}">0</strong><br> <small>Bình luận</small>
 								</div>
 								<div class="col text-center">
-									<strong>0</strong><br> <small>Bình luận</small>
+									<strong class="format-number" th:text="${soNhomDich}">0</strong><br> <small>Nhóm dịch</small>
 								</div>
 							</div>
 
