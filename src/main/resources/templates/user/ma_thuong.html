@@ -1,171 +1,158 @@
-<!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="${title}">Nhập Giftcode</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-</head>
-<body style="background-color: #f8fafc;">
-
 <div th:fragment="content">
-    
-    <style>
-        /* Hiệu ứng nền chìm đằng sau Form */
-        .giftcode-wrapper {
-            background-image: radial-gradient(circle at top right, #e0e7ff 0%, transparent 40%),
-                              radial-gradient(circle at bottom left, #fae8ff 0%, transparent 40%);
-            min-height: 70vh;
-            display: flex;
-            align-items: center;
-        }
 
-        /* Thẻ Card hiện đại */
-        .gift-card {
-            border-radius: 24px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.6);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-        }
-        .gift-card:hover {
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
-        }
+<style>
+    body {
+        background: linear-gradient(135deg, #eef2ff, #fdf4ff);
+    }
 
-        /* Icon Hộp quà bứt phá khỏi khung + Hiệu ứng bay lơ lửng */
-        .floating-icon {
-            width: 90px;
-            height: 90px;
-            background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%);
-            border-radius: 25%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: -45px auto 20px auto; /* Kéo icon lên trên viền card */
-            box-shadow: 0 10px 20px rgba(255, 154, 158, 0.4);
-            animation: float 3s ease-in-out infinite;
-            border: 4px solid #fff;
-        }
-        .floating-icon i {
-            font-size: 2.8rem;
-            color: #fff;
-        }
+    .gift-wrapper {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
+    .gift-card {
+        width: 100%;
+        max-width: 420px;
+        border-radius: 20px;
+        padding: 40px 30px;
+        background: #ffffff;
+        color: #1e293b !important; /* FIX DARK MODE */
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        text-align: center;
+    }
 
-        /* Ô nhập code xịn xò */
-        .code-input-group {
-            position: relative;
-        }
-        .code-input {
-            letter-spacing: 4px;
-            border: 2px dashed #a5b4fc;
-            background-color: #f8fafc;
-            color: #4338ca;
-            font-size: 1.25rem;
-            transition: all 0.3s;
-        }
-        .code-input:focus {
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
-            border-color: #6366f1;
-            background-color: #fff;
-            transform: scale(1.02);
-        }
-        .code-input::placeholder {
-            letter-spacing: 1px;
-            color: #94a3b8;
-            font-size: 1rem;
-        }
+    /* FIX: không cho CSS ngoài phá */
+    .gift-card * {
+        color: inherit !important;
+    }
 
-        /* Nút bấm Đổi Quà (Có hiệu ứng quét sáng chớp nhoáng) */
-        .btn-claim {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            border: none;
-            color: white;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-        .btn-claim::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: all 0.5s;
-            z-index: -1;
-        }
-        .btn-claim:hover::before {
-            left: 100%;
-        }
-        .btn-claim:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
-            color: white;
-        }
+    .gift-icon {
+        width: 70px;
+        height: 70px;
+        margin: -60px auto 20px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 20px rgba(99,102,241,0.4);
+    }
 
-        /* Làm đẹp thanh Alert thông báo */
-        .alert-custom {
-            border-left: 5px solid;
-        }
-        .alert-success-custom { border-color: #10b981; background-color: #d1fae5; color: #065f46; }
-        .alert-danger-custom { border-color: #ef4444; background-color: #fee2e2; color: #991b1b; }
-    </style>
+    .gift-title {
+        font-weight: 700;
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
 
-    <div class="giftcode-wrapper py-5">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-12 col-sm-10 col-md-8 col-lg-5">
-                    
-                    <div class="card gift-card mt-5">
-                        <div class="card-body px-4 pb-5 text-center">
-                            
-                            <div class="floating-icon">
-                                <i class="fa-solid fa-gift"></i>
-                            </div>
-                            
-                            <h2 class="fw-bold mb-2" style="color: #1e293b;">Đổi Mã Thưởng</h2>
-                            <p class="text-muted mb-4 px-2" style="font-size: 0.95rem;">Nhập ngay Giftcode để nhận hàng ngàn phiếu thưởng đọc truyện thả ga!</p>
+    .gift-sub {
+        color: #64748b;
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
 
-                            <div th:if="${successMsg}" class="alert alert-custom alert-success-custom text-start fw-bold rounded-3 shadow-sm mb-4" role="alert">
-                                <i class="fa-solid fa-circle-check me-2 fs-5 align-middle"></i><span class="align-middle" th:text="${successMsg}"></span>
-                            </div>
-                            <div th:if="${errorMsg}" class="alert alert-custom alert-danger-custom text-start fw-bold rounded-3 shadow-sm mb-4" role="alert">
-                                <i class="fa-solid fa-triangle-exclamation me-2 fs-5 align-middle"></i><span class="align-middle" th:text="${errorMsg}"></span>
-                            </div>
+    .code-input {
+        border-radius: 12px;
+        border: 2px solid #e5e7eb;
+        text-align: center;
+        padding: 12px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        color: #1e293b;
+        transition: 0.2s;
+    }
 
-                            <form th:action="@{/ma-thuong/nhap-code}" method="post">
-                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                                
-                                <div class="mb-4 code-input-group">
-                                    <input type="text" name="code" 
-                                           class="form-control form-control-lg text-center text-uppercase fw-bold code-input py-3 rounded-4" 
-                                           placeholder="NHẬP MÃ TẠI ĐÂY" required autocomplete="off">
-                                </div>
+    .code-input:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
 
-                                <button type="submit" class="btn btn-claim btn-lg w-100 fw-bold rounded-pill py-3 mt-2">
-                                    XÁC NHẬN ĐỔI QUÀ <i class="fa-solid fa-wand-magic-sparkles ms-2"></i>
-                                </button>
-                            </form>
+    .btn-main {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white !important;
+        border: none;
+        border-radius: 999px;
+        padding: 12px;
+        font-weight: 600;
+        margin-top: 15px;
+        transition: 0.2s;
+    }
 
-                        </div>
-                    </div>
+    .btn-main:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99,102,241,0.4);
+    }
 
-                    <div class="text-center mt-4 text-muted fw-medium" style="font-size: 0.85rem; opacity: 0.8;">
-                        <i class="fa-solid fa-shield-halved me-1"></i> Giao dịch an toàn • Mỗi mã áp dụng 1 lần/tài khoản.
-                    </div>
+    .btn-back {
+        margin-top: 12px;
+        border-radius: 999px;
+        padding: 10px;
+        border: 1px solid #cbd5f5;
+        color: #4f46e5 !important;
+        background: transparent;
+        transition: 0.2s;
+    }
 
-                </div>
-            </div>
+    .btn-back:hover {
+        background: #eef2ff;
+    }
+
+    .note {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #94a3b8;
+    }
+</style>
+
+<div class="gift-wrapper">
+    <div class="gift-card">
+
+        <!-- ICON -->
+        <div class="gift-icon">
+            <svg width="28" height="28" fill="white" viewBox="0 0 24 24">
+                <path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"/>
+                <path d="M2 7h20v5H2z"/>
+                <path d="M12 22V7"/>
+                <path d="M12 7c-1.5 0-4-1-4-3a2 2 0 0 1 4 0v3z"/>
+                <path d="M12 7c1.5 0 4-1 4-3a2 2 0 0 0-4 0v3z"/>
+            </svg>
         </div>
+
+        <div class="gift-title">Đổi Mã Thưởng</div>
+        <div class="gift-sub">Nhập giftcode để nhận thưởng</div>
+
+        <!-- ALERT -->
+        <div th:if="${successMsg}" class="alert alert-success text-start small">
+            <span th:text="${successMsg}"></span>
+        </div>
+
+        <div th:if="${errorMsg}" class="alert alert-danger text-start small">
+            <span th:text="${errorMsg}"></span>
+        </div>
+
+        <!-- FORM -->
+        <form th:action="@{/ma-thuong/nhap-code}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <input type="text" name="code"
+                   class="form-control code-input"
+                   placeholder="NHẬP MÃ..."
+                   required>
+
+            <button class="btn btn-main w-100">Xác nhận</button>
+        </form>
+
+        <!-- BACK BUTTON -->
+        <a href="/DustNovel/user/profile" class="btn btn-back w-100">
+            ← Quay lại trang cá nhân
+        </a>
+
+        <div class="note">
+            Mỗi mã chỉ dùng 1 lần
+        </div>
+
     </div>
 </div>
 
-</body>
-</html>
+</div>

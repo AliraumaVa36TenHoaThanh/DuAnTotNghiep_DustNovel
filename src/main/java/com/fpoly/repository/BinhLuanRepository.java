@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface BinhLuanRepository extends JpaRepository<BinhLuan, Long> {
     List<BinhLuan> findByTruyenIdOrderByNgayBinhLuanDesc(Long truyenId);
+    List<BinhLuan> findByNguoiDung_Id(Long id);
+
     
     List<BinhLuan> findByChuongIdAndParentIsNullOrderByNgayBinhLuanDesc(Long chuongId);
     @Query("""
