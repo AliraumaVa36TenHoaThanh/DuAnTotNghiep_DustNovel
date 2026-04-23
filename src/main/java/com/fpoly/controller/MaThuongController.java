@@ -25,9 +25,10 @@ public class MaThuongController {
     @GetMapping("/nhap")
     public String trangNhapCode(Model model) {
         model.addAttribute("title", "Nhập Giftcode");
-        return "user/ma_thuong";
+        model.addAttribute("content", "user/ma_thuong");
+        return "layout/main";
     }
-
+    
     @PostMapping("/nhap-code")
     public String xuLyNhapCodeUser(@RequestParam("code") String code,
                                    Principal principal,

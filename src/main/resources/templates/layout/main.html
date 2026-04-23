@@ -462,9 +462,29 @@
 					    </div>
 					</li>
 				</ul>
-				<form class="d-flex ms-auto me-3" th:action="@{/DustNovel/truyen/tim-kiem}" method="get"> <input
-						class="form-control search-input me-2" type="search" name="keyword" placeholder="Tìm truyện...">
-					<button class="btn btn-outline-primary btn-sm">🔍</button>
+				<form class="d-flex ms-auto me-3 position-relative" 
+				      th:action="@{/DustNovel/truyen/tim-kiem}" method="get">
+
+				    <input id="searchBox"
+				           class="form-control search-input me-2"
+				           type="search"
+				           name="keyword"
+				           placeholder="Tìm truyện..."
+				           data-bs-toggle="collapse"
+				           data-bs-target="#advancedSearch">
+
+				    <button class="btn btn-outline-primary btn-sm">🔍</button>
+
+				    <!-- Dropdown nâng cao -->
+				    <div class="collapse position-absolute top-100 start-0 w-100 mt-1" id="advancedSearch">
+				        <div class="card card-body p-2">
+				            <a href="/DustNovel/truyen/tim-kiem-nang-cao"
+				               class="text-decoration-none small">
+				               🔎 Tìm kiếm nâng cao
+				            </a>
+				        </div>
+				    </div>
+
 				</form>
 				<ul class="navbar-nav">
 					<div sec:authorize="isAnonymous()"> <a th:href="@{/DustNovel/login}"
@@ -514,12 +534,6 @@
 							<li>
 								<a class="dropdown-item custom-item" th:href="@{/DustNovel/nhom-dich}">
 									<span>📖 Nhóm dịch</span>
-								</a>
-							</li>
-							<li>
-								<a class="dropdown-item custom-item" th:href="@{/DustNovel/truyen/tim-kiem-nang-cao}">
-									<span> 🔎 Tìm
-										kiếm nâng cao</span>
 								</a>
 							</li>
 								<a class="dropdown-item custom-item" th:href="@{/DustNovel/nap-tien}">
