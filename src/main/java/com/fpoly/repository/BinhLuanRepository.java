@@ -23,5 +23,5 @@ public interface BinhLuanRepository extends JpaRepository<BinhLuan, Long> {
     	""")
     	List<BinhLuan> findParentCommentsWithChildren(@Param("chuongId") Long chuongId);
     
-    List<BinhLuan> findByNguoiDung_Id(Long userId);
+//    List<BinhLuan> findByNguoiDung_Id(Long userId);
 } 
