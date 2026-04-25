@@ -16,6 +16,7 @@ import com.fpoly.security.CustomUserDetails;
 import com.fpoly.service.TruyenService;
 
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.fpoly.model.NguoiDung;
 import java.io.File;
@@ -119,7 +120,8 @@ public class DatatableTestController {
 	        @ModelAttribute("truyenUser") Truyen truyen,
 	        @RequestParam(value = "theLoaiIds", required = false) List<Long> theLoaiIds,
 	        @RequestParam(value = "file", required = false) MultipartFile file,
-	        Model model
+	        Model model,
+	        RedirectAttributes redirectAttributes
 	) throws IOException {
 
 	    CustomUserDetails cud =
@@ -156,7 +158,7 @@ public class DatatableTestController {
 	    if (truyen.getAnhBia() == null
 	            || truyen.getAnhBia().isBlank()) {
 
-	        truyen.setAnhBia("/images/default.jpg");
+	        truyen.setAnhBia("/images/aria.jpg");
 	    }
 
 	    // ===============================
@@ -176,6 +178,11 @@ public class DatatableTestController {
 	    }
 
 	    truyenService.save(truyen, theLoaiIds);
+	    
+	    redirectAttributes.addFlashAttribute(
+	            "successMessage",
+	            "Thêm truyện \"" + truyen.getTenTruyen() + "\" thành công!"
+	    );
 
 	    return "redirect:/DustNovel/home";
 	}
