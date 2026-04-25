@@ -12,6 +12,7 @@
 	font-weight: 700;
 	margin-bottom: 24px;
 	color: #111827;
+	margin-top: 15px;
 }
 
 /* ===== KHUNG THỂ LOẠI ===== */
@@ -124,6 +125,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.w-100 {
+    width: 100% !important;
+    margin-top: 38px;
+}
+
 /* ===== DROPDOWN ===== */
 .filter-list {
     display: none;       /* mặc định ẩn */
@@ -191,13 +198,123 @@
     scrollbar-width: thin;
     scrollbar-color: #999 transparent;
 }
+
+.selected-genres {
+    position: absolute;
+    top: 8px;
+    left: 150px;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    width: max-content;
+}
+
+.selected-popup {
+    position: absolute;
+    top: 100%;
+    left: 18px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    display: none;
+    grid-template-columns: repeat(10, auto);
+    gap: 6px;
+    width: max-content;
+    max-width: 1000px;
+    z-index: 999;
+}
+
+.selected-popup.show {
+    display: grid;
+}
+
+.genre-badge {
+    color: #000000;
+    padding: 4px 20px;
+    border-radius: 6px;
+    font-size: 10px;
+}
+
+
+[data-theme="dark"] .filter-header {
+    background: #2b2b2b;
+    border: 1px solid #444;
+    color: #eee;
+}
+
+[data-theme="dark"] .filter-header span {
+    color: #aaa;
+}
+
+[data-theme="dark"] .filter-list {
+    background: #1f1f1f;
+    border: 1px solid #444;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+}
+
+[data-theme="dark"] .filter-item {
+    background: #2a2a2a;
+    color: #ddd;
+}
+
+[data-theme="dark"] .filter-item:hover {
+    background: #3a3a3a;
+}
+
+[data-theme="dark"] .filter-item.active {
+    background: #4f6ef7;
+    color: #fff;
+}
+
+[data-theme="dark"] .filter-list::-webkit-scrollbar-thumb {
+    background: #555;
+}
+
+[data-theme="dark"] .selected-popup {
+    background: #1f1f1f;
+    border: 1px solid #ffffff;
+}
+
+[data-theme="dark"] .genre-badge {
+    background: transparent;
+    color: #fff;
+}
+
+[data-theme="dark"] .card {
+    background: #1f1f1f;
+    color: #eee;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background: #2b2b2b;
+    color: #eee;
+    border: 1px solid #444;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: #888;
+}
+
+[data-theme="dark"] .search-title-main,
+[data-theme="dark"] .result-title {
+    color: #eee;
+}
+
+[data-theme="dark"] .result-empty {
+    color: #aaa;
+}
+
 </style>
 
 <!-- ================= FORM TÌM KIẾM ================= -->
 <div class="card shadow-sm mb-4">
 	<div class="card-body">
 
-		<h5 class="search-title-main">🔍 Tìm kiếm nâng cao</h5>
+		<h5 class="search-title-main"><i class="bi bi-search"></i> Tìm kiếm nâng cao</h5>
 
 		<form th:action="@{/DustNovel/truyen/tim-kiem-nang-cao}" method="get">
 
@@ -241,6 +358,11 @@
 								<i class="fa-solid fa-chevron-down"></i>
 							</span>
 						</div>
+						
+						<div id="selectedGenres" class="selected-genres" onclick="toggleSelectedPopup()">
+                          <i class="bi bi-tags"></i>
+                        <div id="selectedPopup" class="selected-popup"></div>
+                       </div>
 
 						<div class="filter-list" id="filterList">
 
@@ -284,7 +406,7 @@
 				</select>
 			</div>
 
-			<button class="btn btn-primary w-100">🔎 Tìm kiếm</button>
+			<button class="btn btn-primary w-100" style="font-size: 19px;"><i class="bi bi-search"></i> Tìm kiếm</button>
 		</form>
 	</div>
 </div>
@@ -409,6 +531,8 @@ function chonTheLoai(element) {
     element.classList.toggle("active");
 
     updateFilterText();
+    renderSelectedGenres(); 
+    togglePopupAuto();  
 }
 
 function locTatCa(element) {
@@ -434,6 +558,8 @@ function locTatCa(element) {
     }
 
     updateFilterText();
+    renderSelectedGenres(); 
+    togglePopupAuto();  
 }
 
 function updateFilterText() {
@@ -458,13 +584,13 @@ function updateFilterText() {
 
     if (checked.length === total) {
         text.innerText = "Tất cả";
-        text.style.color = "#111";
+        text.style.color = "";
         tatCaBtn.classList.add("active");
         return;
     }
 
     text.innerText = checked.length + " thể loại";
-    text.style.color = "#111";
+    text.style.color = "";
     tatCaBtn.classList.remove("active");
 }
 
@@ -479,6 +605,54 @@ document.addEventListener("click", function (e) {
         list.style.display = "none";
     }
 });
+
+
+
+function renderSelectedGenres() {
+    const popup = document.getElementById("selectedPopup");
+
+    if (!popup) return;
+
+    popup.innerHTML = "";
+
+    const checked = document.querySelectorAll("input[name='theLoaiIds']:checked");
+
+    if (checked.length === 0) {
+        popup.classList.remove("show");
+        return;
+    }
+
+    checked.forEach(cb => {
+        const text = cb.nextElementSibling.innerText;
+
+        const badge = document.createElement("span");
+        badge.className = "genre-badge";
+        badge.innerText = text;
+
+        popup.appendChild(badge);
+    });
+}
+
+function toggleSelectedPopup() {
+    const popup = document.getElementById("selectedPopup");
+    if (!popup) return;
+
+    popup.classList.toggle("show");
+    renderSelectedGenres();
+}
+
+function togglePopupAuto() {
+    const popup = document.getElementById("selectedPopup");
+    if (!popup) return;
+
+    const checked = document.querySelectorAll("input[name='theLoaiIds']:checked");
+
+    if (checked.length > 0) {
+        popup.classList.add("show");
+    } else {
+        popup.classList.remove("show");
+    }
+}
 </script>
 
 </div>
