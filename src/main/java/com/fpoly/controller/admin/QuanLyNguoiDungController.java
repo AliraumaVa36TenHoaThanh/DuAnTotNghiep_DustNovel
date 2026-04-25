@@ -81,7 +81,8 @@ public class QuanLyNguoiDungController {
 	public String themTruyen(
 	        @ModelAttribute Truyen truyen,
 	        @RequestParam(value = "theLoaiIds", required = false) List<Long> theLoaiIds,
-	        @RequestParam(value = "file", required = false) MultipartFile file, Model model
+	        @RequestParam(value = "file", required = false) MultipartFile file, Model model,
+	        RedirectAttributes redirectAttributes
 	) throws IOException {
 
 	    CustomUserDetails cud =
@@ -125,6 +126,11 @@ public class QuanLyNguoiDungController {
 	    }
 
 	    truyenService.save(truyen, theLoaiIds);
+	    
+	    redirectAttributes.addFlashAttribute(
+	            "successMessage",
+	            "Thêm truyện \"" + truyen.getTenTruyen() + "\" thành công!"
+	    );
 
 	    return "redirect:/DustNovel/home";
 	}
