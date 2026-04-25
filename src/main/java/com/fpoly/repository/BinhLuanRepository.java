@@ -22,4 +22,6 @@ public interface BinhLuanRepository extends JpaRepository<BinhLuan, Long> {
     	    ORDER BY b.ngayBinhLuan DESC
     	""")
     	List<BinhLuan> findParentCommentsWithChildren(@Param("chuongId") Long chuongId);
+    
+    List<BinhLuan> findByNguoiDung_Id(Long userId);
 } 
