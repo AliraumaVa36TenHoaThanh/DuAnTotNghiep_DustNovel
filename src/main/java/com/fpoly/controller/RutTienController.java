@@ -23,6 +23,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.transaction.annotation.Transactional;
+
+
 
 @Controller
 @RequestMapping("/DustNovel")
@@ -145,4 +148,34 @@ public class RutTienController {
 
         return "redirect:/DustNovel/rut-tien";
     }
+    
+    
+    @PostMapping("/rut-tien/delete")
+    @Transactional
+    public String xoaTaiKhoan(
+            @RequestParam Long id,
+            Authentication auth,
+            RedirectAttributes redirectAttributes) {
+
+        var user = napTienService.getByTenDangNhap(auth.getName());
+
+        RutTien rutTien = rutTienRepository.findById(id)
+                .orElse(null);
+
+        if (rutTien == null || !rutTien.getNguoiDung().getId().equals(user.getId())) {
+            redirectAttributes.addFlashAttribute("error", "Không tìm thấy tài khoản!");
+            return "redirect:/DustNovel/rut-tien";
+        }
+
+ 
+        rutTienRepository.deleteByNganHangAndSoTaiKhoanAndTenChuTaiKhoan(
+                rutTien.getNganHang(),
+                rutTien.getSoTaiKhoan(),
+                rutTien.getTenChuTaiKhoan()
+        );
+
+        redirectAttributes.addFlashAttribute("successMessage", "Đã xóa tài khoản ngân hàng!");
+        return "redirect:/DustNovel/rut-tien";
+    }
+    
 }
