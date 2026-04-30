@@ -2,7 +2,6 @@
      th:fragment="content">
 
 <style>
-    /* ===== BUTTON STYLE ===== */
     .action-btn {
         display: inline-flex;
         align-items: center;
@@ -75,6 +74,7 @@
 
                 <div class="card-body">
 
+                    <!-- Thông báo -->
                     <div th:if="${successMsg}"
                          class="alert alert-success"
                          th:text="${successMsg}"></div>
@@ -89,6 +89,7 @@
                             <th>#</th>
                             <th>Mã Code</th>
                             <th>Phiếu thưởng</th>
+							<th>Số lượng nhập</th>
                             <th>Đã nhập</th>
                             <th>Trạng thái</th>
                             <th>Thao tác</th>
@@ -102,32 +103,34 @@
                             <td class="fw-bold text-primary"
                                 th:text="${ma.code}"></td>
 
+								<td class="text-success fw-bold" th:text="${ma.soLuongNhap}"></td>
+								
                             <td class="text-success fw-bold"
                                 th:text="${ma.soPhieuThuong}"></td>
 
-                            <td th:text="${ma.daNhap}"></td>
+                            <td class="text-success fw-bold" th:text="${ma.daNhap}"></td>
 
+                            <!-- ✅ Trạng thái -->
                             <td>
-                                <span th:class="${ma.statusMaThuong.name() == 'ON'} 
-                                   ? 'badge bg-success'
-                                   : 'badge bg-danger'"
-                                      th:text="${ma.statusMaThuong.name() == 'ON'} 
-                                   ? 'HOẠT ĐỘNG'
-                                   : 'ĐÃ KHÓA'">
+                                <span th:class="${ma.statusMaThuong.isActive()} 
+                                       ? 'badge bg-success'
+                                       : 'badge bg-danger'"
+                                      th:text="${ma.statusMaThuong.displayName}">
                                 </span>
                             </td>
 
+                            <!-- ✅ Thao tác -->
                             <td class="d-flex justify-content-center gap-2">
 
-                                <!-- Nút sửa -->
+                                <!-- Sửa -->
                                 <a class="action-btn btn-edit-custom"
-                                   th:href="@{/dba/ma-thuong/sua/{id}(id=${ma.id})}">
+                                   th:href="@{/admin/ma-thuong/sua/{id}(id=${ma.id})}">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                     Sửa
                                 </a>
 
-                                <!-- Nút khóa -->
-                                <form th:action="@{/dba/ma-thuong/doi-trang-thai/{id}(id=${ma.id})}"
+                                <!-- Khóa / Mở -->
+                                <form th:action="@{/admin/ma-thuong/doi-trang-thai/{id}(id=${ma.id})}"
                                       method="post"
                                       class="d-inline">
 
@@ -136,9 +139,16 @@
                                            th:value="${_csrf.token}" />
 
                                     <button type="submit"
-                                            class="action-btn btn-lock-custom">
-                                        <i class="fa-solid fa-lock"></i>
-                                        Khóa
+                                            class="action-btn btn-lock-custom"
+                                            th:disabled="${ma.daNhap >= ma.soLuongNhap}">
+
+                                        <i class="fa-solid"
+                                           th:classappend="${ma.statusMaThuong.isActive()} 
+                                           ? ' fa-lock' : ' fa-lock-open'"></i>
+
+                                        <span th:text="${ma.statusMaThuong.isActive()} 
+                                                ? 'Khóa' : 'Mở'"></span>
+
                                     </button>
 
                                 </form>
@@ -146,9 +156,9 @@
                             </td>
                         </tr>
 
+                        <!-- Empty -->
                         <tr th:if="${#lists.isEmpty(dsMaThuong)}">
-                            <td colspan="6"
-                                class="text-muted">
+                            <td colspan="6" class="text-muted">
                                 Chưa có mã thưởng
                             </td>
                         </tr>

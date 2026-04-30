@@ -2,6 +2,8 @@ package com.fpoly.controller.admin;
 import java.security.Principal;
 import com.fpoly.model.MaThuong;
 import com.fpoly.model.NguoiDung;
+import com.fpoly.model.enums.StatusMaThuong;
+import com.fpoly.repository.MaThuongRepository;
 import com.fpoly.repository.NguoiDungRepository;
 import com.fpoly.repository.PhieuThuongRepository;
 // Lưu ý: Import class SecurityUtil theo đúng đường dẫn project của cậu nhé
@@ -19,6 +21,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class QuanLyMaThuongController {
 	@Autowired
     private PhieuThuongRepository phieuThuongRepo;
+	@Autowired
+    private MaThuongRepository maThuongRepo;
     @Autowired
     private MaThuongService maThuongService;
     // THÊM DÒNG NÀY VÀO:
@@ -79,29 +83,63 @@ public class QuanLyMaThuongController {
     // ================================
     // FORM SỬA
     // ================================
-    @GetMapping("/sua/{id}")
-    public String formSua(@PathVariable Long id,
-                          Model model,
-                          RedirectAttributes ra) {
 
-        MaThuong mt = maThuongService.layMaThuongTheoId(id);
+    @PostMapping("/doi-trang-thai/{id}")
+    public String doiTrangThai(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 
-        if (mt == null) {
-            ra.addFlashAttribute("errorMsg",
-                    "Không tìm thấy mã thưởng!");
-            return "redirect:/dba/ma-thuong";
+        MaThuong ma = maThuongRepo.findById(id).orElse(null);
+
+        if (ma == null) {
+            redirectAttributes.addFlashAttribute("errorMsg", "Không tìm thấy mã!");
+            return "redirect:/admin/ma-thuong";
         }
 
-        model.addAttribute("maThuong", mt);
-        model.addAttribute("content",
-                "/view/admin/ma-thuong/add");
+        // Toggle trạng thái
+        if (ma.getStatusMaThuong() == StatusMaThuong.ON) {
+            ma.setStatusMaThuong(StatusMaThuong.OFF);
+        } else {
+            ma.setStatusMaThuong(StatusMaThuong.ON);
+        }
 
-        model.addAttribute("title",
-                "Sửa Mã Thưởng");
+        maThuongRepo.save(ma);
 
-        return "/layout/admin_base";
+        redirectAttributes.addFlashAttribute("successMsg", "Đã cập nhật trạng thái!");
+        return "redirect:/admin/ma-thuong";
     }
-   
+
+
+    @GetMapping("/sua/{id}")
+    public String hienThiFormSua(@PathVariable Long id, Model model) {
+
+        MaThuong ma = maThuongRepo.findById(id).orElse(null);
+
+        if (ma == null) {
+            return "redirect:/admin/ma-thuong";
+        }
+
+        model.addAttribute("maThuong", ma);
+
+        // 👇 KEY POINT
+        model.addAttribute("content", "view/admin/ma-thuong/update");
+
+        return "layout/admin_base";
+    }
+    
+    @PostMapping("/sua")
+    public String xuLySua(@ModelAttribute("maThuong") MaThuong form,
+                          RedirectAttributes redirectAttributes) {
+
+        MaThuong old = maThuongRepo.findById(form.getId()).orElseThrow();
+
+        old.setSoPhieuThuong(form.getSoPhieuThuong());
+        old.setSoLuongNhap(form.getSoLuongNhap());
+        old.setNgayHetHan(form.getNgayHetHan());
+
+        maThuongRepo.save(old);
+
+        redirectAttributes.addFlashAttribute("successMsg", "Cập nhật thành công!");
+        return "redirect:/admin/ma-thuong";
+    }
 }
 
    

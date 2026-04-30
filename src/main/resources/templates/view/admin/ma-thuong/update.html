@@ -1,0 +1,131 @@
+<div xmlns:th="http://www.thymeleaf.org"
+     th:fragment="content">
+
+<style>
+    .form-card {
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 10px;
+        border: 1px solid #dcdcdc;
+        transition: all 0.2s;
+    }
+
+    .form-control:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.15rem rgba(25,135,84,0.25);
+    }
+
+    .btn-custom {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: 0.25s;
+    }
+
+    .btn-save {
+        background-color: #198754;
+        color: white;
+        border: none;
+    }
+
+    .btn-save:hover {
+        background-color: #157347;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .btn-back {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+    }
+
+    .btn-back:hover {
+        background-color: #5a6268;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div id="main">
+
+    <div class="page-heading">
+
+        <div class="page-title mb-4">
+            <h3 class="fw-bold text-primary">Sửa Mã Thưởng</h3>
+        </div>
+
+        <section class="section">
+            <div class="card form-card">
+
+                <div class="card-header bg-light">
+                    <h5 class="mb-0 fw-semibold">Chỉnh sửa thông tin</h5>
+                </div>
+
+                <div class="card-body">
+
+                    <form th:action="@{/admin/ma-thuong/sua}" 
+                          method="post"
+                          th:object="${maThuong}">
+
+                        <!-- ID -->
+                        <input type="hidden" th:field="*{id}" />
+
+                        <!-- Code -->
+                        <div class="mb-3">
+                            <label class="form-label">Mã Code</label>
+                            <input type="text" class="form-control"
+                                   th:field="*{code}" readonly />
+                        </div>
+
+                        <!-- Số phiếu -->
+                        <div class="mb-3">
+                            <label class="form-label">Số phiếu thưởng</label>
+                            <input type="number" class="form-control"
+                                   th:field="*{soPhieuThuong}" />
+                        </div>
+
+                        <!-- Số lượng nhập -->
+                        <div class="mb-3">
+                            <label class="form-label">Số lượng nhập</label>
+                            <input type="number" class="form-control"
+                                   th:field="*{soLuongNhap}" />
+                        </div>
+
+                        <!-- Ngày hết hạn -->
+                        <div class="mb-3">
+                            <label class="form-label">Ngày hết hạn</label>
+                            <input type="datetime-local" class="form-control"
+                                   th:field="*{ngayHetHan}" />
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 mt-3">
+                            <button type="submit" class="btn btn-custom btn-save">
+                                💾 Lưu
+                            </button>
+
+                            <a th:href="@{/admin/ma-thuong}" 
+                               class="btn btn-custom btn-back">
+                                ← Quay lại
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+</div>
