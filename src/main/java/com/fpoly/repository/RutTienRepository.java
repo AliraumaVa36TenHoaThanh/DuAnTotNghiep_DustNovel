@@ -33,4 +33,11 @@ public interface RutTienRepository extends JpaRepository<RutTien, Long> {
     List<RutTien> findByNguoiDungId(Long nguoiDungId);
     
     List<RutTien> findByNguoiDungIdAndSoTaiKhoan(Long userId, String soTaiKhoan);
+    
+    void deleteByNganHangAndSoTaiKhoanAndTenChuTaiKhoan(
+    	    String nganHang,
+    	    String soTaiKhoan,
+    	    String tenChuTaiKhoan
+    	);
+    
 }

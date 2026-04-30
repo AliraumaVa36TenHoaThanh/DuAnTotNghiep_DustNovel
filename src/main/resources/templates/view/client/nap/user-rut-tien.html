@@ -178,8 +178,12 @@ th {
 				<tr>
 					<th>Người rút</th>
 					<th>Token rút</th>
+					<th>Thuế (10%)</th>
+                    <th>Token thực</th>
 					<th>Số tiền (VNĐ)</th>
 					<th>Ngân hàng</th>
+					<th>Số tài khoản</th>
+                    <th>Chủ tài khoản</th>
 					<th>Trạng thái</th>
 					<th>Ngày tạo</th>
 				</tr>
@@ -193,12 +197,20 @@ th {
 					<td th:text="${rut.nguoiDung.tenDangNhap}">username</td>
 
 					<td th:text="${rut.soToken}">100</td>
+					
+                    <td th:text="${#numbers.formatDecimal(rut.soToken * 0.1, 0, 'COMMA', 0, 'POINT')}"></td>
+
+                    <td th:text="${rut.tokenThucNhan}">90</td>
 
 					<td th:text="${#numbers.formatDecimal(rut.tokenThucNhan * 20,0,'COMMA',0,'POINT')} + ' VNĐ'">
 						200.000 VNĐ
 					</td>
 
 					<td th:text="${rut.nganHang}">MB Bank</td>
+					
+					<td th:text="${rut.soTaiKhoan}"></td>
+					
+                    <td th:text="${rut.tenChuTaiKhoan}"></td>
 
 					<td>
 						<span th:if="${rut.trangThai == 'CHO_DUYET'}"

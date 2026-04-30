@@ -112,6 +112,15 @@
 	margin-bottom: 10px;
 }
 
+.withdraw-page .action-btn {
+    border-radius: 8px;
+	border: 1.5px solid #6366f1;
+	color: #6366f1;
+	font-weight: 600;
+	padding: 4px 10px;
+	font-size: 14px;
+}
+
 .withdraw-page .text-warning b {
 	color: #e67e22 !important;
 }
@@ -267,7 +276,140 @@
     -webkit-backdrop-filter: blur(6px);
 }
 
+.confirm-box {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    background: rgba(255,255,255,0.05);
+}
+
+.info-item span {
+    opacity: 0.8;
+}
+
+.money-box {
+    margin-top: 15px;
+    padding: 14px;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #22c55e, #4ade80);
+    color: #052e16;
+}
+
+.info-item i {
+    margin-right: 6px;
+}
+
+.btn-confirm {
+    border-radius: 7px;
+    padding: 6px 20px;
+    font-weight: 600;
+    background: linear-gradient(90deg, #22c55e, #4ade80);
+    border: none;
+    color: #052e16;
+    transition: 0.2s;
+}
+
+.btn-confirm:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(34, 197, 94, 0.4);
+}
+
+.withdraw-page .confirm-box {
+    background: #ffffff;
+    color: #1e293b;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.withdraw-page .confirm-box .info-item {
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+.withdraw-page .confirm-box .money-box {
+    background: linear-gradient(90deg, #22c55e, #4ade80);
+    color: #052e16;
+}
+
+[data-theme="dark"] .withdraw-page .confirm-box {
+    background: #1e293b;
+    color: #e5e7eb;
+}
+
+[data-theme="dark"] .withdraw-page .confirm-box .info-item {
+    background: #334155;
+    color: #e5e7eb;
+}
+
+[data-theme="dark"] .withdraw-page .confirm-box .money-box {
+    background: linear-gradient(90deg, #22c55e, #4ade80);
+    color: #052e16;
+}
+
+[data-theme="dark"] .withdraw-page .confirm-box hr {
+    border-color: #475569;
+}
+
 </style>
+
+
+<script>
+function showConfirm() {
+    const nganHang = document.querySelector('input[name="nganHang"]').value;
+    const soTaiKhoan = document.querySelector('input[name="soTaiKhoan"]').value;
+    const tenChu = document.querySelector('input[name="tenChuTaiKhoan"]').value;
+    const token = parseInt(document.querySelector('input[name="soToken"]').value);
+    
+    const tokenHienCo = parseInt(document.getElementById("userToken").innerText);
+
+    if (isNaN(token) || token <= 0) {
+        alert("Vui lòng nhập số token hợp lệ!");
+        return false;
+    }
+    
+    if (token > tokenHienCo) {
+        let thieu = token - tokenHienCo;
+        alert("Không đủ token để rút!\nBạn đang thiếu " + thieu + " token.");
+        return false;
+    }
+
+    let tokenThuc = token - token * 0.1;
+    let TI_GIA = 20;
+    let tienNhan = tokenThuc * TI_GIA;
+
+    document.getElementById("cfNganHang").innerText = nganHang;
+    document.getElementById("cfSoTK").innerText = soTaiKhoan;
+    document.getElementById("cfTenChu").innerText = tenChu;
+    document.getElementById("cfToken").innerText = token;
+    document.getElementById("cfThue").innerText = token * 0.1;
+    document.getElementById("cfThucNhan").innerText = tokenThuc;
+    document.getElementById("cfTien").innerText = tienNhan.toLocaleString() + " VND";
+
+    
+    let modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    modal.show();
+
+    return false; 
+}
+
+function submitForm() {
+    document.getElementById("rutTienForm").submit();
+}
+</script>
+
+
 
 <div class="withdraw-box">
 
@@ -281,6 +423,9 @@
     <p><b>Số token hiện có:</b> 
         <span th:text="${user.token}"></span>
     </p>
+    
+    <span id="userToken" th:text="${user.token}" hidden></span>
+    
 	<p class="text-warning d-flex align-items-center gap-2">
 	<i class="bi bi-exclamation-triangle-fill"></i>
 	<b>Lưu ý: Chúng tôi 100% không chịu trách nghiệm nếu bạn nhập sai thông tin.</b> 
@@ -303,7 +448,7 @@
 
     <h5>Thông tin rút tiền</h5>
 
-    <form th:action="@{/DustNovel/rut-tien}" method="post">
+    <form id="rutTienForm" th:action="@{/DustNovel/rut-tien}" method="post" onsubmit="return showConfirm()">
 
         <input type="text"
                name="nganHang"
@@ -361,13 +506,24 @@
                 <td th:text="${rutTien.nganHang}">Ngân hàng</td>
                 <td th:text="${rutTien.soTaiKhoan}">123456789</td>
                 <td th:text="${rutTien.tenChuTaiKhoan}">Người dùng</td>
-                <td class="text-center">
-                    <!-- Button chỉ icon, trỏ đến trang chi tiết -->
+                <td class="text-center d-flex justify-content-center align-items-center gap-2">
+                
+                    <!-- chọn tài khoản -->
                     <a th:href="@{'/DustNovel/rut-tien/' + ${rutTien.id}}" 
-   class="btn btn-outline-primary btn-sm" 
-   title="Xem chi tiết">
-   <i class="bi bi-hand-index-thumb"></i>
-</a>
+                       class="btn btn-outline-primary btn-sm" 
+                       title="Xem chi tiết">
+                    <i class="bi bi-hand-index-thumb"></i>
+                   </a>
+                   
+                   <!-- xóa -->
+                   <form th:action="@{/DustNovel/rut-tien/delete}" method="post"
+                         onsubmit="return confirm('Bạn có chắc muốn xóa tài khoản này?');">
+                  <input type="hidden" name="id" th:value="${rutTien.id}">
+                 <button class="btn btn-outline-primary action-btn">
+                      <i class="bi bi-trash"></i>
+                  </button>
+                 </form>                 
+                               
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(listRutTien)}">
@@ -377,8 +533,66 @@
     </table>
 </div>
 
+           <!-- MODAL XÁC NHẬN -->
+              <div class="modal fade" id="confirmModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                 <div class="modal-content confirm-box">
 
-</div>
-</div>
+                  <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">
+                     <i class="bi bi-wallet2 me-2"></i> Xác nhận rút tiền
+                  </h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                <div class="info-item">
+                 <span><i class="bi bi-bank"></i> Ngân hàng</span>
+                   <b id="cfNganHang"></b>
+              </div>
+
+                <div class="info-item">
+                  <span><i class="bi bi-credit-card"></i> Số tài khoản</span>
+                   <b id="cfSoTK"></b>
+               </div>
+
+             <div class="info-item">
+               <span><i class="bi bi-person"></i> Chủ tài khoản</span>
+                <b id="cfTenChu"></b>
+           </div>
+
+           <hr>
+
+              <div class="info-item">
+                <span>Token rút</span>
+                 <b id="cfToken"></b>
+              </div>
+
+              <div class="info-item text-warning">
+               <span>Thuế (10%)</span>
+                <b id="cfThue"></b>
+              </div>
+
+              <div class="info-item text-success">
+                <span>Thực nhận</span>
+                 <b id="cfThucNhan"></b>
+             </div>
+
+             <div class="money-box">
+               💰 <span id="cfTien"></span>
+             </div>
+ 
+             </div>
+
+                 <div class="modal-footer border-0">
+                   <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button class="btn-confirm" onclick="submitForm()">Xác nhận</button>
+                 </div>
+               </div>
+             </div>
+           </div>
+        </div>
+     </div>        
 </body>
 </html>
