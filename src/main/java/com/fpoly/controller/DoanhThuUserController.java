@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -94,42 +94,58 @@ public class DoanhThuUserController {
 
         NguoiDung currentUser = securityUtil.getCurrentUserFromDB();
 
-        List<DoanhThuTruyenDTO> danhSach =
+        List<DoanhThuTruyenDTO> danhSachGoc =
                 doanhThuService.layThongKeDoanhThu(currentUser.getId());
 
-        if (type != null) {
+        List<DoanhThuTruyenDTO> danhSach = new ArrayList<>();
 
-            danhSach = danhSach.stream().filter(dt -> {
+        for (DoanhThuTruyenDTO dt : danhSachGoc) {
 
-                if (dt.getNgayMo() == null) return false;
+            List<ChiTietMuaChuongDTO> chiTiet =
+                    doanhThuService.layChiTietTruyen(dt.getTruyenId());
 
-                var ngay = dt.getNgayMo();
+            if (type != null) {
 
-                switch (type) {
+                chiTiet = chiTiet.stream().filter(ct -> {
 
-                    case "day":
-                        return date != null &&
-                                ngay.toLocalDate().toString().equals(date);
+                    if (ct.getNgayMua() == null) return false;
 
-                    case "month":
-                        return month != null &&
-                                ngay.getMonthValue() == Integer.parseInt(month);
+                    var ngay = ct.getNgayMua();
 
-                    case "year":
-                        return year != null &&
-                                ngay.getYear() == year;
+                    switch (type) {
 
-                    case "quarter":
-                        if (year == null || quarter == null) return false;
+                        case "day":
+                            return date != null &&
+                                    ngay.toLocalDate().toString().equals(date);
 
-                        int q = (ngay.getMonthValue() - 1) / 3 + 1;
+                        case "month":
+                            return month != null &&
+                                    ngay.getMonthValue() == Integer.parseInt(month);
 
-                        return q == quarter && ngay.getYear() == year;
-                }
+                        case "year":
+                            return year != null &&
+                                    ngay.getYear() == year;
 
-                return true;
+                        case "quarter":
+                            if (year == null || quarter == null) return false;
 
-            }).toList();
+                            int q = (ngay.getMonthValue() - 1) / 3 + 1;
+                            return q == quarter && ngay.getYear() == year;
+                    }
+
+                    return true;
+
+                }).toList();
+            }
+
+            long tong = chiTiet.stream()
+                    .mapToLong(ChiTietMuaChuongDTO::getSoToken)
+                    .sum();
+
+            if (tong > 0) {
+                dt.setTongDoanhThu(tong);
+                danhSach.add(dt);
+            }
         }
 
         long tongTatCa = 0;
@@ -142,7 +158,6 @@ public class DoanhThuUserController {
 
             if (dt.getLoaiTruyen() == LoaiTruyen.SÁNG_TÁC) {
                 tongSangTac += dt.getTongDoanhThu();
-
             } else if (dt.getLoaiTruyen() == LoaiTruyen.DỊCH) {
                 tongDich += dt.getTongDoanhThu();
             }
