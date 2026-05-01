@@ -209,16 +209,34 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     
     List<Truyen> findTop10ByOrderByLuotXemDesc();
     
+//    @Query("""
+//    	    SELECT new com.fpoly.dto.DoanhThuTruyenDTO(
+//    	        t.id, t.tenTruyen, t.loaiTruyen, t.trangThai, COALESCE(SUM(mk.giaToken), 0L)
+//    	    )
+//    	    FROM Truyen t
+//    	    LEFT JOIN Chuong c ON c.truyen.id = t.id
+//    	    LEFT JOIN MoKhoaChuong mk ON mk.chuong.id = c.id
+//    	    WHERE t.nguoiDang.id = :userId
+//    	    GROUP BY t.id, t.tenTruyen, t.loaiTruyen, t.trangThai
+//    	    ORDER BY COALESCE(SUM(mk.giaToken), 0L) DESC
+//    	""")
+//    	List<DoanhThuTruyenDTO> layDoanhThuCacTruyenCuaUser(@Param("userId") Long userId);
+    
     @Query("""
-    	    SELECT new com.fpoly.dto.DoanhThuTruyenDTO(
-    	        t.id, t.tenTruyen, t.loaiTruyen, t.trangThai, COALESCE(SUM(mk.giaToken), 0L)
-    	    )
-    	    FROM Truyen t
-    	    LEFT JOIN Chuong c ON c.truyen.id = t.id
-    	    LEFT JOIN MoKhoaChuong mk ON mk.chuong.id = c.id
-    	    WHERE t.nguoiDang.id = :userId
-    	    GROUP BY t.id, t.tenTruyen, t.loaiTruyen, t.trangThai
-    	    ORDER BY COALESCE(SUM(mk.giaToken), 0L) DESC
-    	""")
-    	List<DoanhThuTruyenDTO> layDoanhThuCacTruyenCuaUser(@Param("userId") Long userId);
+    		SELECT new com.fpoly.dto.DoanhThuTruyenDTO(
+    		    t.id,
+    		    t.tenTruyen,
+    		    t.loaiTruyen,
+    		    t.trangThai,
+    		    COALESCE(SUM(mk.giaToken), 0L),
+    		    MAX(mk.ngayMo)
+    		)
+    		FROM Truyen t
+    		LEFT JOIN Chuong c ON c.truyen.id = t.id
+    		LEFT JOIN MoKhoaChuong mk ON mk.chuong.id = c.id
+    		WHERE t.nguoiDang.id = :userId
+    		GROUP BY t.id, t.tenTruyen, t.loaiTruyen, t.trangThai
+    		ORDER BY COALESCE(SUM(mk.giaToken), 0L) DESC
+    		""")
+    		List<DoanhThuTruyenDTO> layDoanhThuCacTruyenCuaUser(@Param("userId") Long userId);
 }
