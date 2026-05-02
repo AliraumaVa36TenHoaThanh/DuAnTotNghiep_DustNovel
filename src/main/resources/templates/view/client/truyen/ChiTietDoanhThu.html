@@ -179,10 +179,14 @@ th, td {
                 <strong th:text="${truyen.tenTruyen}"></strong>
             </p>
         </div>
-
+        <div>
+		<a th:href="@{/DustNovel/truyen/{id}(id=${truyen.id})}" class="btn btn-primary shadow-sm fw-bold">
+                <i class="bi bi-book"></i> Xem truyện
+            </a>
         <a th:href="@{/dbu/doanh-thu}" class="btn btn-secondary">
             ← Quay lại
         </a>
+        </div>
     </div>
 
     <!-- CARD -->
