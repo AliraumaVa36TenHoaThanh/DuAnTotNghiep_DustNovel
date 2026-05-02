@@ -100,7 +100,11 @@
 						        ❌ Xoá truyện
 						    </button>
 						</form>
-
+						<a class="btn btn-info shadow-sm text-white fw-bold w-100" 
+                           th:href="@{/dbu/doanh-thu/{id}(id=${truyen.id})}"
+                           th:if="${@permissionService.canEditTruyen(truyen.id)}">
+                            <i class="bi bi-graph-up-arrow"></i> Xem Doanh Thu
+                        </a>
                     </div>
                 </div>
             </div>
