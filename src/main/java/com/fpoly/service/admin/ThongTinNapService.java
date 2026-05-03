@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.fpoly.repository.NguoiDungRepository;
+import com.fpoly.model.NapTien;
 import com.fpoly.model.NguoiDung;
 import com.fpoly.repository.NapTienRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,9 @@ public class ThongTinNapService {
 
     public List<NguoiDung> getTopToken() {
         return nguoiDungRepository.findTop5ByOrderByTokenDesc();
+    }
+    
+    public List<NapTien> getAllNapTien() {
+        return napTienRepository.findAll();
     }
 }

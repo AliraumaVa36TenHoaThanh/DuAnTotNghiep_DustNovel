@@ -1,4 +1,230 @@
 <div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+.mini-filter{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:fit-content;        
+    max-width:100%;
+    background:#f8fbff;
+    padding:10px 12px;
+    border:1px solid #e5e7eb;
+    box-shadow:0 4px 12px rgba(0,0,0,0.05);
+    margin-top:10px;
+}
+
+.mini-filter .form-select,
+.mini-filter .form-control{
+    height:40px;
+    min-width:190px;
+    border-radius:10px;
+    border:1px solid #d1d5db;
+    font-size:14px;
+    box-shadow:none;
+}
+
+#filterType{
+    width:150px;
+}
+
+#dayBox{
+    width:180px;
+}
+
+.btn-filter{
+    height:40px;
+    padding:0 18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    white-space:nowrap; 
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,#4f6ef7,#6f8cff);
+    color:white;
+    font-size:14px;
+    font-weight:700;
+    transition:0.2s;
+}
+
+.btn-filter:hover{
+    transform:translateY(-1px);
+    box-shadow:0 5px 14px rgba(79,110,247,0.22);
+}
+
+.btn-reset{
+    width:40px;
+    height:40px;
+    min-width:40px;
+    flex-shrink:0; 
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:10px;
+    border:1px solid #d1d5db;
+    background:#fff;
+    color:#4f6ef7;
+    text-decoration:none;
+    transition:0.3s ease;
+}
+
+.btn-reset:hover{
+    background:#4f6ef7;
+    color:#fff;
+    box-shadow:0 4px 12px rgba(79,110,247,0.25);
+}
+
+/* icon xoay */
+.btn-reset i{
+    animation:spin 1.2s linear infinite;
+}
+
+@keyframes spin{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+}
+
+.doanh-thu-text{
+    font-weight:600;
+    color:#16a34a;
+    white-space: nowrap;
+    margin-left:10px;
+}
+
+</style>
+
+
+<script>
+window.addEventListener("DOMContentLoaded", function () {
+
+    const filterType = document.getElementById("filterType");
+    const dayBox = document.getElementById("dayBox");
+    const monthBox = document.getElementById("monthBox");
+    const yearBox = document.getElementById("yearBox");
+    const quarterBox = document.getElementById("quarterBox");
+
+    function updateFilterUI() {
+        document.querySelectorAll(".filter-item")
+            .forEach(el => el.classList.add("d-none"));
+
+        const value = filterType.value;
+
+        if (value === "day") {
+            dayBox.classList.remove("d-none");
+        }
+        else if (value === "month") {
+            monthBox.classList.remove("d-none");
+            yearBox.classList.remove("d-none");
+        }
+        else if (value === "year") {
+            yearBox.classList.remove("d-none");
+        }
+        else if (value === "quarter") {
+            quarterBox.classList.remove("d-none");
+            yearBox.classList.remove("d-none");
+        }
+    }
+
+    filterType.addEventListener("change", updateFilterUI);
+
+    const params = new URLSearchParams(window.location.search);
+
+    if(params.get("type")) filterType.value = params.get("type");
+    if(params.get("date")) dayBox.value = params.get("date");
+    if(params.get("month")) monthBox.value = params.get("month");
+    if(params.get("year")) yearBox.value = params.get("year");
+    if(params.get("quarter")) quarterBox.value = params.get("quarter");
+
+    updateFilterUI();
+});
+</script>
+
+
+<script>
+window.addEventListener("DOMContentLoaded", function () {
+
+    const filterType = document.getElementById("filterType");
+    const dayBox = document.getElementById("dayBox");
+    const monthBox = document.getElementById("monthBox");
+    const yearBox = document.getElementById("yearBox");
+    const quarterBox = document.getElementById("quarterBox");
+
+    document.getElementById("filterForm")
+    .addEventListener("submit", function(e){
+
+        const type = filterType.value;
+
+        // chưa chọn kiểu lọc
+        if(type === ""){
+            e.preventDefault();
+            alert("Vui lòng chọn kiểu lọc doanh thu");
+            return;
+        }
+
+        // lọc theo ngày
+        if(type === "day" && dayBox.value === ""){
+            e.preventDefault();
+            alert("Vui lòng chọn ngày");
+            return;
+        }
+
+        // lọc theo tháng
+        if(type === "month"){
+
+            if(monthBox.value === "" || yearBox.value === ""){
+                e.preventDefault();
+                alert("Vui lòng chọn tháng và năm");
+                return;
+            }
+
+            // kiểm tra số âm
+            if(parseInt(monthBox.value) < 0 || parseInt(yearBox.value) < 0){
+                e.preventDefault();
+                alert("Không được nhập số âm");
+                return;
+            }
+        }
+
+        // lọc theo năm
+        if(type === "year"){
+
+            if(yearBox.value === ""){
+                e.preventDefault();
+                alert("Vui lòng nhập năm");
+                return;
+            }
+
+            // kiểm tra số âm
+            if(parseInt(yearBox.value) < 0){
+                e.preventDefault();
+                alert("Năm không hợp lệ");
+                return;
+            }
+        }
+
+        // lọc theo quý
+        if(type === "quarter"){
+
+            if(quarterBox.value === "" || yearBox.value === ""){
+                e.preventDefault();
+                alert("Vui lòng chọn quý và năm");
+                return;
+            }
+
+            // kiểm tra số âm
+            if(parseInt(quarterBox.value) < 0 || parseInt(yearBox.value) < 0){
+                e.preventDefault();
+                alert("Không được nhập số âm");
+                return;
+            }
+        }
+
+    });
+});
+</script>
+
 
 <div id="main">
     <div class="page-heading">
@@ -19,6 +245,102 @@
             </div>
             <!-- ================= BIỂU ĐỒ ================= -->
             <div class="col-12 mt-3">
+            
+            
+            <form th:action="@{/dba/thong-tin-nap/filter}" method="get"
+						class="mini-filter" id="filterForm">
+
+						<!-- TYPE -->
+						<select name="type" id="filterType" class="form-select">
+
+							<option value="">Lọc doanh thu theo</option>
+
+							<option value="day" th:selected="${param.type == 'day'}">
+								Ngày</option>
+
+							<option value="month" th:selected="${param.type == 'month'}">
+								Tháng</option>
+
+							<option value="year" th:selected="${param.type == 'year'}">
+								Năm</option>
+
+							<option value="quarter" th:selected="${param.type == 'quarter'}">
+								Quý</option>
+
+						</select>
+
+						<!-- DAY -->
+						<input type="date" name="date" id="dayBox"
+							th:value="${param.date}" class="form-control filter-item d-none">
+
+						<!-- MONTH -->
+						<select name="month" id="monthBox"
+							class="form-select filter-item d-none">
+
+							<option value="">Tháng</option>
+							<option value="1" th:selected="${param.month == '1'}">Tháng
+								1</option>
+							<option value="2" th:selected="${param.month == '2'}">Tháng
+								2</option>
+							<option value="3" th:selected="${param.month == '3'}">Tháng
+								3</option>
+							<option value="4" th:selected="${param.month == '4'}">Tháng
+								4</option>
+							<option value="5" th:selected="${param.month == '5'}">Tháng
+								5</option>
+							<option value="6" th:selected="${param.month == '6'}">Tháng
+								6</option>
+							<option value="7" th:selected="${param.month == '7'}">Tháng
+								7</option>
+							<option value="8" th:selected="${param.month == '8'}">Tháng
+								8</option>
+							<option value="9" th:selected="${param.month == '9'}">Tháng
+								9</option>
+							<option value="10" th:selected="${param.month == '10'}">Tháng
+								10</option>
+							<option value="11" th:selected="${param.month == '11'}">Tháng
+								11</option>
+							<option value="12" th:selected="${param.month == '12'}">Tháng
+								12</option>
+
+						</select>
+
+						<!-- YEAR -->
+						<input type="number" name="year" id="yearBox" placeholder="Năm"
+							th:value="${param.year}" class="form-control filter-item d-none">
+
+						<!-- QUARTER -->
+						<select name="quarter" id="quarterBox"
+							class="form-select filter-item d-none">
+
+							<option value="">Quý</option>
+							<option value="1" th:selected="${param.quarter == '1'}">Quý
+								1</option>
+							<option value="2" th:selected="${param.quarter == '2'}">Quý
+								2</option>
+							<option value="3" th:selected="${param.quarter == '3'}">Quý
+								3</option>
+							<option value="4" th:selected="${param.quarter == '4'}">Quý
+								4</option>
+
+						</select>
+
+						<button class="btn btn-filter">Lọc Doanh Thu</button>
+						
+						
+						<a th:href="@{/dba/thong-tin-nap}" class="btn-reset"> <i
+							class="fa-solid fa-rotate-right"></i>
+						</a>
+						
+						<span class="doanh-thu-text">
+                              Doanh thu:
+                         <span th:text="${#numbers.formatDecimal(tongTienFilter,0,'COMMA',0,'POINT')}"></span>
+                           VNĐ
+                       </span>
+
+					</form>
+            
+            
                 <div class="card shadow-sm">
                     <div class="card-header">
                         <h5>Biểu đồ doanh thu theo ngày</h5>
@@ -104,7 +426,7 @@
 </div>
 
 <!-- ================= CHART JS ================= -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script th:inline="javascript">
     const labels = [[${doanhThuNgay}]].map(item => item[0]);
@@ -124,6 +446,58 @@
             }]
         }
     });
+</script> -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+window.addEventListener("DOMContentLoaded", function () {
+
+    const rawData = [[${doanhThuNgayFilter != null 
+        ? doanhThuNgayFilter 
+        : doanhThuNgay}]];
+
+    const labels = rawData.map(item => item[0]);
+    const data = rawData.map(item => Number(item[1]));
+
+    const ctx = document.getElementById('revenueChart');
+
+    if (ctx) {
+
+        new Chart(ctx, {
+            type: 'line',
+
+            data: {
+                labels: labels,
+
+                datasets: [{
+                    label: 'Doanh thu',
+                    data: data,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+
+            options: {
+
+                responsive: true,
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('vi-VN');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+});
 </script>
 
 </div>
