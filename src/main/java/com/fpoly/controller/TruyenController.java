@@ -188,15 +188,17 @@ public class TruyenController {
 	            model.addAttribute("content", "truyen/add");
 	            model.addAttribute("title", "Thêm truyện");
 
-	            return "layout/main"; // không redirect để giữ dữ liệu
+	            return "layout/main"; 
 	        }
 
 	        truyenService.save(truyen, theLoaiIds);
+            
 	        redirectAttributes.addFlashAttribute(
 	        	    "successMessage",
 	        	    "Thêm truyện \"" + truyen.getTenTruyen() + "\" thành công!"
 	        	);
-	        return "redirect:/DustNovel/home";
+            
+	        return "redirect:/DustNovel/truyen/" + truyen.getId();
 	    }
 
 	    @GetMapping("/truyen/tim-kiem")
