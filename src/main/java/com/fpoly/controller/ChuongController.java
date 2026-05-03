@@ -118,9 +118,9 @@ public class ChuongController {
 	    model.addAttribute("bannerTruyen", bannerTruyen);
 	    
 	    
-	    List<Chuong> danhSachChuong = chuongService.findByTap(chuong.getTap().getId());
+	    List<Chuong> dsChuong = chuongRepo.findByTruyenId(chuong.getTruyen().getId());
 	    model.addAttribute("chuong", chuong);
-	    model.addAttribute("dsChuong", danhSachChuong);
+	    model.addAttribute("dsChuong", dsChuong);
 	    model.addAttribute("chuongTruoc", chuongTruoc);
 	    model.addAttribute("chuongSau", chuongSau);
 	    model.addAttribute("canRead", canRead);
