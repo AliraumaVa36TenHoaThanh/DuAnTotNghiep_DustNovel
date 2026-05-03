@@ -1,169 +1,116 @@
-<!--  <div th:fragment="muaModal(chap, currentUser)">
+<div th:fragment="muaModal(chap, currentUser)">
     <div class="modal fade" th:id="'muaChuongModal__' + ${chap.id}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold text-dark">Xác nhận mua chương</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            
+            <!-- ======================================================= -->
+            <!-- TRƯỜNG HỢP 1: CHƯA ĐĂNG NHẬP (Hiện Form mời Đăng Nhập)  -->
+            <!-- ======================================================= -->
+            <div class="modal-content border-primary border-2 shadow-lg" th:if="${currentUser == null}">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold text-dark">⚠️ Yêu cầu đăng nhập</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body text-center text-dark">
-                    <p class="mb-1">Bạn đang mua: <b th:text="${chap.tieuDe}"></b></p>
-                    <h4 class="text-danger fw-bold"><span th:text="${chap.giaToken}"></span> Token</h4>
-                    <hr>
-                    <div th:if="${currentUser != null}" class="bg-light p-2 rounded">
-                        <span>Số dư hiện tại: </span>	
-                        <b class="text-primary"><span th:text="${currentUser.token}"></span> Token</b>
-                    </div>
+                <div class="modal-body text-center text-dark py-4">
+                    <i class="bi bi-person-lock text-primary" style="font-size: 3.5rem;"></i>
+                    <p class="fs-5 mt-3 mb-0">Bạn cần đăng nhập để mua chương.</p>
+                    <p class="fs-5 fw-bold mb-0">Bạn có muốn đăng nhập ngay không?</p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    
-                    <form th:if="${currentUser != null}" th:action="@{/DustNovel/chuong/{id}/mua(id=${chap.id})}" method="post">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>	
-                        <button type="submit" class="btn btn-danger px-4" 
-                                th:disabled="${currentUser.token < (chap.giaToken != null ? chap.giaToken : 0)}">
-                            💰 Xác nhận mua
-                        </button>
-                    </form>
-                    
-                    <a th:if="${currentUser == null}" th:href="@{/DustNovel/login}" class="btn btn-primary">Đăng nhập</a>
+                <div class="modal-footer justify-content-center bg-light">
+                    <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Không</button>
+                    <a th:href="@{/DustNovel/login}" class="btn btn-primary px-4 fw-bold">Có, đăng nhập 🚀</a>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
---> 
-.
-
-<div th:fragment="muaModal(chap, currentUser)">
-    <div class="modal fade"
-         th:id="'muaChuongModal__' + ${chap.id}"
-         tabindex="-1"
-         aria-hidden="true">
-
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-
+            <!-- ======================================================= -->
+            <!-- TRƯỜNG HỢP 2: ĐÃ ĐĂNG NHẬP (Hiện Form báo giá mua chương) -->
+            <!-- ======================================================= -->
+            <div class="modal-content" th:if="${currentUser != null}">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold text-dark">
-                        Xác nhận mua chương
-                    </h5>
-                    <button type="button" class="btn-close"
-                            data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title fw-bold text-dark">Xác nhận mua chương</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body text-center text-dark">
-                    <p class="mb-1">
-                        Bạn đang mua:
-                        <b th:text="${chap.tieuDe}"></b>
-                    </p>
+                    <p class="mb-1">Bạn đang mua: <b th:text="${chap.tieuDe}"></b></p>
 
-                    <!-- =================== CÓ PHIẾU =================== -->
-                    <div th:if="${currentUser != null 
-                        and currentUser.phieuThuong != null
-                        and currentUser.phieuThuong.soLuong > 0}">
-
+                    <!-- NẾU CÓ PHIẾU THƯỞNG -->
+                    <div th:if="${currentUser.phieuThuong != null and currentUser.phieuThuong.soLuong > 0}">
                         <div class="alert alert-success py-2">
-                            🎟️ Bạn đang có
-                            <b th:text="${currentUser.phieuThuong.soLuong}"></b>
-                            phiếu thưởng
+                            🎟️ Bạn đang có <b th:text="${currentUser.phieuThuong.soLuong}"></b> phiếu thưởng
                         </div>
-
                         <p>Bạn muốn dùng <b>1 phiếu</b> để mở chương này không?</p>
-
-                        <form th:action="@{/DustNovel/chuong/{id}/mua-phieu(id=${chap.id})}"
-                              method="post">
+                        
+                        <form th:action="@{/DustNovel/chuong/{id}/mua-phieu(id=${chap.id})}" method="post">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                            <button class="btn btn-success w-100 mb-2">
-                                ✅ Dùng phiếu
-                            </button>
+                            <button class="btn btn-success w-100 mb-2">✅ Dùng phiếu</button>
                         </form>
 
                         <hr class="my-2">
-
-                        <p class="text-muted mb-1">
-                            Hoặc mua bằng
-                            <b th:text="${chap.giaToken}"></b> Token
-                        </p>
-
+                        <p class="text-muted mb-1">Hoặc mua bằng <b th:text="${chap.giaToken}"></b> Token</p>
+                        
                         <div class="bg-light p-2 rounded mb-2">
-                            Số dư hiện tại:
-                            <b class="text-primary">
-                                <span th:text="${currentUser.token}"></span>
-                            </b>
-                            Token
+                            Số dư hiện tại: <b class="text-primary"><span th:text="${currentUser.token}"></span> Token</b>
                         </div>
-
-                        <form th:action="@{/DustNovel/chuong/{id}/mua(id=${chap.id})}"
-                              method="post">
+                        
+                        <button type="button" class="btn btn-outline-danger w-100" th:onclick="'handleBuySingle(' + ${chap.id} + ', 1, ' + ${currentUser.token} + ', ' + ${chap.giaToken} + ')'">
+                            💰 Mua bằng token
+                        </button>
+                        <form th:id="'formMuaSingle1_' + ${chap.id}" th:action="@{/DustNovel/chuong/{id}/mua(id=${chap.id})}" method="post" class="d-none">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                            <button class="btn btn-outline-danger w-100"
-                                    th:disabled="${currentUser.token < chap.giaToken}">
-                                💰 Mua bằng token
-                            </button>
                         </form>
                     </div>
 
-                    <!-- =================== KHÔNG CÓ PHIẾU =================== -->
-                    <div th:unless="${currentUser != null 
-                        and currentUser.phieuThuong != null
-                        and currentUser.phieuThuong.soLuong > 0}">
-
-                        <h4 class="text-danger fw-bold">
-                            <span th:text="${chap.giaToken}"></span> Token
-                        </h4>
-
+                    <!-- NẾU KHÔNG CÓ PHIẾU THƯỞNG -->
+                    <div th:unless="${currentUser.phieuThuong != null and currentUser.phieuThuong.soLuong > 0}">
+                        <h4 class="text-danger fw-bold"><span th:text="${chap.giaToken}"></span> Token</h4>
                         <hr>
-
-                        <div th:if="${currentUser != null}"
-                             class="bg-light p-2 rounded">
-                            Số dư hiện tại:
-                            <b class="text-primary">
-                                <span th:text="${currentUser.token}"></span>
-                            </b>
-                            Token
+                        <div class="bg-light p-2 rounded">
+                            Số dư hiện tại: <b class="text-primary"><span th:text="${currentUser.token}"></span> Token</b>
                         </div>
                     </div>
                 </div>
 
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
 
-                    <button type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        Hủy
-                    </button>
-
-                    <!-- KHÔNG CÓ PHIẾU → MUA TOKEN -->
-                    <form th:if="${currentUser != null 
-                        and (currentUser.phieuThuong == null 
-                        or currentUser.phieuThuong.soLuong == 0)}"
-                          th:action="@{/DustNovel/chuong/{id}/mua(id=${chap.id})}"
-                          method="post">
-
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-
-                        <button type="submit"
-                                class="btn btn-danger px-4"
-                                th:disabled="${currentUser.token < chap.giaToken}">
+                    <!-- NÚT MUA TOKEN (Chỉ hiện khi KHÔNG có phiếu thưởng) -->
+                    <th:block th:if="${currentUser.phieuThuong == null or currentUser.phieuThuong.soLuong == 0}">
+                        <button type="button" class="btn btn-danger px-4" th:onclick="'handleBuySingle(' + ${chap.id} + ', 2, ' + ${currentUser.token} + ', ' + ${chap.giaToken} + ')'">
                             💰 Xác nhận mua
                         </button>
-                    </form>
-
-                    <a th:if="${currentUser == null}"
-                       th:href="@{/DustNovel/login}"
-                       class="btn btn-primary">
-                        Đăng nhập
-                    </a>
-
+                        <form th:id="'formMuaSingle2_' + ${chap.id}" th:action="@{/DustNovel/chuong/{id}/mua(id=${chap.id})}" method="post" class="d-none">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        </form>
+                    </th:block>
                 </div>
             </div>
+            
         </div>
     </div>
 </div>
 
 <div th:fragment="muaHangLoatTruyenModal(truyen, tatCaChuong, currentUser)">
+    <div class="modal fade" id="napThemTokenModal" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-warning border-2 shadow-lg">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title fw-bold text-dark">⚠️ Số dư không đủ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center text-dark py-4">
+                    <i class="bi bi-wallet2 text-warning" style="font-size: 3.5rem;"></i>
+                    <p class="fs-5 mt-3 mb-0">Bạn không đủ token để thanh toán.</p>
+                    <p class="fs-5 fw-bold mb-0">Bạn có muốn nạp thêm token không?</p>
+                </div>
+                <div class="modal-footer justify-content-center bg-light">
+                    <button type="button" class="btn btn-secondary px-4 fw-bold" data-bs-dismiss="modal">Không</button>
+                    <a th:href="@{/DustNovel/nap-tien-tu-dong}" class="btn btn-warning px-4 fw-bold text-dark">Có, nạp ngay 🚀</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mua hàng loạt Modal -->
     <div class="modal fade" th:id="'muaHangLoatTruyenModal__' + ${truyen.id}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -251,7 +198,9 @@
                         
                         <div>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                            <button type="submit" class="btn btn-danger px-3 fw-bold" th:id="'btnBuyBulkTruyen_' + ${truyen.id}" disabled>Thanh toán</button>
+                            <!-- SỬA: Đổi nút Thanh Toán sang điều khiển bằng JS -->
+                            <button type="button" class="btn btn-danger px-3 fw-bold" th:id="'btnBuyBulkTruyen_' + ${truyen.id}" disabled 
+                                    th:onclick="'handleBuyBulk(' + ${truyen.id} + ')'">Thanh toán</button>
                         </div>
                     </div>
                 </form>
@@ -272,7 +221,8 @@
                 document.getElementById('totalPriceTruyen_' + truyenId).innerText = total;
                 const btnBuy = document.getElementById('btnBuyBulkTruyen_' + truyenId);
                 
-                if (checkboxes.length > 0 && total <= currentUserToken) {
+                // SỬA: Chỉ cần có tick chọn là nút sẽ sáng lên (không quan tâm đủ tiền hay không)
+                if (checkboxes.length > 0) {
                     btnBuy.removeAttribute('disabled'); 
                 } else {
                     btnBuy.setAttribute('disabled', 'true');
@@ -284,7 +234,6 @@
                 let checkboxes = document.querySelectorAll('input.chap-cb-truyen[data-truyen-id="' + truyenId + '"]');
                 
                 checkboxes.forEach(function(cb) { 
-                    // Chỉ tick tất cả cho những chương đang nằm trong Tập được Lọc
                     if (selectedTapId === 'ALL' || cb.getAttribute('data-tap-id') === selectedTapId) {
                         cb.checked = isChecked; 
                     }
@@ -292,15 +241,13 @@
                 updateCartTotalTruyen(truyenId);
             }
 
-            // --- TÍNH NĂNG 1: TỰ ĐỘNG KHỞI TẠO CÁC OPTION LỌC TẬP ---
             function initVolumeFilter(truyenId) {
                 let select = document.getElementById('volFilter_' + truyenId);
-                if(!select || select.options.length > 1) return; // Nếu đã có dữ liệu rồi thì thôi
+                if(!select || select.options.length > 1) return;
 
                 let checkboxes = document.querySelectorAll('input.chap-cb-truyen[data-truyen-id="' + truyenId + '"]');
                 let uniqueTaps = {};
                 
-                // Thu thập tất cả id và name của các Tập từ data attribute của checkbox
                 checkboxes.forEach(cb => {
                     let tapId = cb.getAttribute('data-tap-id');
                     let tapName = cb.getAttribute('data-tap-name');
@@ -314,18 +261,17 @@
                 });
             }
 
-            // --- TÍNH NĂNG 2: XỬ LÝ KHI NGƯỜI DÙNG CHỌN 1 TẬP ---
             function filterVolume(truyenId) {
                 let selectedTapId = document.getElementById('volFilter_' + truyenId).value;
                 let checkboxes = document.querySelectorAll('input.chap-cb-truyen[data-truyen-id="' + truyenId + '"]');
 
                 checkboxes.forEach(cb => {
-                    let li = cb.closest('li'); // Tìm thẻ <li> chứa checkbox này
+                    let li = cb.closest('li');
                     if (selectedTapId === 'ALL' || cb.getAttribute('data-tap-id') === selectedTapId) {
-                        li.classList.remove('d-none'); // Hiện
+                        li.classList.remove('d-none');
                     } else {
-                        li.classList.add('d-none'); // Ẩn
-                        cb.checked = false; // Bỏ tick nếu bị ẩn đi
+                        li.classList.add('d-none');
+                        cb.checked = false;
                     }
                 });
 
@@ -333,7 +279,6 @@
                 updateCartTotalTruyen(truyenId);
             }
 
-            // --- TÍNH NĂNG 3: ÁP DỤNG TICK THEO KHOẢNG CHƯƠNG ---
             function applyRangeSelect(truyenId) {
                 let start = parseInt(document.getElementById('chapStart_' + truyenId).value);
                 let end = parseInt(document.getElementById('chapEnd_' + truyenId).value);
@@ -346,11 +291,9 @@
                 let selectedTapId = document.getElementById('volFilter_' + truyenId).value;
                 let checkboxes = document.querySelectorAll('input.chap-cb-truyen[data-truyen-id="' + truyenId + '"]');
 
-                // Bỏ tick hết trước khi áp dụng khoảng mới
                 checkboxes.forEach(function(cb) { cb.checked = false; });
 
                 checkboxes.forEach(function(cb) {
-                    // Mấu chốt: Chỉ áp dụng range cho các chương thuộc Tập đang được lọc
                     if (selectedTapId === 'ALL' || cb.getAttribute('data-tap-id') === selectedTapId) {
                         let soChuong = parseInt(cb.getAttribute('data-so-chuong'));
                         if (soChuong >= start && soChuong <= end) {
@@ -362,6 +305,42 @@
                 document.getElementById('checkAllTruyen_' + truyenId).checked = false;
                 updateCartTotalTruyen(truyenId);
             }
+
+            // =========================================================
+            // HÀM XỬ LÝ CHUYỂN HƯỚNG NẠP TIỀN THÔNG MINH
+            // =========================================================
+            window.handleBuySingle = function(chapId, formIdSuffix, userToken, price) {
+                if (userToken < price) {
+                    // Tắt Popup mua 1 chương
+                    let currentModalEl = document.getElementById('muaChuongModal__' + chapId);
+                    let currentModal = bootstrap.Modal.getInstance(currentModalEl);
+                    if(currentModal) currentModal.hide();
+                    
+                    // Bật Popup nạp tiền
+                    let napTienModal = new bootstrap.Modal(document.getElementById('napThemTokenModal'));
+                    napTienModal.show();
+                } else {
+                    document.getElementById('formMuaSingle' + formIdSuffix + '_' + chapId).submit();
+                }
+            };
+
+            window.handleBuyBulk = function(truyenId) {
+                let totalText = document.getElementById('totalPriceTruyen_' + truyenId).innerText;
+                let total = parseInt(totalText) || 0;
+                
+                if (currentUserToken < total) {
+                    // Tắt Popup mua hàng loạt
+                    let currentModalEl = document.getElementById('muaHangLoatTruyenModal__' + truyenId);
+                    let currentModal = bootstrap.Modal.getInstance(currentModalEl);
+                    if(currentModal) currentModal.hide();
+                    
+                    // Bật Popup nạp tiền
+                    let napTienModal = new bootstrap.Modal(document.getElementById('napThemTokenModal'));
+                    napTienModal.show();
+                } else {
+                    document.getElementById('formMuaHangLoatTruyen_' + truyenId).submit();
+                }
+            };
         }
         
         // Chạy khởi tạo danh sách Tập ngay sau khi HTML được render xong
@@ -454,7 +433,6 @@
         if (typeof window.khoaModalInitialized === 'undefined') {
             window.khoaModalInitialized = true;
 
-            // --- 1. TỰ ĐỘNG KHỞI TẠO DANH SÁCH TẬP VÀO THẺ SELECT ---
             function initKhoaVolumeFilter(truyenId) {
                 let select = document.getElementById('volFilterKhoa_' + truyenId);
                 if(!select || select.options.length > 1) return;
@@ -475,7 +453,6 @@
                 });
             }
 
-            // --- 2. XỬ LÝ LỌC ẨN/HIỆN CHƯƠNG THEO TẬP ---
             function filterKhoaVolume(truyenId) {
                 let selectedTapId = document.getElementById('volFilterKhoa_' + truyenId).value;
                 let checkboxes = document.querySelectorAll('input.khoa-cb-truyen[data-truyen-id="' + truyenId + '"]');
@@ -490,7 +467,6 @@
                 });
             }
 
-            // --- 3. NÚT KHÓA/MỞ TẤT CẢ (Chỉ tác động tới các chương ĐANG HIỂN THỊ) ---
             function toggleAllKhoa(truyenId, isLock) {
                 let selectedTapId = document.getElementById('volFilterKhoa_' + truyenId).value;
                 let checkboxes = document.querySelectorAll('input.khoa-cb-truyen[data-truyen-id="' + truyenId + '"]');
@@ -502,7 +478,6 @@
                 });
             }
 
-            // --- 4. NÚT KHÓA/MỞ THEO KHOẢNG CHƯƠNG (Chỉ tác động tới các chương ĐANG HIỂN THỊ) ---
             function applyKhoaRange(truyenId, isLock) {
                 let start = parseInt(document.getElementById('khoaStart_' + truyenId).value);
                 let end = parseInt(document.getElementById('khoaEnd_' + truyenId).value);
@@ -516,18 +491,17 @@
                 let checkboxes = document.querySelectorAll('input.khoa-cb-truyen[data-truyen-id="' + truyenId + '"]');
 
                 checkboxes.forEach(function(cb) {
-                    // Áp dụng cho các chương nằm trong Tập đang lọc (Hoặc ALL)
                     if (selectedTapId === 'ALL' || cb.getAttribute('data-tap-id') === selectedTapId) {
                         let soChuong = parseInt(cb.getAttribute('data-so-chuong'));
                         if (soChuong >= start && soChuong <= end) {
-                            cb.checked = isLock; // isLock = true (Khóa) hoặc false (Mở)
+                            cb.checked = isLock; 
                         }
                     }
                 });
             }
         }
         
-        // Khởi tạo select box Tập khi mở load trang
+        // ĐÃ SỬA: Đổi đúng tên hàm Khóa
         setTimeout(() => { initKhoaVolumeFilter(/*[[${truyen.id}]]*/ 0); }, 500);
     </script>
 </div>
