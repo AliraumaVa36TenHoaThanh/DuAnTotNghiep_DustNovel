@@ -143,6 +143,7 @@
                         <div th:if="${chuongMoi != null}" class="mb-2 text-truncate" style="font-size: 0.85rem;">
                             <span class="badge bg-danger me-1">New!</span>
                             <a th:href="@{/DustNovel/chuong/{id}(id=${chuongMoi.id})}"
+                               th:classappend="${chuongMoi.khoa} ? 'locked-chuong' : ''"
                                class="text-decoration-none text-primary fw-bold"
                                th:text="'Chương ' + ${chuongMoi.soChuong} + ': ' + ${chuongMoi.tieuDe}"
 							   >
@@ -293,6 +294,7 @@
 	                        <div th:if="${chuongMoi != null}" class="mb-2 text-truncate" style="font-size: 0.85rem;">
 	                            <span class="badge bg-danger me-1">New!</span>
 	                            <a th:href="@{/DustNovel/chuong/{id}(id=${chuongMoi.id})}"
+	                               th:classappend="${chuongMoi.khoa} ? 'locked-chuong' : ''"
 	                               class="text-decoration-none text-primary fw-bold"
 	                               th:text="'Chương ' + ${chuongMoi.soChuong} + ': ' + ${chuongMoi.tieuDe}">
 	                            </a>
@@ -726,6 +728,20 @@ modeScroll.onclick = () => {
 
 });
 
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener("click", function(e){
+    const link = e.target.closest(".locked-chuong");
+
+    if(link){
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
+});
 </script>
 
 
