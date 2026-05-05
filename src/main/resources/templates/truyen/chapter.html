@@ -323,7 +323,11 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
     <p class="text-center text-muted small">
         Cập nhật: <span th:text="${#temporals.format(chuong.ngayTao, 'dd/MM/yyyy HH:mm')}"></span>
     </p>
-    
+    <p class="text-center text-muted small mb-4">
+        <i class="bi bi-clock"></i> Cập nhật: <span th:text="${#temporals.format(chuong.ngayTao, 'dd/MM/yyyy HH:mm')}"></span>
+        &nbsp;|&nbsp;
+        <i class="bi bi-file-earmark-word"></i> Số từ: <span id="wordCountDisplay" class="fw-bold text-primary">Đang đếm...</span>
+    </p>
 
 <div th:if="${bannerTruyen != null and !#lists.isEmpty(bannerTruyen)}"
      class="text-center my-5 banner-slider"
@@ -537,6 +541,23 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.c
 	<div th:replace="~{chuong/mua-modal :: muaHangLoatTruyenModal(${chuong.truyen}, ${dsChuong}, ${currentUser})}"></div>
     <script th:inline="javascript">
     document.addEventListener("DOMContentLoaded", function () {
+    	
+    	const contentBox = document.getElementById("reader-content");
+        const wordCountDisplay = document.getElementById("wordCountDisplay");
+        
+        if (contentBox && wordCountDisplay) {
+            let text = contentBox.innerText || contentBox.textContent;
+            
+            let cleanText = text.trim().replace(/\s+/g, ' ');
+            
+            let wordCount = cleanText === "" ? 0 : cleanText.split(' ').length;
+            
+            wordCountDisplay.innerText = wordCount.toLocaleString("vi-VN") + " từ";
+        } else if (wordCountDisplay) {
+            wordCountDisplay.innerText = "Chưa mở khóa";
+        }
+    	
+    	
         const settingBtn   = document.getElementById("reader-setting-btn");
         const settingPanel = document.getElementById("reader-setting-panel");
         const fontSelect   = document.getElementById("fontSelect");
