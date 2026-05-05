@@ -15,7 +15,10 @@
                 <li class="list-group-item">Số tiền cần chuyển: <strong class="text-danger fs-5" th:text="${#numbers.formatDecimal(don.soTienThuc, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong></li>
                 <li class="list-group-item">Nội dung chuyển khoản: <strong class="text-primary fs-5" th:text="${don.noiDungCk}"></strong></li>
             </ul>
-
+			<div class="alert alert-danger fw-bold mb-3">
+                ⏳ Thời gian còn lại:
+                <span id="countdown">05:00</span>
+            </div>
             <div class="alert alert-warning mt-3 mb-0">
                 <div class="spinner-border spinner-border-sm text-warning me-2" role="status"></div>
                 <strong>Đang chờ thanh toán...</strong> Hệ thống sẽ tự động cộng Token ngay khi nhận được tiền.
@@ -33,6 +36,35 @@
 
     <script th:inline="javascript">
         const maDonNap = /*[[${don.id}]]*/ 0;
+        
+        let totalSeconds = 5 * 60;
+
+        const countdownEl = document.getElementById('countdown');
+
+        const countdownInterval = setInterval(() => {
+
+            let minutes = Math.floor(totalSeconds / 60);
+            let seconds = totalSeconds % 60;
+
+            countdownEl.textContent =
+                String(minutes).padStart(2, '0') + ':' +
+                String(seconds).padStart(2, '0');
+
+            totalSeconds--;
+
+            // Hết thời gian
+            if (totalSeconds < 0) {
+
+                clearInterval(countdownInterval);
+                clearInterval(interval);
+
+                alert("Đã hết thời gian thanh toán!");
+
+                window.location.href = '/DustNovel/nap-tien-tu-dong';
+            }
+
+        }, 1000);
+        
         
         const interval = setInterval(function() {
             // Thêm tham số timestamp (?t=...) để chống trình duyệt lưu Cache GET request

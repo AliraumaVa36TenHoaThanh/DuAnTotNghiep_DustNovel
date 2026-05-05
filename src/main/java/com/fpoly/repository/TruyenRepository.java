@@ -239,4 +239,6 @@ public interface TruyenRepository extends JpaRepository<Truyen, Long> {
     		ORDER BY COALESCE(SUM(mk.giaToken), 0L) DESC
     		""")
     		List<DoanhThuTruyenDTO> layDoanhThuCacTruyenCuaUser(@Param("userId") Long userId);
+    
+    List<Truyen> findByNguoiDangId(Long id);
 }

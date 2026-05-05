@@ -28,7 +28,7 @@ public class NapTienTuDongService {
         don.setSoTokenNhan(soToken);
         
         // Sinh mã chuyển khoản duy nhất (Tiền tố DATN + ID User + Random 4 số)
-        String noiDung = "DATN" + user.getId() + (System.currentTimeMillis() % 10000);
+        String noiDung = "NAP_" + user.getTenDangNhap()  + "_" +  (System.currentTimeMillis() % 10000);
         don.setNoiDungCk(noiDung);
         don.setTrangThai("PENDING");
 

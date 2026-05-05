@@ -113,9 +113,22 @@
         <div class="text-center mb-5">
             <p class="fw-bold">💖 BẢNG GIÁ NẠP TOKEN 💖</p>
             <p class="text-muted">Tỉ giá quy đổi: 20 VNĐ = 1 Token</p>
-			<p class="text-muted">Hãy nạp để ủng hộ các author và admin nhó :3</p>
+            <div class="mb-3">
+            <a th:href="@{/dbu/nap-tien}"
+               class="btn btn-light border shadow-sm px-4 py-2 rounded-pill fw-bold text-decoration-none">
+                <i class="bi bi-clock-history me-1"></i>
+                Xem lịch sử nạp
+            </a>
         </div>
-
+        <div>
+            <a th:href="@{/DustNovel/rut-tien}"
+               class="btn btn-danger shadow-sm px-4 py-2 rounded-pill fw-bold text-decoration-none">
+                <i class="bi bi-cash-coin me-1"></i>
+                Rút tiền
+            </a>
+        </div>
+        </div>
+	
         <div class="token-grid">
             <th:block th:each="gia : ${ {10000, 20000, 50000, 100000, 200000, 500000} }">
 

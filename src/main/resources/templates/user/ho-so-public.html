@@ -22,6 +22,18 @@
                         </div>
                     </div>
                 </div>
+                <div class="ms-auto d-flex gap-2 mt-3 mt-md-0" th:if="${currentUser != null and currentUser.id == tacGia.id}">
+                    <a th:href="@{/DustNovel/themtruyen}" class="btn btn-light text-success fw-bold shadow-sm d-flex align-items-center gap-2">
+                        <i class="bi bi-plus-circle-fill fs-5"></i> Thêm truyện
+                    </a>
+                    <button type="button" class="btn btn-light text-danger fw-bold shadow-sm d-flex align-items-center gap-2" 
+                            data-bs-toggle="modal" data-bs-target="#xoaNhieuTruyenModal">
+                        <i class="bi bi-trash3-fill fs-5"></i> Xóa hàng loạt
+                    </button>
+                    <a th:href="@{/dbu/doanh-thu}" class="btn btn-light text-primary fw-bold shadow-sm d-flex align-items-center gap-2">
+                        <i class="bi bi-graph-up-arrow fs-5"></i> Doanh thu
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -74,4 +86,5 @@
         </div>
         
     </div>
+			<div th:replace="~{user/xoa-nhieu-truyen :: xoaNhieuTruyenModal(${tatCaTruyen})}"></div>
 </div>
