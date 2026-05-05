@@ -1,7 +1,9 @@
 package com.fpoly.controller;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -15,11 +17,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import com.fpoly.model.NguoiDung;
 import com.fpoly.model.Banner;
+import com.fpoly.model.LichSuDoc;
 import com.fpoly.model.Truyen;
 import com.fpoly.model.enums.LoaiTruyen;
 import com.fpoly.repository.BannerRepository;
+import com.fpoly.repository.LichSuDocRepository;
+import com.fpoly.repository.NguoiDungRepository;
 import com.fpoly.repository.TruyenRepository;
 import com.fpoly.security.CustomUserDetails;
 import com.fpoly.service.TruyenService;
@@ -34,6 +39,11 @@ public class TrangChuController {
     private TruyenRepository truyenRepo;
     @Autowired
     private BannerRepository bannerRepo;
+    @Autowired
+    private LichSuDocRepository lichSuDocRepo;
+
+    @Autowired
+    private NguoiDungRepository nguoiDungRepo;
 //    @GetMapping("/home")
 //    public String home(Model model, Authentication authentication) {
 //    	
@@ -47,7 +57,7 @@ public class TrangChuController {
 //    }
     
     @GetMapping("/home")
-    public String home(Model model) {
+    public String home(Model model, Principal principal) {
 
         model.addAttribute("title", "Trang chủ");
         model.addAttribute("content", "home/index.html");
@@ -74,7 +84,18 @@ public class TrangChuController {
                 );
 
             model.addAttribute("bannerDangChay", bannerDangChay);
-
+            List<LichSuDoc> danhSachLichSu = new ArrayList<>();
+            if (principal != null) {
+                String username = principal.getName();
+                NguoiDung user = nguoiDungRepo.findByTenDangNhap(username).orElse(null);
+                
+                if (user != null) {
+                    danhSachLichSu = lichSuDocRepo.findTop50ByNguoiDungIdOrderByLanDocCuoiDesc(user.getId());
+                }
+            }
+            
+            model.addAttribute("danhSachLichSu", danhSachLichSu);
+            
         return "layout/main";
     }
     

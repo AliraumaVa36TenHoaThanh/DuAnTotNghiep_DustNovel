@@ -520,7 +520,7 @@
 										class="token-value" th:text="${userToken}">0</span> </div>
 								<div class="token-box phieu-box mb-2">
 									<span class="token-label">🎟️ Phiếu thưởng</span>
-									<span class="token-value text-warning fw-bold" th:text="${user?.phieuThuong?.soLuong ?: 0}">0</span>
+									<span class="token-value text-warning fw-bold" th:text="${user != null and user.phieuThuong != null ? user.phieuThuong.soLuong : 0}">0</span>
 								</div>
 
 							</li>
