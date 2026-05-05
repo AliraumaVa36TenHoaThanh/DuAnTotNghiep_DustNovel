@@ -109,4 +109,8 @@ public class Truyen {
     private List<BaoCaoTruyen> danhSachBaoCao = new ArrayList<>();
     @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DanhGiaTruyen> danhSachDanhGia = new ArrayList<>();
+    @OneToMany(mappedBy = "truyen",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+ private List<Banner> banners = new ArrayList<>();
 }

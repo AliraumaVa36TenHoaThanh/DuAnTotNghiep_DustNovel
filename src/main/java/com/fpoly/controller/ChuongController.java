@@ -189,8 +189,8 @@ public class ChuongController {
 
 	    chuong.setTruyen(tap.getTruyen());
 
-	    int nextSo = chuongService.getNextSoChuongByTap(tap.getId());
-	    chuong.setSoChuong(nextSo);
+//	    int nextSo = chuongService.getNextSoChuongByTap(tap.getId());
+//	    chuong.setSoChuong(nextSo);
 
 	    chuongService.save(chuong);
 
@@ -387,6 +387,7 @@ public class ChuongController {
          if (chuongDB == null) {
              return "redirect:/DustNovel/home";
          }
+         chuongDB.setSoChuong(chuongForm.getSoChuong());
          chuongDB.setTieuDe(chuongForm.getTieuDe());
          chuongDB.setNoiDung(chuongForm.getNoiDung());
          chuongService.save(chuongDB);
