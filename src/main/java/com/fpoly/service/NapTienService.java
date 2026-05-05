@@ -68,4 +68,8 @@ public class NapTienService {
         nguoiDungRepo.save(sender);
         nguoiDungRepo.save(receiver);
     }
+    
+    public void save(NguoiDung user){
+        nguoiDungRepo.save(user);
+    }
 }

@@ -112,6 +112,10 @@ public class RutTienController {
 
         Long thue = soToken / 10; // 10%
         Long thucNhan = soToken - thue;
+        
+        user.setToken(user.getToken() - soToken);
+        napTienService.save(user);
+
 
         RutTien rutTien = new RutTien();
         rutTien.setNguoiDung(user);
@@ -121,6 +125,8 @@ public class RutTienController {
         rutTien.setNganHang(nganHang);
         rutTien.setSoTaiKhoan(soTaiKhoan);
         rutTien.setTenChuTaiKhoan(tenChuTaiKhoan);
+        
+        rutTien.setTrangThai("CHO_DUYET");
 
         rutTienRepository.save(rutTien);
 
