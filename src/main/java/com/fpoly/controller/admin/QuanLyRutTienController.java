@@ -71,14 +71,14 @@ public class QuanLyRutTienController {
         if (!"CHO_DUYET".equals(rut.getTrangThai()))
             return "redirect:/dba/rut-tien";
 
-        NguoiDung user = rut.getNguoiDung();
-
-        // 🔥 Trừ token người dùng
-        if (user.getToken() < rut.getSoToken())
-            return "redirect:/dba/rut-tien";
-
-        user.setToken(user.getToken() - rut.getSoToken());
-        nguoiDungRepo.save(user);
+//        NguoiDung user = rut.getNguoiDung();
+//
+//        // 🔥 Trừ token người dùng
+//        if (user.getToken() < rut.getSoToken())
+//            return "redirect:/dba/rut-tien";
+//
+//        user.setToken(user.getToken() - rut.getSoToken());
+//        nguoiDungRepo.save(user);
 
         rut.setTrangThai("DA_TRA");
         rutTienRepo.save(rut);
@@ -95,6 +95,10 @@ public class QuanLyRutTienController {
 
         if (!"CHO_DUYET".equals(rut.getTrangThai()))
             return "redirect:/dba/rut-tien";
+        
+        NguoiDung user = rut.getNguoiDung();
+        user.setToken(user.getToken() + rut.getSoToken());
+        nguoiDungRepo.save(user);
 
         rut.setTrangThai("TU_CHOI");
         rutTienRepo.save(rut);
