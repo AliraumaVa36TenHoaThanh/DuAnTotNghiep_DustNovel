@@ -1,0 +1,113 @@
+<div th:fragment="xoaNhieuTruyenModal(danhSachTruyen)">
+    <div class="modal fade" id="xoaNhieuTruyenModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold">🗑️ Xóa hàng loạt truyện</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                
+                <form th:action="@{/DustNovel/truyen/xoa-hang-loat}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    
+                    <div class="modal-body p-0">
+                        <div class="p-3 bg-light border-bottom">
+                            <div class="text-danger small mb-3">
+                                <i class="bi bi-exclamation-triangle-fill"></i> <i>Tick vào ô để <b>Xóa</b> truyện. Lưu ý: Hành động này không thể hoàn tác!</i>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2 bg-white p-2 rounded border">
+                                <span class="small fw-bold text-secondary text-nowrap"><i class="bi bi-funnel"></i> Lọc loại:</span>
+                                <select id="filterLoaiTruyenXoa" class="form-select form-select-sm" onchange="filterXoaTruyen()">
+                                    <option value="ALL">-- Tất cả --</option>
+                                    <option value="DICH">Truyện Dịch</option>
+                                    <option value="SANG_TAC">Truyện Sáng Tác</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <ul class="list-group list-group-flush" style="max-height: 45vh; overflow-y: auto;">
+                            <!-- Quét danh sách truyện truyền vào -->
+                            <th:block th:each="truyen : ${danhSachTruyen}">
+                                <li class="list-group-item d-flex justify-content-between align-items-center xoa-item-row">
+                                    <div class="form-check text-truncate pe-2 w-100">
+                                        <!-- Cấu hình data-loai để JS đọc và lọc (Bắt theo tên loại truyện) -->
+                                        <input class="form-check-input border-danger xoa-cb-truyen" type="checkbox" name="truyenIds" 
+                                               th:value="${truyen.id}" 
+                                               th:data-loai="${truyen.loaiTruyen != null ? truyen.loaiTruyen : ''}"
+                                               th:id="'cb_xoa_' + ${truyen.id}">
+                                        
+                                        <label class="form-check-label user-select-none text-dark w-100" th:for="'cb_xoa_' + ${truyen.id}">
+                                            <span class="badge bg-secondary me-1" th:text="${truyen.loaiTruyen}">Loại</span>
+                                            <span th:text="${truyen.tenTruyen}">Tên truyện</span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </th:block>
+                        </ul>
+                    </div>
+
+                    <div class="modal-footer bg-light justify-content-between">
+                        <div>
+                            <button type="button" class="btn btn-sm btn-outline-danger fw-bold" onclick="toggleAllXoa(true)">Chọn tất cả</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary fw-bold" onclick="toggleAllXoa(false)">Bỏ chọn</button>
+                        </div>
+                        
+                        <div>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-danger px-4 fw-bold" onclick="return confirm('Bạn có chắc chắn muốn XÓA VĨNH VIỄN các truyện đã chọn không?');">🗑️ Xóa</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT XỬ LÝ LỌC & CHỌN -->
+    <script>
+    function filterXoaTruyen() {
+        let selectedLoai = document.getElementById('filterLoaiTruyenXoa').value;
+        let checkboxes = document.querySelectorAll('.xoa-cb-truyen');
+
+        checkboxes.forEach(cb => {
+            let li = cb.closest('li');
+
+            let loaiTruyen = (cb.getAttribute('data-loai') || '')
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toUpperCase();
+
+            let isMatch = false;
+
+            if (selectedLoai === 'ALL') {
+                isMatch = true;
+            } 
+            else if (selectedLoai === 'DICH' && loaiTruyen.includes('DICH')) {
+                isMatch = true;
+            } 
+            else if (selectedLoai === 'SANG_TAC' && loaiTruyen.includes('SANG_TAC')) {
+                isMatch = true;
+            }
+
+            if (isMatch) {
+                li.classList.remove('d-none');
+            } else {
+                li.classList.add('d-none');
+                cb.checked = false;
+            }
+        });
+    }
+
+        function toggleAllXoa(isSelect) {
+            let checkboxes = document.querySelectorAll('.xoa-cb-truyen');
+            checkboxes.forEach(cb => {
+                let li = cb.closest('li');
+                // Chỉ tác động vào các thẻ truyện đang hiển thị
+                if (!li.classList.contains('d-none')) {
+                    cb.checked = isSelect;
+                }
+            });
+        }
+    </script>
+</div>

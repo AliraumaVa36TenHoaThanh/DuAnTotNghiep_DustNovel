@@ -361,7 +361,52 @@
 [data-theme="dark"] .withdraw-page .confirm-box hr {
     border-color: #475569;
 }
+.withdraw-submit-btn {
+    border: none;
+    border-radius: 14px;
+    padding: 12px 24px;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #ff4d6d, #ff9f43);
+    box-shadow: 0 6px 18px rgba(255, 77, 109, 0.25);
+    transition: all 0.25s ease;
+}
 
+.withdraw-submit-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 22px rgba(255, 77, 109, 0.35);
+    color: white;
+}
+
+.withdraw-history-btn {
+    border-radius: 14px;
+    padding: 12px 22px;
+    font-weight: 700;
+    border: 2px solid #6366f1;
+    color: #6366f1;
+    background: white;
+    transition: all 0.25s ease;
+    text-decoration: none;
+}
+
+.withdraw-history-btn:hover {
+    background: #6366f1;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+}
+
+/* DARK MODE */
+[data-theme="dark"] .withdraw-history-btn {
+    background: #1e293b;
+    color: #a5b4fc;
+    border-color: #818cf8;
+}
+
+[data-theme="dark"] .withdraw-history-btn:hover {
+    background: #6366f1;
+    color: white;
+}
 </style>
 
 
@@ -483,7 +528,23 @@ function submitForm() {
                placeholder="Mật khẩu xác nhận"
                required>
 
-        <button class="btn btn-danger">Gửi yêu cầu rút tiền</button>
+        <div class="d-flex gap-3 flex-wrap mt-4">
+
+    <!-- Nút rút tiền -->
+    <button class="btn withdraw-submit-btn">
+        <i class="bi bi-cash-coin me-2"></i>
+        Gửi yêu cầu rút tiền
+    </button>
+
+    <!-- Nút lịch sử -->
+    <a th:href="@{/dbu/rut-tien}"
+       class="btn withdraw-history-btn">
+        <i class="bi bi-clock-history me-2"></i>
+        Lịch sử rút tiền
+    </a>
+
+</div>
+        
     </form>   
    <hr>
 
@@ -544,7 +605,7 @@ function submitForm() {
                   </h5>
                   <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-
+				
                 <div class="modal-body">
 
                 <div class="info-item">
