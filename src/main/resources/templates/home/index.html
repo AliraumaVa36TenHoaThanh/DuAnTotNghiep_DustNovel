@@ -308,16 +308,12 @@
 	                               th:text="'Tác giả: ' + ${truyen.tenTacGia}"></small>
 
 	                        <div class="mb-2 d-flex flex-wrap gap-1">
-
-    <!-- chỉ hiện 4 -->
     <a th:each="tl, stat : ${truyen.theLoais}"
        th:if="${stat.index < 4}"
        th:href="@{/DustNovel/the-loai/{id}(id=${tl.id})}"
        th:text="${tl.tenTheLoai}"
        class="badge bg-secondary text-decoration-none">
     </a>
-
-    <!-- nếu >4 thì hiện +x -->
     <span th:if="${#lists.size(truyen.theLoais) > 4}"
           class="badge bg-dark">
         +<span th:text="${#lists.size(truyen.theLoais) - 4}"></span>
@@ -333,8 +329,6 @@
 	                    </div>
 	                </div>
 	            </div>
-
-	            <!-- CARD XEM THÊM -->
 	            <div class="col-md-3 mb-4" th:if="${#lists.size(truyenDich) > 7}">
 	                <a th:href="@{/DustNovel/truyen/dich}" class="text-decoration-none">
 	                    <div class="card h-100 shadow-sm border-primary bg-light">
@@ -348,14 +342,71 @@
 
 	        </div>
 	    </div>
+	    <div class="col-md-3 mb-4">
+            <div class="p-3 sidebar-box rounded shadow-sm border h-100 d-flex flex-column">
+                
+                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                    <h5 class="fw-bold text-primary m-0" style="font-size: 1.1rem;">
+                        <i class=""></i> Lịch sử đọc
+                    </h5>
+                    <a th:href="@{/DustNovel/lich-su-doc}" class="text-decoration-none text-muted small fw-bold">
+                        Xem thêm <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+                <div sec:authorize="isAuthenticated()" class="d-flex flex-column flex-grow-1" style="min-height: 0;">
+                    
+                    <div th:if="${danhSachLichSu == null or #lists.isEmpty(danhSachLichSu)}" class="text-center text-muted small py-4 m-auto">
+                        <i class="bi bi-inbox fs-2 d-block mb-2 text-secondary"></i>
+                        Bạn chưa đọc truyện nào 📭
+                    </div>
+                    <div th:if="${danhSachLichSu != null and !#lists.isEmpty(danhSachLichSu)}" 
+                         style="overflow-y: auto; overflow-x: hidden; padding-right: 5px;" 
+                         class="custom-scrollbar flex-grow-1" 
+                         th:with="danhSachDaXem=${new java.util.ArrayList()}">
+                        
+                        <th:block th:each="ls : ${danhSachLichSu}">
+                            <th:block th:if="${!#lists.contains(danhSachDaXem, ls.truyen.id)}">
+                                <span th:text="${danhSachDaXem.add(ls.truyen.id)}" style="display:none;"></span>
+                                <div class="mb-3 border-bottom pb-2 d-flex align-items-start">
+                                    <div style="width: 55px; height: 75px; overflow: hidden; border-radius: 4px; flex-shrink: 0; cursor: pointer;" 
+                                         class="me-2 shadow-sm"
+                                         th:onclick="'window.location.href=\'/DustNovel/chuong/' + ${ls.chuong.id} + '\''">
+                                        <img th:src="${ls.truyen.tag18} ? 'https://i.pinimg.com/1200x/69/05/e3/6905e37f8ca8a420fd303393921ecec0.jpg' : (${ls.truyen.anhBia != null && !#strings.isEmpty(ls.truyen.anhBia)} ? ${ls.truyen.anhBia} : '/images/aria.jpg')"
+                                             style="width: 100%; height: 100%; object-fit: cover; transition: 0.3s;"
+                                             th:styleappend="${ls.truyen.tag18 != null and ls.truyen.tag18} ? 'filter: blur(8px) brightness(0.85); transform: scale(1.15);' : ''">
+                                    </div>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <h6 class="card-title fw-bold text-truncate mb-1" style="cursor: pointer; font-size: 13px;"
+                                            th:onclick="'window.location.href=\'/DustNovel/chuong/' + ${ls.chuong.id} + '\''"
+                                            th:text="${ls.truyen.tenTruyen}" th:title="${ls.truyen.tenTruyen}">
+                                        </h6>
+                                        <div class="d-flex align-items-center mb-1 text-truncate">
+                                            <span class="badge bg-primary me-1" style="font-size: 0.65rem;">C.[[${ls.chuong.soChuong}]]</span>
+                                            <small class="text-muted text-truncate" style="font-size: 0.75rem;" th:text="${ls.chuong.tieuDe}" th:title="${ls.chuong.tieuDe}"></small>
+                                        </div>
+                                        <div class="mt-1">
+                                            <small class="text-secondary" style="font-size: 0.7rem; opacity: 0.8;">
+                                                <i class="bi bi-clock"></i> <span th:text="${#temporals.format(ls.lanDocCuoi, 'dd/MM/yyyy HH:mm')}"></span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </th:block>
+                    </div>
+                </div>
+                <div sec:authorize="!isAuthenticated()" class="text-center m-auto">
+                    <div class="mb-3">
+                        <i class="bi bi-person-lock text-secondary" style="font-size: 3.5rem;"></i>
+                    </div>
+                    <p class="small text-muted mb-3 px-2">Đăng nhập để lưu và xem lại lịch sử đọc truyện.</p>
+                    <a th:href="@{/DustNovel/login}" class="btn btn-primary btn-sm w-100 fw-bold shadow-sm mb-2">
+                        <i class="bi bi-box-arrow-in-right"></i> Đăng nhập ngay
+                    </a>
+                </div>
 
-	    <!-- BÊN PHẢI: SIDEBAR -->
-	    <div class="col-md-3">
-	        <div class="p-3 sidebar-box rounded shadow-sm h-100">
-	            <h5 class="fw-bold">Liên Hệ Admin:</h5>
-	            <p class="text-muted">Liên hệ với chúng tôi tại: </p>
-	        </div>
-	    </div>
+            </div>
+        </div>
 	<div th:replace="~{truyen/XacMinhTuoi :: ageGate(${currentUser})}"></div>
 	</div>
 

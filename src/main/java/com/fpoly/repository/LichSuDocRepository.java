@@ -53,4 +53,6 @@ public interface LichSuDocRepository extends JpaRepository<LichSuDoc, Long> {
     @Transactional
     @Query("DELETE FROM LichSuDoc l WHERE l.chuong.tap.id = :tapId")
     void deleteByTapId(@Param("tapId") Long tapId);
+    
+    List<LichSuDoc> findTop50ByNguoiDungIdOrderByLanDocCuoiDesc(Long nguoiDungId);
 }
