@@ -364,7 +364,12 @@
                             th:data-bs-target="'#quanLyKhoaModal__' + ${truyen.id}">
                         🔒 Quản lý Khóa
                     </button>
-	
+				<button th:if="${@permissionService.canEditTruyen(truyen.id)}" 
+        type="button" class="btn btn-sm btn-outline-danger fw-bold shadow-sm" 
+        data-bs-toggle="modal" 
+        th:data-bs-target="'#xoaHangLoatModal__' + ${truyen.id}">
+    🗑️ Xóa hàng loạt
+					</button>
             <div th:if="${#lists.isEmpty(dsTap)}" class="text-muted">
                 Truyện chưa có tập nào.
             </div>
@@ -599,6 +604,7 @@
     <div th:replace="~{truyen/XacMinhTuoi :: chuThichModal(${truyen}, ${currentUser})}"></div>
     <div th:replace="~{truyen/DanhGiaTruyen :: vietDanhGiaModal(${truyen}, ${currentUser})}"></div>
 	<div th:replace="~{truyen/DanhGiaTruyen :: xemTatCaDanhGiaModal(${danhGias}, ${trungBinhSao}, ${currentUser}, ${truyen})}"></div>
+	<div th:replace="~{chuong/mua-modal :: xoaHangLoatModal(${truyen}, ${tatCaChuong})}"></div>
 	</div>
 	
 <script>

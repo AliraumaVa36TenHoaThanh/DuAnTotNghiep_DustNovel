@@ -575,7 +575,6 @@ public class ChuongController {
           
             chuongService.muaHangLoat(chuongIds, user);
             
-            // Xong xuôi thì F5 lại đúng trang hiện tại
             return "redirect:" + request.getHeader("Referer");
             
         } catch (Exception e) {
@@ -597,6 +596,18 @@ public class ChuongController {
             e.printStackTrace();
         }
         
+        return "redirect:" + request.getHeader("Referer");
+    }
+    
+    @PostMapping("/xoa-hang-loat")
+    @Transactional
+    @PreAuthorize("@permissionService.canEditTruyen(#truyenId)")
+    public String xoaHangLoat(@RequestParam("truyenId") Long truyenId, 
+                              @RequestParam(value = "chuongIds", required = false) List<Long> chuongIds,
+                              HttpServletRequest request) {
+        if (chuongIds != null && !chuongIds.isEmpty()) {
+            chuongRepo.deleteAllById(chuongIds);
+        }
         return "redirect:" + request.getHeader("Referer");
     }
 }
