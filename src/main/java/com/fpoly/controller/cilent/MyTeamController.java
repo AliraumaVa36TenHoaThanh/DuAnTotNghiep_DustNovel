@@ -52,9 +52,6 @@ public class MyTeamController {
         return "/layout/cilent_base";
     }
 
- // =============================
- // FORM SỬA
- // =============================
  @GetMapping("/nhomDichCuaToi/sua/{id}")
  public String formSua(@PathVariable Long id, Model model, Principal principal) {
 
@@ -204,9 +201,6 @@ public class MyTeamController {
      return "redirect:/dbu/nhomDichCuaToi";
  }
 
-    // =============================
-    // XÓA NHÓM
-    // =============================
     @GetMapping("/nhomDichCuaToi/xoa/{id}")
     public String xoa(@PathVariable Long id, Principal principal) {
 

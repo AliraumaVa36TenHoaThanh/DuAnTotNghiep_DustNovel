@@ -6,8 +6,6 @@ import com.fpoly.model.enums.StatusMaThuong;
 import com.fpoly.repository.MaThuongRepository;
 import com.fpoly.repository.NguoiDungRepository;
 import com.fpoly.repository.PhieuThuongRepository;
-// Lưu ý: Import class SecurityUtil theo đúng đường dẫn project của cậu nhé
-// import com.fpoly.security.SecurityUtil; 
 import com.fpoly.service.MaThuongService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,9 +42,6 @@ public class QuanLyMaThuongController {
         return "/layout/admin_base";
     }
 
-    // ================================
-    // FORM THÊM
-    // ================================
     @GetMapping("/them")
     public String formThem(Model model) {
 
@@ -60,9 +55,6 @@ public class QuanLyMaThuongController {
         return "/layout/admin_base";
     }
 
-    // ================================
-    // LƯU THÊM
-    // ================================
     @PostMapping("/them")
     public String them(@ModelAttribute MaThuong maThuong,
                        RedirectAttributes ra) {
@@ -80,10 +72,6 @@ public class QuanLyMaThuongController {
         return "redirect:/admin/ma-thuong";
     }
 
-    // ================================
-    // FORM SỬA
-    // ================================
-
     @PostMapping("/doi-trang-thai/{id}")
     public String doiTrangThai(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 
@@ -94,7 +82,6 @@ public class QuanLyMaThuongController {
             return "redirect:/admin/ma-thuong";
         }
 
-        // Toggle trạng thái
         if (ma.getStatusMaThuong() == StatusMaThuong.ON) {
             ma.setStatusMaThuong(StatusMaThuong.OFF);
         } else {

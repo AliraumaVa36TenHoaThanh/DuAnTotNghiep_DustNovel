@@ -86,10 +86,9 @@ public class TruyenController {
 	        List<Chuong> tatCaChuong = chuongRepo.findByTruyenId(id);
 	        String tenNhom = null;
 	        if (truyen.getNguoiDang() != null) {
-	            // Lấy danh sách nhóm mà user này tham gia (hoặc làm trưởng nhóm)
 	            List<com.fpoly.model.NhomDich> dsNhom = nhomDichRepo.findNhomByUserId(truyen.getNguoiDang().getId());
 	            if (dsNhom != null && !dsNhom.isEmpty()) {
-	                tenNhom = dsNhom.get(0).getTenNhom(); // Lấy tên nhóm đầu tiên tìm thấy
+	                tenNhom = dsNhom.get(0).getTenNhom();
 	            }
 	        }
 	        model.addAttribute("tenNhom", tenNhom);
@@ -157,9 +156,6 @@ public class TruyenController {
 	            return "layout/main";
 	        }
 	        
-	     // =========================
-	        //  THÊM PHẦN UPLOAD ẢNH
-	        // =========================
 	        if (file != null && !file.isEmpty()) {
 
 	            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -179,7 +175,6 @@ public class TruyenController {
 	            truyen.setAnhBia("/images/aria.jpg");
 	        }
 	        
-	    //  Nếu chưa chọn thể loại
 	    	if (theLoaiIds == null || theLoaiIds.isEmpty()) {
 
 	            model.addAttribute("error", "Vui lòng chọn ít nhất một thể loại!");
