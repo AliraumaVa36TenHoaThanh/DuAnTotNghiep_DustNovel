@@ -26,9 +26,6 @@ public class QuanLyNhomDichController {
     @Autowired
     private NguoiDungRepository nguoiDungRepository;
 
-    // =============================
-    // LIST NHÓM DỊCH
-    // =============================
     @GetMapping
     public String listNhomDich(Model model) {
 
@@ -41,9 +38,6 @@ public class QuanLyNhomDichController {
         return "/layout/admin_base";
     }
 
-// // =============================
-// // CHI TIẾT NHÓM
-// // =============================
 // @GetMapping("/chi-tiet/{id}")
 // public String chiTiet(@PathVariable Long id, Model model) {
 //
@@ -58,7 +52,6 @@ public class QuanLyNhomDichController {
 //     return "layout/admin_base"; // bỏ dấu /
 // }
     
-//================= FORM SỬA =================
 	@GetMapping("/sua/{id}")
 	public String formSua(@PathVariable Long id, Model model) {
 
@@ -71,7 +64,6 @@ public class QuanLyNhomDichController {
 		return "/layout/admin_base";
 	}
 
-//================= UPDATE =================
 	@PostMapping("/sua/{id}")
 	public String capNhat(@PathVariable Long id,
 	                      @ModelAttribute("nhom") NhomDich nhomForm,
@@ -225,9 +217,6 @@ public class QuanLyNhomDichController {
 	    return "redirect:/dba/nhom-dich";
 	}
 
-    // =============================
-    // XÓA NHÓM
-    // =============================
     @GetMapping("/xoa/{id}")
     public String xoaNhom(@PathVariable Long id) {
 

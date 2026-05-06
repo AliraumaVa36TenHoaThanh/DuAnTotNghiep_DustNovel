@@ -26,15 +26,11 @@ public class DashboardAdminController {
     @GetMapping("/dba/dashboard")
     public String dashboard(Model model) {
 
-        // ===== THỐNG KÊ =====
         model.addAttribute("totalUsers", nguoiDungRepository.count());
         model.addAttribute("totalTruyen", truyenRepository.count());
         model.addAttribute("totalChuong", chuongRepository.count());
         
-     // ===== LẤY DOANH THU GỐC =====
         List<Object[]> data = thongTinNapService.getDoanhThuTheoNgay();
-
-        // ===== TÍNH TỔNG (CHƯA LỌC) =====
         long tongTien = 0;
         for (Object[] item : data) {
             if (item[1] != null) {
@@ -44,12 +40,8 @@ public class DashboardAdminController {
         
         model.addAttribute("tongTienFilter", tongTien);
 
-        // ===== DÙNG SERVICE (QUAN TRỌNG) =====
         model.addAttribute("topUsers",
                 thongTinNapService.getTopToken());
-
-//        model.addAttribute("doanhThuNgay",
-//                thongTinNapService.getDoanhThuTheoNgay());
         
         model.addAttribute("doanhThuNgay", data);
 
@@ -72,15 +64,12 @@ public class DashboardAdminController {
             @RequestParam(required = false) Integer quarter,
             Model model) {
 
-        // ===== THỐNG KÊ =====
         model.addAttribute("totalUsers", nguoiDungRepository.count());
         model.addAttribute("totalTruyen", truyenRepository.count());
         model.addAttribute("totalChuong", chuongRepository.count());
 
-        // ===== DATA GỐC =====
         var doanhThuGoc = thongTinNapService.getDoanhThuTheoNgay();
 
-        // ===== FILTER =====
         var doanhThuFilter = doanhThuGoc;
 
         if (type != null && !type.isEmpty()) {
@@ -116,8 +105,6 @@ public class DashboardAdminController {
 
             }).toList();
         }
-
-        // ===== TÍNH TỔNG =====
         double tongTienFilter = doanhThuFilter.stream()
                 .mapToDouble(item -> ((Number) item[1]).doubleValue())
                 .sum();
@@ -126,7 +113,6 @@ public class DashboardAdminController {
                 .mapToDouble(item -> ((Number) item[1]).doubleValue())
                 .sum();
 
-        // ===== ADD MODEL =====
         model.addAttribute("doanhThuNgay", doanhThuGoc);
         model.addAttribute("doanhThuNgayFilter", doanhThuFilter);
         model.addAttribute("tongTienFilter", tongTienFilter);
