@@ -24,7 +24,7 @@ public class AiTomTatService {
 
     private final AiTomTatRepository aiTomTatRepo;
     private final ChuongRepository chuongRepo;
-    private final String GROQ_API_KEY = "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";
+    private final String GROQ_API_KEY = "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";
 
     public String getTomTatChuong(Long chuongId) {
         Chuong chuong = chuongRepo.findById(chuongId)
