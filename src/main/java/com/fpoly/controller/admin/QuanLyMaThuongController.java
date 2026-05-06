@@ -61,12 +61,16 @@ public class QuanLyMaThuongController {
 
         try {
             maThuongService.themMaThuong(maThuong);
+
             ra.addFlashAttribute("successMsg",
                     "Thêm mã thưởng thành công!");
+
         } catch (Exception e) {
+
             ra.addFlashAttribute("errorMsg",
                     e.getMessage());
-            return "redirect:/dba/ma-thuong/them";
+
+            return "redirect:/admin/ma-thuong/them";
         }
 
         return "redirect:/admin/ma-thuong";
